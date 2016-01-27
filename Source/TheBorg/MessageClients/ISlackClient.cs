@@ -22,19 +22,17 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Clients.Slack.RtmRequests
-{
-    public abstract class RtmRequest
-    {
-        protected RtmRequest(
-            int id,
-            string type)
-        {
-            Id = id;
-            Type = type;
-        }
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.MessageClients.Slack;
 
-        public int Id { get; }
-        public string Type { get; }
+namespace TheBorg.MessageClients
+{
+    public interface ISlackMessageClient
+    {
+        IObservable<SlackMessage> Messages { get; }
+
+        Task ConnectAsync(CancellationToken cancellationToken);
     }
 }

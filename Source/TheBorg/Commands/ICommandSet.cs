@@ -22,33 +22,9 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using Autofac;
-using Serilog;
-using TheBorg.Commands;
-
-namespace TheBorg
+namespace TheBorg.Commands
 {
-    public class TheBorgModule : Module
+    public interface ICommandSet
     {
-        private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
-            {
-                typeof(Command),
-            }; 
-
-        protected override void Load(ContainerBuilder builder)
-        {
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-
-            builder.RegisterInstance(logger);
-            builder
-                .RegisterAssemblyTypes(typeof (TheBorgModule).Assembly)
-                .Where(t => !TypesNotRegisteredByConvention.Contains(t))
-                .AsImplementedInterfaces();
-        }
     }
 }

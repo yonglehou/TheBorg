@@ -23,26 +23,24 @@
 //
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
-using TheBorg.Clients.Slack;
-using TheBorg.Clients.Slack.ApiResponses;
-using TheBorg.Clients.Slack.DTOs;
-using TheBorg.Clients.Slack.RtmMessages;
+using TheBorg.Clients;
 using TheBorg.Core;
+using TheBorg.MessageClients.Slack;
+using TheBorg.MessageClients.Slack.ApiResponses;
+using TheBorg.MessageClients.Slack.RtmResponses;
 
-namespace TheBorg.Clients
+namespace TheBorg.MessageClients
 {
-    public class SlackClient : ISlackClient
+    public class SlackMessageClient : ISlackMessageClient
     {
         private readonly ILogger _logger;
-        private readonly IRestClient _restClient;
+        private readonly ISlackApiClient _slackApiClient;
         private readonly IWebSocketClient _webSocketClient;
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
         private readonly Subject<SlackMessage> _messages = new Subject<SlackMessage>();
@@ -51,17 +49,16 @@ namespace TheBorg.Clients
             {
                 ContractResolver = new UnderscoreMappingResolver(),
             };
-        private readonly ConcurrentDictionary<string, Task<UserDto>> _userCache = new ConcurrentDictionary<string, Task<UserDto>>(); 
 
         public IObservable<SlackMessage> Messages => _messages; 
 
-        public SlackClient(
+        public SlackMessageClient(
             ILogger logger,
-            IRestClient restClient,
+            ISlackApiClient slackApiClient,
             IWebSocketClient webSocketClient)
         {
             _logger = logger;
-            _restClient = restClient;
+            _slackApiClient = slackApiClient;
             _webSocketClient = webSocketClient;
 
             _disposables.Add(_webSocketClient.Messages.Subscribe(Received));
@@ -69,7 +66,7 @@ namespace TheBorg.Clients
 
         public async Task ConnectAsync(CancellationToken cancellationToken)
         {
-            var rtmStartResponse = await CallApiAsync<RtmStartApiResponse>(
+            var rtmStartResponse = await _slackApiClient.CallApiAsync<RtmStartApiResponse>(
                 "rtm.start",
                 cancellationToken)
                 .ConfigureAwait(false);
@@ -77,45 +74,9 @@ namespace TheBorg.Clients
             await _webSocketClient.ConnectAsync(rtmStartResponse.Url, cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<T> CallApiAsync<T>(
-            string method,
-            Dictionary<string, string> arguments,
-            CancellationToken cancellationToken)
-        {
-            var json = await _restClient.GetAsync(
-                new Uri(new Uri("https://slack.com/api/"), method),
-                arguments,
-                cancellationToken)
-                .ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<T>(json);
-        }
-
-        private Task<T> CallApiAsync<T>(
-            string method,
-            CancellationToken cancellationToken,
-            params KeyValuePair<string, string>[] keyValuePairs)
-        {
-            var arguments = keyValuePairs.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value);
-            if (!arguments.ContainsKey("token"))
-            {
-                arguments.Add("token", Environment.GetEnvironmentVariable("SLACK_TOKEN"));
-            }
-            return CallApiAsync<T>(method, arguments, cancellationToken);
-        }
-
         private int GetMessageId()
         {
             return Interlocked.Increment(ref _messageIdCounter);
-        }
-
-        private Task<UserDto> GetUserAsync(string userId)
-        {
-            return _userCache.GetOrAdd(
-                userId,
-                id => CallApiAsync<UserDto>(
-                    "users.info",
-                    CancellationToken.None,
-                    new KeyValuePair<string, string>("user", userId)));
         }
 
         private void Received(string json)
@@ -140,10 +101,11 @@ namespace TheBorg.Clients
         {
             _logger.Debug($"Slack message - {messageRtmResponse.User}@{messageRtmResponse.Channel}: {messageRtmResponse.Text}");
 
-            var username = GetUserAsync(messageRtmResponse.User).Result.Name;
+            var username = _slackApiClient.GetUserAsync(messageRtmResponse.User, CancellationToken.None).Result?.Name ?? "<unknown>";
             _messages.OnNext(new SlackMessage(
                 messageRtmResponse.Text,
-                username));
+                username,
+                messageRtmResponse.Channel));
         }
     }
 }

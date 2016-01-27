@@ -22,16 +22,24 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Clients.Slack.RtmMessages
+namespace TheBorg.MessageClients.Slack.ApiResponses
 {
-    public class RtmResponse
+    public class ApiResponse
     {
-        public string Type { get; }
-
-        public RtmResponse(
-            string type)
+        public ApiResponse(
+            string ok,
+            string error)
         {
-            Type = type;
+            Error = error ?? string.Empty;
+            IsOk = bool.Parse(ok);
+        }
+
+        public string Error { get; }
+        public bool IsOk { get; }
+
+        public override string ToString()
+        {
+            return $"IsOk: {IsOk}, Error: {Error}";
         }
     }
 }

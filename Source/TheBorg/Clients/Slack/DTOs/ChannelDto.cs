@@ -22,19 +22,22 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Clients.Slack
+namespace TheBorg.Clients.Slack.DTOs
 {
-    public class SlackMessage
+    /// <summary>
+    ///     https://api.slack.com/types/channel
+    /// </summary>
+    public class ChannelDto
     {
-        public SlackMessage(
-            string text,
-            string username)
+        public ChannelDto(
+            string id,
+            string name)
         {
-            Text = text;
-            Username = username;
+            Id = id;
+            Name = name;
         }
 
-        public string Text { get; }
-        public string Username { get; }
+        public string Id { get; }
+        public string Name { get; }
     }
 }

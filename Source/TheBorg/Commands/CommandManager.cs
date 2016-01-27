@@ -22,46 +22,49 @@
 // SOFTWARE.
 //
 
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Clients;
+using Serilog;
 using TheBorg.Clients.Slack;
-using TheBorg.Commands;
-using TheBorg.MessageClients;
 using TheBorg.MessageClients.Slack;
 
-namespace TheBorg
+namespace TheBorg.Commands
 {
-    public class Collective : ICollective
+    public class CommandManager : ICommandManager
     {
-        private readonly ICommandManager _commandManager;
-        private readonly ISlackMessageClient _slackMessageClient;
+        private readonly ILogger _logger;
+        private readonly IReadOnlyCollection<ICommand> _commands;
 
-        public Collective(
-            ICommandManager commandManager,
-            ISlackMessageClient slackMessageClient)
+        public CommandManager(
+            ILogger logger,
+            ICommandBuilder commandBuilder,
+            IEnumerable<ICommandSet> commandSets)
         {
-            _commandManager = commandManager;
-            _slackMessageClient = slackMessageClient;
+            _logger = logger;
+            _commands = commandBuilder.BuildCommands(commandSets);
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public async Task ExecuteAsync(SlackMessage slackMessage, CancellationToken cancellationToken)
         {
-            await _slackMessageClient.ConnectAsync(cancellationToken).ConfigureAwait(false);
-            _slackMessageClient.Messages.Subscribe(HandleMessage);
-        }
+            var commandThatUnderstandMessage = _commands
+                .Where(c => c.IsMatch(slackMessage.Text))
+                .ToList();
+            if (!commandThatUnderstandMessage.Any())
+            {
+                _logger.Information($"Did not find any commands that understand: {slackMessage.Text}");
+                return;
+            }
+            if (commandThatUnderstandMessage.Count != 1)
+            {
+                _logger.Warning($"Foung too many commands that understand: {slackMessage.Text}");
+                return;
+            }
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.FromResult(0);
-        }
+            var command = commandThatUnderstandMessage.Single();
 
-        private async void HandleMessage(SlackMessage slackMessage)
-        {
-            // Yes, its async void
-
-            await _commandManager.ExecuteAsync(slackMessage, CancellationToken.None).ConfigureAwait(false);
+            await command.ExecuteAsync(slackMessage, cancellationToken).ConfigureAwait(false);
         }
     }
 }

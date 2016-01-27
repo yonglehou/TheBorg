@@ -22,33 +22,16 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using Autofac;
-using Serilog;
-using TheBorg.Commands;
-
-namespace TheBorg
+namespace TheBorg.MessageClients.Slack.RtmResponses
 {
-    public class TheBorgModule : Module
+    public class RtmResponse
     {
-        private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
-            {
-                typeof(Command),
-            }; 
+        public string Type { get; }
 
-        protected override void Load(ContainerBuilder builder)
+        public RtmResponse(
+            string type)
         {
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-
-            builder.RegisterInstance(logger);
-            builder
-                .RegisterAssemblyTypes(typeof (TheBorgModule).Assembly)
-                .Where(t => !TypesNotRegisteredByConvention.Contains(t))
-                .AsImplementedInterfaces();
+            Type = type;
         }
     }
 }

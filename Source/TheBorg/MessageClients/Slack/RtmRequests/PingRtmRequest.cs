@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Clients.Slack.RtmRequests
+namespace TheBorg.MessageClients.Slack.RtmRequests
 {
     public class PingRtmRequest : RtmRequest
     {

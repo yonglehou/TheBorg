@@ -22,14 +22,22 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Clients.Slack.RtmMessages
+using System;
+
+namespace TheBorg.Commands.Attributes
 {
-    public class HelloRtmResponse : RtmResponse
+    [AttributeUsage(AttributeTargets.Method)]
+    public class CommandAttribute : Attribute
     {
-        public HelloRtmResponse(
-            string type)
-            : base(type)
+        public string Help { get; }
+        public string Regex { get; }
+
+        public CommandAttribute(
+            string help,
+            string regex)
         {
+            Help = help;
+            Regex = regex;
         }
     }
 }

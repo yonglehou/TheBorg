@@ -22,46 +22,15 @@
 // SOFTWARE.
 //
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Clients;
 using TheBorg.Clients.Slack;
-using TheBorg.Commands;
-using TheBorg.MessageClients;
 using TheBorg.MessageClients.Slack;
 
-namespace TheBorg
+namespace TheBorg.Commands
 {
-    public class Collective : ICollective
+    public interface ICommandManager
     {
-        private readonly ICommandManager _commandManager;
-        private readonly ISlackMessageClient _slackMessageClient;
-
-        public Collective(
-            ICommandManager commandManager,
-            ISlackMessageClient slackMessageClient)
-        {
-            _commandManager = commandManager;
-            _slackMessageClient = slackMessageClient;
-        }
-
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            await _slackMessageClient.ConnectAsync(cancellationToken).ConfigureAwait(false);
-            _slackMessageClient.Messages.Subscribe(HandleMessage);
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.FromResult(0);
-        }
-
-        private async void HandleMessage(SlackMessage slackMessage)
-        {
-            // Yes, its async void
-
-            await _commandManager.ExecuteAsync(slackMessage, CancellationToken.None).ConfigureAwait(false);
-        }
+        Task ExecuteAsync(SlackMessage slackMessage, CancellationToken cancellationToken);
     }
 }

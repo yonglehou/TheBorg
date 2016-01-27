@@ -22,46 +22,33 @@
 // SOFTWARE.
 //
 
-using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Clients;
-using TheBorg.Clients.Slack;
-using TheBorg.Commands;
-using TheBorg.MessageClients;
-using TheBorg.MessageClients.Slack;
+using TheBorg.Clients.Slack.DTOs;
+using TheBorg.MessageClients.Slack.ApiResponses;
 
-namespace TheBorg
+namespace TheBorg.Clients
 {
-    public class Collective : ICollective
+    public interface ISlackApiClient
     {
-        private readonly ICommandManager _commandManager;
-        private readonly ISlackMessageClient _slackMessageClient;
+        Task<UserDto> GetUserAsync(
+            string userId,
+            CancellationToken cancellationToken);
 
-        public Collective(
-            ICommandManager commandManager,
-            ISlackMessageClient slackMessageClient)
-        {
-            _commandManager = commandManager;
-            _slackMessageClient = slackMessageClient;
-        }
+        Task<ApiResponse> SendMessageAsync(
+            string channelId,
+            string text,
+            CancellationToken cancellationToken);
 
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            await _slackMessageClient.ConnectAsync(cancellationToken).ConfigureAwait(false);
-            _slackMessageClient.Messages.Subscribe(HandleMessage);
-        }
+        Task<T> CallApiAsync<T>(
+            string method,
+            Dictionary<string, string> arguments,
+            CancellationToken cancellationToken);
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.FromResult(0);
-        }
-
-        private async void HandleMessage(SlackMessage slackMessage)
-        {
-            // Yes, its async void
-
-            await _commandManager.ExecuteAsync(slackMessage, CancellationToken.None).ConfigureAwait(false);
-        }
+        Task<T> CallApiAsync<T>(
+            string method,
+            CancellationToken cancellationToken,
+            params KeyValuePair<string, string>[] keyValuePairs);
     }
 }
