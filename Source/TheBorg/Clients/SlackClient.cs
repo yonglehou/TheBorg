@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
@@ -50,6 +51,7 @@ namespace TheBorg.Clients
             {
                 ContractResolver = new UnderscoreMappingResolver(),
             };
+        private readonly ConcurrentDictionary<string, Task<UserDto>> _userCache = new ConcurrentDictionary<string, Task<UserDto>>(); 
 
         public IObservable<SlackMessage> Messages => _messages; 
 
@@ -96,7 +98,7 @@ namespace TheBorg.Clients
             var arguments = keyValuePairs.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value);
             if (!arguments.ContainsKey("token"))
             {
-                arguments.Add("token", "");
+                arguments.Add("token", Environment.GetEnvironmentVariable("SLACK_TOKEN"));
             }
             return CallApiAsync<T>(method, arguments, cancellationToken);
         }
@@ -106,12 +108,14 @@ namespace TheBorg.Clients
             return Interlocked.Increment(ref _messageIdCounter);
         }
 
-        private Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken)
+        private Task<UserDto> GetUserAsync(string userId)
         {
-            return CallApiAsync<UserDto>(
-                "users.info",
-                cancellationToken,
-                new KeyValuePair<string, string>("user", userId));
+            return _userCache.GetOrAdd(
+                userId,
+                id => CallApiAsync<UserDto>(
+                    "users.info",
+                    CancellationToken.None,
+                    new KeyValuePair<string, string>("user", userId)));
         }
 
         private void Received(string json)
@@ -127,7 +131,7 @@ namespace TheBorg.Clients
                     ReceivedMessage(JsonConvert.DeserializeObject<MessageRtmResponse>(json, _jsonSerializerSettings));
                     break;
                 default:
-                    _logger.Debug($"Ignoring Slack message type '{rtmMessage.Type}'");
+                    _logger.Verbose($"Ignoring Slack message type '{rtmMessage.Type}'");
                     break;
             }
         }
@@ -135,6 +139,11 @@ namespace TheBorg.Clients
         private void ReceivedMessage(MessageRtmResponse messageRtmResponse)
         {
             _logger.Debug($"Slack message - {messageRtmResponse.User}@{messageRtmResponse.Channel}: {messageRtmResponse.Text}");
+
+            var username = GetUserAsync(messageRtmResponse.User).Result.Name;
+            _messages.OnNext(new SlackMessage(
+                messageRtmResponse.Text,
+                username));
         }
     }
 }
