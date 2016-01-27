@@ -1,0 +1,7 @@
+NUGET
+  remote: https://www.nuget.org/api/v2
+  specs:
+    Autofac (3.5.2)
+    Newtonsoft.Json (8.0.2)
+    Serilog (1.5.14)
+    Topshelf (3.3.1)
