@@ -23,15 +23,20 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace TheBorg.Clients
+namespace TheBorg.Clients.Slack.ApiResponses
 {
-    public interface IWebSocketClient
+    public class RtmStartApiResponse
     {
-        IObservable<string> Messages { get; }
+        public RtmStartApiResponse(
+            string ok,
+            Uri url)
+        {
+            if (!bool.Parse(ok)) throw new ArgumentException("Response is not OK");
 
-        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
+            Url = url;
+        }
+
+        public Uri Url { get; }
     }
 }

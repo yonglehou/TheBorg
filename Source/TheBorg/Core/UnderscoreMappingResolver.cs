@@ -22,20 +22,18 @@
 // SOFTWARE.
 //
 
-using System;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Serialization;
 
-namespace TheBorg.Clients.Slack
+namespace TheBorg.Core
 {
-    public class RtmStartResponse
+    public class UnderscoreMappingResolver : DefaultContractResolver
     {
-        public RtmStartResponse(
-            string ok,
-            Uri url)
-        {
-            Url = url;
-            if (!bool.Parse(ok)) throw new ArgumentException("Response is not OK");
-        }
+        private static readonly Regex Regex = new Regex(@"([A-Z])([A-Z][a-z])|([a-z0-9])([A-Z])", RegexOptions.Compiled);
 
-        public Uri Url { get; }
+        protected override string ResolvePropertyName(string propertyName)
+        {
+            return Regex.Replace(propertyName,"$1$3_$2$4").ToLower();
+        }
     }
 }

@@ -22,16 +22,19 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace TheBorg.Clients
+namespace TheBorg.Clients.Slack
 {
-    public interface IWebSocketClient
+    public class SlackMessage
     {
-        IObservable<string> Messages { get; }
+        public SlackMessage(
+            string text,
+            string username)
+        {
+            Text = text;
+            Username = username;
+        }
 
-        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
+        public string Text { get; }
+        public string Username { get; }
     }
 }

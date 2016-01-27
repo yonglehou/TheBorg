@@ -2,5 +2,6 @@ source https://www.nuget.org/api/v2
 
 nuget Autofac 3.5.2
 nuget Newtonsoft.Json 8.0.2
+nuget Rx-Main 2.2.5
 nuget Serilog 1.5.14
 nuget Topshelf 3.3.1

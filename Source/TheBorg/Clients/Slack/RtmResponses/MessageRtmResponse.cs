@@ -22,16 +22,24 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace TheBorg.Clients
+namespace TheBorg.Clients.Slack.RtmMessages
 {
-    public interface IWebSocketClient
+    public class MessageRtmResponse : RtmResponse
     {
-        IObservable<string> Messages { get; }
+        public MessageRtmResponse(
+            string type,
+            string channel,
+            string user,
+            string text)
+            : base(type)
+        {
+            Channel = channel;
+            User = user;
+            Text = text;
+        }
 
-        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
+        public string Channel { get; }
+        public string User { get; }
+        public string Text { get; }
     }
 }

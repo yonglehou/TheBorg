@@ -24,11 +24,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using TheBorg.Clients.Slack;
+using TheBorg.Clients.Slack.ApiResponses;
+using TheBorg.Clients.Slack.DTOs;
+using TheBorg.Clients.Slack.RtmMessages;
+using TheBorg.Core;
 
 namespace TheBorg.Clients
 {
@@ -37,6 +43,15 @@ namespace TheBorg.Clients
         private readonly ILogger _logger;
         private readonly IRestClient _restClient;
         private readonly IWebSocketClient _webSocketClient;
+        private readonly List<IDisposable> _disposables = new List<IDisposable>();
+        private readonly Subject<SlackMessage> _messages = new Subject<SlackMessage>();
+        private int _messageIdCounter;
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new UnderscoreMappingResolver(),
+            };
+
+        public IObservable<SlackMessage> Messages => _messages; 
 
         public SlackClient(
             ILogger logger,
@@ -46,16 +61,14 @@ namespace TheBorg.Clients
             _logger = logger;
             _restClient = restClient;
             _webSocketClient = webSocketClient;
+
+            _disposables.Add(_webSocketClient.Messages.Subscribe(Received));
         }
 
         public async Task ConnectAsync(CancellationToken cancellationToken)
         {
-            var rtmStartResponse = await CallApiAsync<RtmStartResponse>(
+            var rtmStartResponse = await CallApiAsync<RtmStartApiResponse>(
                 "rtm.start",
-                new Dictionary<string, string>()
-                    {
-                        {"token", ""}
-                    },
                 cancellationToken)
                 .ConfigureAwait(false);
 
@@ -73,6 +86,55 @@ namespace TheBorg.Clients
                 cancellationToken)
                 .ConfigureAwait(false);
             return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        private Task<T> CallApiAsync<T>(
+            string method,
+            CancellationToken cancellationToken,
+            params KeyValuePair<string, string>[] keyValuePairs)
+        {
+            var arguments = keyValuePairs.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value);
+            if (!arguments.ContainsKey("token"))
+            {
+                arguments.Add("token", "");
+            }
+            return CallApiAsync<T>(method, arguments, cancellationToken);
+        }
+
+        private int GetMessageId()
+        {
+            return Interlocked.Increment(ref _messageIdCounter);
+        }
+
+        private Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken)
+        {
+            return CallApiAsync<UserDto>(
+                "users.info",
+                cancellationToken,
+                new KeyValuePair<string, string>("user", userId));
+        }
+
+        private void Received(string json)
+        {
+            var rtmMessage = JsonConvert.DeserializeObject<RtmResponse>(json, _jsonSerializerSettings);
+
+            switch (rtmMessage.Type)
+            {
+                case "hello":
+                    _logger.Information("Connected to Slack RTM web socket");
+                    break;
+                case "message":
+                    ReceivedMessage(JsonConvert.DeserializeObject<MessageRtmResponse>(json, _jsonSerializerSettings));
+                    break;
+                default:
+                    _logger.Debug($"Ignoring Slack message type '{rtmMessage.Type}'");
+                    break;
+            }
+        }
+
+        private void ReceivedMessage(MessageRtmResponse messageRtmResponse)
+        {
+            _logger.Debug($"Slack message - {messageRtmResponse.User}@{messageRtmResponse.Channel}: {messageRtmResponse.Text}");
         }
     }
 }

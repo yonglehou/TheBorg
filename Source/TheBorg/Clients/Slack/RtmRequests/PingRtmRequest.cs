@@ -22,16 +22,14 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace TheBorg.Clients
+namespace TheBorg.Clients.Slack.RtmRequests
 {
-    public interface IWebSocketClient
+    public class PingRtmRequest : RtmRequest
     {
-        IObservable<string> Messages { get; }
-
-        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
+        public PingRtmRequest(
+            int id)
+            : base(id, "ping")
+        {
+        }
     }
 }

@@ -22,16 +22,22 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace TheBorg.Clients
+namespace TheBorg.Clients.Slack.DTOs
 {
-    public interface IWebSocketClient
+    /// <summary>
+    ///     https://api.slack.com/types/user
+    /// </summary>
+    public class UserDto
     {
-        IObservable<string> Messages { get; }
+        public UserDto(
+            string id,
+            string name)
+        {
+            Id = id;
+            Name = name;
+        }
 
-        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
+        public string Id { get; }
+        public string Name { get; }
     }
 }

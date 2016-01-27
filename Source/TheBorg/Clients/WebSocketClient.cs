@@ -24,6 +24,7 @@
 
 using System;
 using System.Net.WebSockets;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,6 +38,9 @@ namespace TheBorg.Clients
         private readonly ClientWebSocket _webSocket = new ClientWebSocket();
         private readonly Thread _receiverThread;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly Subject<string> _messages = new Subject<string>();
+
+        public IObservable<string> Messages => _messages; 
 
         public WebSocketClient(
             ILogger logger)
@@ -60,8 +64,11 @@ namespace TheBorg.Clients
             catch (OperationCanceledException) { }
             catch (Exception e)
             {
+                //_messages.OnError(e);
                 _logger.Error(e, "Web socket failed");
             }
+
+            _messages.OnCompleted();
 
             _logger.Information("Web socket closed");
         }
@@ -106,7 +113,7 @@ namespace TheBorg.Clients
                 }
 
                 var message = Encoding.UTF8.GetString(buffer, 0, count);
-                Console.WriteLine(">" + message);
+                _messages.OnNext(message);
             }
         }
 
