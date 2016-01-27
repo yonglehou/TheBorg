@@ -68,7 +68,7 @@ namespace TheBorg.Clients
                     {
                         {"channel", channelId},
                         {"text", text},
-                        {"icon_url", "https://avatars.slack-edge.com/2016-01-27/19577639410_6b893cc16196304616f7_192.jpg"},
+                        {"icon_url", "https://media.githubusercontent.com/media/rasmus/TheBorg/master/icon-512x512.jpg"},
                         {"username", "The Borg"}
                     },
                 cancellationToken);
