@@ -24,8 +24,8 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Conversations.Attributes;
 using TheBorg.Interface.Commands;
+using TheBorg.Interface.Conversations;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Conversations.Topics

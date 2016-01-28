@@ -58,12 +58,9 @@
     <Compile Include="Commands\CommandSets\HelpCommandSet.cs" />
     <Compile Include="Commands\CommandSets\StatusCommandSet.cs" />
     <Compile Include="Commands\ICommandBuilder.cs" />
-    <Compile Include="Conversations\Attributes\ConversationTopicAttribute.cs" />
     <Compile Include="Conversations\ActiveConversation.cs" />
     <Compile Include="Conversations\ConversationManager.cs" />
-    <Compile Include="Conversations\IActiveConversation.cs" />
     <Compile Include="Conversations\IConversationManager.cs" />
-    <Compile Include="Conversations\IConversationTopic.cs" />
     <Compile Include="Core\IMessageProcessors.cs" />
     <Compile Include="Conversations\Topics\OctopusCreateReleaseTopic.cs" />
     <Compile Include="Core\ITime.cs" />
@@ -103,9 +100,7 @@
       <Name>TheBorg.Interface</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\Attributes\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

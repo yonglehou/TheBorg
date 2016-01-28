@@ -23,21 +23,16 @@
 //
 
 using System;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Conversations.Attributes
+namespace TheBorg.Interface.Conversations
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    public class ConversationTopicAttribute : Attribute
+    public interface IActiveConversation
     {
-        public string Help { get; }
-        public string StartedBy { get; }
+        DateTimeOffset Started { get; }
+        Address Recipient { get; }
 
-        public ConversationTopicAttribute(
-            string help,
-            string startedBy)
-        {
-            Help = help;
-            StartedBy = startedBy;
-        }
+        bool TryGet<T>(string key, out T value);
+        bool TrySet<T>(string key, T value);
     }
 }

@@ -30,6 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Commands;
 using TheBorg.Core;
+using TheBorg.Interface.Conversations;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Conversations
@@ -41,12 +42,12 @@ namespace TheBorg.Conversations
         private readonly IReadOnlyCollection<ICommand> _commands;
 
         public ActiveConversation(
-            Address with,
+            Address recipient,
             ITime time,
             IConversationTopic conversationTopic,
             ICommandBuilder commandBuilder)
         {
-            With = with;
+            Recipient = recipient;
             Started = time.Now;
 
             _conversationTopic = conversationTopic;
@@ -55,7 +56,7 @@ namespace TheBorg.Conversations
         }
 
         public DateTimeOffset Started { get; }
-        public Address With { get; }
+        public Address Recipient { get; }
         public bool TryGet<T>(string key, out T value)
         {
             object obj;

@@ -30,8 +30,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Commands;
-using TheBorg.Conversations.Attributes;
 using TheBorg.Core;
+using TheBorg.Interface.Conversations;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Conversations
@@ -41,7 +41,7 @@ namespace TheBorg.Conversations
         private readonly ITime _time;
         private readonly ILogger _logger;
         private readonly ICommandBuilder _commandBuilder;
-        private readonly ConcurrentDictionary<Address, IActiveConversation> _activeConversations = new ConcurrentDictionary<Address, IActiveConversation>();
+        private readonly ConcurrentDictionary<Address, ActiveConversation> _activeConversations = new ConcurrentDictionary<Address, ActiveConversation>();
         private readonly IReadOnlyDictionary<Regex, IConversationTopic> _conversationTopics;
 
         private static readonly IReadOnlyCollection<Regex> ConversationEnders = new[]
@@ -67,7 +67,7 @@ namespace TheBorg.Conversations
         public async Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var processMessageResult = ProcessMessageResult.Skipped;
-            IActiveConversation activeConversation;
+            ActiveConversation activeConversation;
             if (_activeConversations.TryGetValue(tenantMessage.Sender, out activeConversation))
             {
                 if (ConversationEnders.Any(e => e.IsMatch(tenantMessage.Text)))
@@ -94,7 +94,7 @@ namespace TheBorg.Conversations
                         _time,
                         kv.Value,
                         _commandBuilder);
-                    if (!_activeConversations.TryAdd(activeConversation.With, activeConversation))
+                    if (!_activeConversations.TryAdd(activeConversation.Recipient, activeConversation))
                     {
                         _logger.Error("Failed to start conversation");
                         await tenantMessage.ReplyAsync("Failed to start your conversation", cancellationToken).ConfigureAwait(false);

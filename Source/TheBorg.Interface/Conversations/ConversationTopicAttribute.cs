@@ -23,21 +23,21 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Core;
-using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Conversations
+namespace TheBorg.Interface.Conversations
 {
-    public interface IActiveConversation : IMessageProcessor
+    [AttributeUsage(AttributeTargets.Class)]
+    public class ConversationTopicAttribute : Attribute
     {
-        DateTimeOffset Started { get; }
-        Address With { get; }
+        public string Help { get; }
+        public string StartedBy { get; }
 
-        bool TryGet<T>(string key, out T value);
-        bool TrySet<T>(string key, T value);
-
-        Task EndAsync(CancellationToken cancellationToken);
+        public ConversationTopicAttribute(
+            string help,
+            string startedBy)
+        {
+            Help = help;
+            StartedBy = startedBy;
+        }
     }
 }
