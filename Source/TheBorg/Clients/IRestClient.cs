@@ -44,5 +44,10 @@ namespace TheBorg.Clients
             Uri uri,
             IEnumerable<KeyValuePair<string, string>> queryString,
             CancellationToken cancellationToken);
+
+        Task<string> PostFormAsync(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> keyValuePairs,
+            CancellationToken cancellationToken);
     }
 }

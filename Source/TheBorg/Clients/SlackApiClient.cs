@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using TheBorg.Clients.Slack.ApiResponses;
-using TheBorg.Clients.Slack.DTOs;
+using TheBorg.Core;
 using TheBorg.ValueObjects;
 
 namespace TheBorg.Clients
@@ -42,6 +42,10 @@ namespace TheBorg.Clients
         private readonly IRestClient _restClient;
         private readonly ConcurrentDictionary<string, Task<User>> _userCache = new ConcurrentDictionary<string, Task<User>>();
         private static readonly Tenant Tenant = new Tenant("slack");
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new UnderscoreMappingResolver(),
+            };
 
         public SlackApiClient(
             ILogger logger,
@@ -95,12 +99,12 @@ namespace TheBorg.Clients
             {
                 arguments.Add("token", Environment.GetEnvironmentVariable("SLACK_TOKEN"));
             }
-            var json = await _restClient.GetAsync(
+            var json = await _restClient.PostFormAsync(
                 new Uri(new Uri("https://slack.com/api/"), method),
                 arguments,
                 cancellationToken)
                 .ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<T>(json);
+            return JsonConvert.DeserializeObject<T>(json, _jsonSerializerSettings);
         }
 
         public Task<T> CallApiAsync<T>(

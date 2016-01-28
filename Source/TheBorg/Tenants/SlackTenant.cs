@@ -85,7 +85,6 @@ namespace TheBorg.Tenants
 
         private async void Received(string json)
         {
-            _logger.Verbose(json);
             try
             {
                 var rtmMessage = JsonConvert.DeserializeObject<RtmResponse>(json, _jsonSerializerSettings);
@@ -139,12 +138,10 @@ namespace TheBorg.Tenants
             _logger.Debug($"Slack message - {messageRtmResponse.User}@{messageRtmResponse.Channel}: {messageRtmResponse.Text}");
 
             var user = await _slackApiClient.GetUserAsync(messageRtmResponse.User, CancellationToken.None).ConfigureAwait(false);
-
             var sender = new Address(
                 user,
                 new Channel(messageRtmResponse.Channel),
                 Tenant);
-
 
             _messages.OnNext(new TenantMessage(
                 text,

@@ -76,6 +76,19 @@ namespace TheBorg.Clients
             }
         }
 
+        public async Task<string> PostFormAsync(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> keyValuePairs,
+            CancellationToken cancellationToken)
+        {
+            var formUrlEncodedContent = new FormUrlEncodedContent(keyValuePairs);
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri) { Content = formUrlEncodedContent, })
+            using (var httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
+            {
+                return await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            }
+        }
+
         public async Task<string> PostAsync<T>(
             Uri uri,
             T obj,
