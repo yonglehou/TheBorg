@@ -52,6 +52,7 @@
     <Compile Include="Clients\Slack\DTOs\ChannelDto.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandBuilder.cs" />
+    <Compile Include="Commands\CommandSets\ChuckNorrisCommandSet.cs" />
     <Compile Include="Commands\CommandSets\StatusCommandSet.cs" />
     <Compile Include="Commands\ICommandBuilder.cs" />
     <Compile Include="Conversations\Attributes\ConversationTopicAttribute.cs" />
