@@ -28,7 +28,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.MessageClients.Slack;
+using TheBorg.Tenants.Slack;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Commands
 {
@@ -58,12 +59,12 @@ namespace TheBorg.Commands
             return _regex.IsMatch(text);
         }
 
-        public Task ExecuteAsync(SlackMessage slackMessage, CancellationToken cancellationToken)
+        public Task ExecuteAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
-            var match = _regex.Match(slackMessage.Text);
+            var match = _regex.Match(tenantMessage.Text);
             if (!match.Success)
             {
-                throw new ArgumentException($"Text '{slackMessage.Text}' was not a match");
+                throw new ArgumentException($"Text '{tenantMessage.Text}' was not a match");
             }
 
             var arguments = new List<object>();
@@ -74,9 +75,9 @@ namespace TheBorg.Commands
                     arguments.Add(cancellationToken);
                     continue;
                 }
-                if (parameterInfo.ParameterType == typeof (SlackMessage))
+                if (parameterInfo.ParameterType == typeof (TenantMessage))
                 {
-                    arguments.Add(slackMessage);
+                    arguments.Add(tenantMessage);
                     continue;
                 }
                 

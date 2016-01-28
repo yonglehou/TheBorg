@@ -22,16 +22,12 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Clients.Slack;
-using TheBorg.Tenants.Slack;
-using TheBorg.ValueObjects;
-
-namespace TheBorg.Commands
+namespace TheBorg.ValueObjects
 {
-    public interface ICommandManager
+    public class Tenant : SingleValueObject<string>
     {
-        Task ExecuteAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
+        public Tenant(string value) : base(value)
+        {
+        }
     }
 }

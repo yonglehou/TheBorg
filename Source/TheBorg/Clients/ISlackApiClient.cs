@@ -25,14 +25,14 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Clients.Slack.DTOs;
-using TheBorg.MessageClients.Slack.ApiResponses;
+using TheBorg.Tenants.Slack.ApiResponses;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Clients
 {
     public interface ISlackApiClient
     {
-        Task<UserDto> GetUserAsync(
+        Task<User> GetUserAsync(
             string userId,
             CancellationToken cancellationToken);
 

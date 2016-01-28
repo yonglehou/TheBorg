@@ -22,16 +22,19 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.MessageClients.Slack.RtmResponses
+namespace TheBorg.Tenants.Slack.RtmRequests
 {
-    public class RtmResponse
+    public abstract class RtmRequest
     {
-        public string Type { get; }
-
-        public RtmResponse(
+        protected RtmRequest(
+            int id,
             string type)
         {
+            Id = id;
             Type = type;
         }
+
+        public int Id { get; }
+        public string Type { get; }
     }
 }

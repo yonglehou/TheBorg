@@ -22,14 +22,18 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.MessageClients.Slack.RtmResponses
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Tenants.Slack;
+using TheBorg.ValueObjects;
+
+namespace TheBorg.Tenants
 {
-    public class HelloRtmResponse : RtmResponse
+    public interface ISlackTenant
     {
-        public HelloRtmResponse(
-            string type)
-            : base(type)
-        {
-        }
+        IObservable<TenantMessage> Messages { get; }
+
+        Task ConnectAsync(CancellationToken cancellationToken);
     }
 }

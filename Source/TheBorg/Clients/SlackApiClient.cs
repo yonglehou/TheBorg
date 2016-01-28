@@ -30,14 +30,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TheBorg.Clients.Slack.DTOs;
-using TheBorg.MessageClients.Slack.ApiResponses;
+using TheBorg.Tenants.Slack.ApiResponses;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Clients
 {
     public class SlackApiClient : ISlackApiClient
     {
         private readonly IRestClient _restClient;
-        private readonly ConcurrentDictionary<string, Task<UserDto>> _userCache = new ConcurrentDictionary<string, Task<UserDto>>();
+        private readonly ConcurrentDictionary<string, Task<User>> _userCache = new ConcurrentDictionary<string, Task<User>>();
+        private static readonly Tenant Tenant = new Tenant("slack");
 
         public SlackApiClient(
             IRestClient restClient)
@@ -45,16 +47,23 @@ namespace TheBorg.Clients
             _restClient = restClient;
         }
 
-        public Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken)
+        public Task<User> GetUserAsync(string userId, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(userId)) return Task.FromResult(null as UserDto);
+            if (string.IsNullOrEmpty(userId)) return Task.FromResult(null as User);
 
             return _userCache.GetOrAdd(
                 userId,
-                id => CallApiAsync<UserDto>(
-                    "users.info",
-                    cancellationToken,
-                    new KeyValuePair<string, string>("user", id)));
+                id => InternalGetUserAsync(id, cancellationToken));
+        }
+
+        private async Task<User> InternalGetUserAsync(string userId, CancellationToken cancellationToken)
+        {
+            var userDto = await CallApiAsync<UserDto>(
+                "users.info",
+                cancellationToken,
+                new KeyValuePair<string, string>("user", userId))
+                .ConfigureAwait(false);
+            return new User(userDto.Name, userDto.Id, Tenant);
         }
 
         public Task<ApiResponse> SendMessageAsync(

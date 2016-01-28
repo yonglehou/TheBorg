@@ -22,24 +22,14 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.MessageClients.Slack.ApiResponses
+namespace TheBorg.Tenants.Slack.RtmRequests
 {
-    public class ApiResponse
+    public class PingRtmRequest : RtmRequest
     {
-        public ApiResponse(
-            string ok,
-            string error)
+        public PingRtmRequest(
+            int id)
+            : base(id, "ping")
         {
-            Error = error ?? string.Empty;
-            IsOk = bool.Parse(ok);
-        }
-
-        public string Error { get; }
-        public bool IsOk { get; }
-
-        public override string ToString()
-        {
-            return $"IsOk: {IsOk}, Error: {Error}";
         }
     }
 }

@@ -28,7 +28,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Clients.Slack;
-using TheBorg.MessageClients.Slack;
+using TheBorg.Tenants.Slack;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Commands
 {
@@ -46,25 +47,25 @@ namespace TheBorg.Commands
             _commands = commandBuilder.BuildCommands(commandSets);
         }
 
-        public async Task ExecuteAsync(SlackMessage slackMessage, CancellationToken cancellationToken)
+        public async Task ExecuteAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var commandThatUnderstandMessage = _commands
-                .Where(c => c.IsMatch(slackMessage.Text))
+                .Where(c => c.IsMatch(tenantMessage.Text))
                 .ToList();
             if (!commandThatUnderstandMessage.Any())
             {
-                _logger.Information($"Did not find any commands that understand: {slackMessage.Text}");
+                _logger.Information($"Did not find any commands that understand: {tenantMessage.Text}");
                 return;
             }
             if (commandThatUnderstandMessage.Count != 1)
             {
-                _logger.Warning($"Foung too many commands that understand: {slackMessage.Text}");
+                _logger.Warning($"Foung too many commands that understand: {tenantMessage.Text}");
                 return;
             }
 
             var command = commandThatUnderstandMessage.Single();
 
-            await command.ExecuteAsync(slackMessage, cancellationToken).ConfigureAwait(false);
+            await command.ExecuteAsync(tenantMessage, cancellationToken).ConfigureAwait(false);
         }
     }
 }

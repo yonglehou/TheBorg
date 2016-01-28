@@ -24,7 +24,8 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.MessageClients.Slack;
+using TheBorg.Tenants.Slack;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Commands
 {
@@ -33,6 +34,6 @@ namespace TheBorg.Commands
         string Help { get; }
         bool IsMatch(string text);
 
-        Task ExecuteAsync(SlackMessage slackMessage, CancellationToken cancellationToken);
+        Task ExecuteAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
     }
 }

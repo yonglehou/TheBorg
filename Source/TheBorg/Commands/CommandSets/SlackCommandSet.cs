@@ -28,8 +28,9 @@ using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Clients;
 using TheBorg.Commands.Attributes;
-using TheBorg.MessageClients.Slack;
-using TheBorg.MessageClients.Slack.ApiResponses;
+using TheBorg.Tenants.Slack;
+using TheBorg.Tenants.Slack.ApiResponses;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Commands.CommandSets
 {
@@ -66,11 +67,11 @@ namespace TheBorg.Commands.CommandSets
             "^ping (?<message>.*)$")]
         public async Task PingAsync(
             string message,
-            SlackMessage slackMessage,
+            TenantMessage tenantMessage,
             CancellationToken cancellationToken)
         {
             var apiResponse = await _slackApiClient.SendMessageAsync(
-                slackMessage.Channel,
+                tenantMessage.Channel.Value,
                 $"pong {message}",
                 cancellationToken)
                 .ConfigureAwait(false);

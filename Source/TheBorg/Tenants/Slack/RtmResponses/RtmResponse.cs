@@ -22,16 +22,16 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Clients.Slack;
-using TheBorg.Tenants.Slack;
-using TheBorg.ValueObjects;
-
-namespace TheBorg.Commands
+namespace TheBorg.Tenants.Slack.RtmResponses
 {
-    public interface ICommandManager
+    public class RtmResponse
     {
-        Task ExecuteAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
+        public string Type { get; }
+
+        public RtmResponse(
+            string type)
+        {
+            Type = type;
+        }
     }
 }

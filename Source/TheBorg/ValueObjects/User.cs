@@ -22,22 +22,22 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.MessageClients.Slack
+namespace TheBorg.ValueObjects
 {
-    public class SlackMessage
+    public class User : ValueObject
     {
-        public SlackMessage(
-            string text,
-            string username,
-            string channel)
+        public User(
+            string name,
+            string id,
+            Tenant tenant)
         {
-            Text = text;
-            Username = username;
-            Channel = channel;
+            Name = name;
+            Id = id;
+            Tenant = tenant;
         }
 
-        public string Text { get; }
-        public string Username { get; }
-        public string Channel { get; }
+        public string Name { get; }
+        public string Id { get; }
+        public Tenant Tenant { get; }
     }
 }

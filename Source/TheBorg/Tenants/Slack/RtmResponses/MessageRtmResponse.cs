@@ -22,19 +22,30 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.MessageClients.Slack.RtmRequests
+namespace TheBorg.Tenants.Slack.RtmResponses
 {
-    public abstract class RtmRequest
+    public class MessageRtmResponse : RtmResponse
     {
-        protected RtmRequest(
-            int id,
-            string type)
+        public MessageRtmResponse(
+            string type,
+            string channel,
+            string user,
+            string text,
+            string subtype,
+            object edited)
+            : base(type)
         {
-            Id = id;
-            Type = type;
+            Channel = channel;
+            User = user;
+            Text = text;
+            Subtype = subtype;
+            IsEdit = edited != null;
         }
 
-        public int Id { get; }
-        public string Type { get; }
+        public string Channel { get; }
+        public string User { get; }
+        public string Text { get; }
+        public string Subtype { get; }
+        public bool IsEdit { get; }
     }
 }

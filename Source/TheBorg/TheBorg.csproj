@@ -52,19 +52,22 @@
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandBuilder.cs" />
     <Compile Include="Commands\ICommandBuilder.cs" />
-    <Compile Include="MessageClients\ISlackClient.cs" />
+    <Compile Include="Tenants\ISlackTenant.cs" />
     <Compile Include="Clients\IWebSocketClient.cs" />
     <Compile Include="Clients\RestClient.cs" />
-    <Compile Include="MessageClients\SlackClient.cs" />
-    <Compile Include="MessageClients\Slack\ApiResponses\ApiResponse.cs" />
-    <Compile Include="MessageClients\Slack\ApiResponses\RtmStartApiResponse.cs" />
+    <Compile Include="Tenants\SlackTenant.cs" />
+    <Compile Include="Tenants\Slack\ApiResponses\ApiResponse.cs" />
+    <Compile Include="Tenants\Slack\ApiResponses\RtmStartApiResponse.cs" />
     <Compile Include="Clients\Slack\DTOs\UserDto.cs" />
-    <Compile Include="MessageClients\Slack\RtmRequests\PingRtmRequest.cs" />
-    <Compile Include="MessageClients\Slack\RtmRequests\RtmRequest.cs" />
-    <Compile Include="MessageClients\Slack\SlackMessage.cs" />
-    <Compile Include="MessageClients\Slack\RtmResponses\HelloRtmResponse.cs" />
-    <Compile Include="MessageClients\Slack\RtmResponses\MessageRtmResponse.cs" />
-    <Compile Include="MessageClients\Slack\RtmResponses\RtmResponse.cs" />
+    <Compile Include="Tenants\Slack\RtmRequests\PingRtmRequest.cs" />
+    <Compile Include="Tenants\Slack\RtmRequests\RtmRequest.cs" />
+    <Compile Include="ValueObjects\Channel.cs" />
+    <Compile Include="ValueObjects\SingleValueObject.cs" />
+    <Compile Include="ValueObjects\Tenant.cs" />
+    <Compile Include="ValueObjects\TenantMessage.cs" />
+    <Compile Include="Tenants\Slack\RtmResponses\HelloRtmResponse.cs" />
+    <Compile Include="Tenants\Slack\RtmResponses\MessageRtmResponse.cs" />
+    <Compile Include="Tenants\Slack\RtmResponses\RtmResponse.cs" />
     <Compile Include="Clients\WebSocketClient.cs" />
     <Compile Include="Commands\Attributes\CommandAttribute.cs" />
     <Compile Include="Commands\CommandManager.cs" />
@@ -78,6 +81,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collective.cs" />
     <Compile Include="TheBorgModule.cs" />
+    <Compile Include="ValueObjects\User.cs" />
+    <Compile Include="ValueObjects\ValueObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

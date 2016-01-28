@@ -22,17 +22,25 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.MessageClients.Slack;
-
-namespace TheBorg.MessageClients
+namespace TheBorg.ValueObjects
 {
-    public interface ISlackMessageClient
+    public class TenantMessage
     {
-        IObservable<SlackMessage> Messages { get; }
+        public TenantMessage(
+            string text,
+            User user,
+            Channel channel,
+            Tenant tenant)
+        {
+            Text = text;
+            User = user;
+            Channel = channel;
+            Tenant = tenant;
+        }
 
-        Task ConnectAsync(CancellationToken cancellationToken);
+        public string Text { get; }
+        public User User { get; }
+        public Channel Channel { get; }
+        public Tenant Tenant { get; }
     }
 }

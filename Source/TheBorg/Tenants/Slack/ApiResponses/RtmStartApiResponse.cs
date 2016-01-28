@@ -25,7 +25,7 @@
 using System;
 using TheBorg.Clients.Slack.DTOs;
 
-namespace TheBorg.MessageClients.Slack.ApiResponses
+namespace TheBorg.Tenants.Slack.ApiResponses
 {
     public class RtmStartApiResponse : ApiResponse
     {

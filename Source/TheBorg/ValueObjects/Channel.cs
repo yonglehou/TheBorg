@@ -22,30 +22,12 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.MessageClients.Slack.RtmResponses
+namespace TheBorg.ValueObjects
 {
-    public class MessageRtmResponse : RtmResponse
+    public class Channel : SingleValueObject<string>
     {
-        public MessageRtmResponse(
-            string type,
-            string channel,
-            string user,
-            string text,
-            string subtype,
-            object edited)
-            : base(type)
+        public Channel(string value) : base(value)
         {
-            Channel = channel;
-            User = user;
-            Text = text;
-            Subtype = subtype;
-            IsEdit = edited != null;
         }
-
-        public string Channel { get; }
-        public string User { get; }
-        public string Text { get; }
-        public string Subtype { get; }
-        public bool IsEdit { get; }
     }
 }

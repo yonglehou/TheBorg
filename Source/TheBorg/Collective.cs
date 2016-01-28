@@ -28,28 +28,29 @@ using System.Threading.Tasks;
 using TheBorg.Clients;
 using TheBorg.Clients.Slack;
 using TheBorg.Commands;
-using TheBorg.MessageClients;
-using TheBorg.MessageClients.Slack;
+using TheBorg.Tenants;
+using TheBorg.Tenants.Slack;
+using TheBorg.ValueObjects;
 
 namespace TheBorg
 {
     public class Collective : ICollective
     {
         private readonly ICommandManager _commandManager;
-        private readonly ISlackMessageClient _slackMessageClient;
+        private readonly ISlackTenant _slackTenant;
 
         public Collective(
             ICommandManager commandManager,
-            ISlackMessageClient slackMessageClient)
+            ISlackTenant slackTenant)
         {
             _commandManager = commandManager;
-            _slackMessageClient = slackMessageClient;
+            _slackTenant = slackTenant;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _slackMessageClient.ConnectAsync(cancellationToken).ConfigureAwait(false);
-            _slackMessageClient.Messages.Subscribe(HandleMessage);
+            await _slackTenant.ConnectAsync(cancellationToken).ConfigureAwait(false);
+            _slackTenant.Messages.Subscribe(HandleMessage);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -57,11 +58,11 @@ namespace TheBorg
             return Task.FromResult(0);
         }
 
-        private async void HandleMessage(SlackMessage slackMessage)
+        private async void HandleMessage(TenantMessage tenantMessage)
         {
             // Yes, its async void
 
-            await _commandManager.ExecuteAsync(slackMessage, CancellationToken.None).ConfigureAwait(false);
+            await _commandManager.ExecuteAsync(tenantMessage, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

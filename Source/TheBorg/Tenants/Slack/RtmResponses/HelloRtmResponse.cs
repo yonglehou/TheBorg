@@ -22,13 +22,13 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.MessageClients.Slack.RtmRequests
+namespace TheBorg.Tenants.Slack.RtmResponses
 {
-    public class PingRtmRequest : RtmRequest
+    public class HelloRtmResponse : RtmResponse
     {
-        public PingRtmRequest(
-            int id)
-            : base(id, "ping")
+        public HelloRtmResponse(
+            string type)
+            : base(type)
         {
         }
     }

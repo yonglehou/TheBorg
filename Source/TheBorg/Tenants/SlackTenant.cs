@@ -32,30 +32,32 @@ using Serilog;
 using TheBorg.Clients;
 using TheBorg.Clients.Slack.DTOs;
 using TheBorg.Core;
-using TheBorg.MessageClients.Slack;
-using TheBorg.MessageClients.Slack.ApiResponses;
-using TheBorg.MessageClients.Slack.RtmResponses;
+using TheBorg.Tenants.Slack;
+using TheBorg.Tenants.Slack.ApiResponses;
+using TheBorg.Tenants.Slack.RtmResponses;
+using TheBorg.ValueObjects;
 
-namespace TheBorg.MessageClients
+namespace TheBorg.Tenants
 {
-    public class SlackMessageClient : ISlackMessageClient
+    public class SlackTenant : ISlackTenant
     {
         private readonly ILogger _logger;
         private readonly ISlackApiClient _slackApiClient;
         private readonly IWebSocketClient _webSocketClient;
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
-        private readonly Subject<SlackMessage> _messages = new Subject<SlackMessage>();
+        private readonly Subject<TenantMessage> _messages = new Subject<TenantMessage>();
         private int _messageIdCounter;
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
             {
                 ContractResolver = new UnderscoreMappingResolver(),
             };
+        private static readonly Tenant Tenant = new Tenant("slack");
 
         private UserDto _self;
 
-        public IObservable<SlackMessage> Messages => _messages; 
+        public IObservable<TenantMessage> Messages => _messages; 
 
-        public SlackMessageClient(
+        public SlackTenant(
             ILogger logger,
             ISlackApiClient slackApiClient,
             IWebSocketClient webSocketClient)
@@ -134,10 +136,11 @@ namespace TheBorg.MessageClients
 
             var user = await _slackApiClient.GetUserAsync(messageRtmResponse.User, CancellationToken.None).ConfigureAwait(false);
 
-            _messages.OnNext(new SlackMessage(
+            _messages.OnNext(new TenantMessage(
                 messageRtmResponse.Text,
-                user?.Name ?? "<unknown>",
-                messageRtmResponse.Channel));
+                user,
+                new Channel(messageRtmResponse.Channel),
+                Tenant));
         }
     }
 }
