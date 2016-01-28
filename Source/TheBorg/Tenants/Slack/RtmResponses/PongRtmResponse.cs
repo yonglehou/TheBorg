@@ -23,17 +23,22 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Tenants.Slack;
-using TheBorg.ValueObjects;
 
-namespace TheBorg.Tenants
+namespace TheBorg.Tenants.Slack.RtmResponses
 {
-    public interface ISlackTenant
+    public class PongRtmResponse : RtmResponse
     {
-        IObservable<TenantMessage> Messages { get; }
+        public PongRtmResponse(
+            int replyTo,
+            DateTimeOffset time,
+            string type)
+            : base(type)
+        {
+            ReplyTo = replyTo;
+            Time = time;
+        }
 
-        Task ConnectAsync(CancellationToken cancellationToken);
+        public int ReplyTo { get; }
+        public DateTimeOffset Time { get; }
     }
 }

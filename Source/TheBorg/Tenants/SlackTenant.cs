@@ -39,7 +39,7 @@ using TheBorg.ValueObjects;
 
 namespace TheBorg.Tenants
 {
-    public class SlackTenant : ISlackTenant
+    public class SlackTenant : ITenant
     {
         private readonly ILogger _logger;
         private readonly ISlackApiClient _slackApiClient;
@@ -51,6 +51,8 @@ namespace TheBorg.Tenants
                 ContractResolver = new UnderscoreMappingResolver(),
             };
         private static readonly Tenant Tenant = new Tenant("slack");
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private int _messageId;
 
         private UserDto _self;
 
@@ -83,8 +85,15 @@ namespace TheBorg.Tenants
             await _webSocketClient.ConnectAsync(rtmStartResponse.Url, cancellationToken).ConfigureAwait(false);
         }
 
+        public Task DisconnectAsync(CancellationToken cancellationToken)
+        {
+            return Task.FromResult(0);
+        }
+
         private async void Received(string json)
         {
+            // Yes, it's async void
+
             try
             {
                 var rtmMessage = JsonConvert.DeserializeObject<RtmResponse>(json, _jsonSerializerSettings);
@@ -93,6 +102,13 @@ namespace TheBorg.Tenants
                 {
                     case "hello":
                         _logger.Information("Connected to Slack RTM web socket");
+                        var t = Task.Run(async () => await PingLoopAsync()); // Not awaited
+                        break;
+                    case "pong":
+                        {
+                            var pongRtmResponse = JsonConvert.DeserializeObject<PongRtmResponse>(json, _jsonSerializerSettings);
+                            _logger.Verbose($"Received pong from the server. Latency is {(DateTimeOffset.Now - pongRtmResponse.Time).TotalSeconds:0.00} seconds");
+                        }
                         break;
                     case "message":
                         await ReceivedMessage(JsonConvert.DeserializeObject<MessageRtmResponse>(json, _jsonSerializerSettings)).ConfigureAwait(false);
@@ -165,6 +181,31 @@ namespace TheBorg.Tenants
         private static string SanitiseText(string text)
         {
             return InvalidStrings.Aggregate(text, ((s, t) => s.Replace(t, string.Empty)));
+        }
+
+        private async Task PingLoopAsync()
+        {
+            try
+            {
+                while (true)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token).ConfigureAwait(false);
+                    var messageId = Interlocked.Increment(ref _messageId);
+                    var json = JsonConvert.SerializeObject(
+                        new
+                        {
+                            id = messageId,
+                            type = "ping",
+                            time = DateTimeOffset.Now,
+                        },
+                        _jsonSerializerSettings);
+                    await _webSocketClient.SendAsync(json, _cancellationTokenSource.Token).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Slack ping loop failed");
+            }
         }
     }
 }

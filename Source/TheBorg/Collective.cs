@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Commands;
@@ -38,22 +39,25 @@ namespace TheBorg
     {
         private readonly ICommandManager _commandManager;
         private readonly IConversationManager _conversationManager;
-        private readonly ISlackTenant _slackTenant;
+        private readonly IReadOnlyCollection<ITenant> _tenants;
 
         public Collective(
             ICommandManager commandManager,
             IConversationManager conversationManager,
-            ISlackTenant slackTenant)
+            IEnumerable<ITenant> tenants)
         {
             _commandManager = commandManager;
             _conversationManager = conversationManager;
-            _slackTenant = slackTenant;
+            _tenants = tenants.ToList();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _slackTenant.ConnectAsync(cancellationToken).ConfigureAwait(false);
-            _slackTenant.Messages.Subscribe(HandleMessage);
+            var disposables = await Task.WhenAll(_tenants.Select(async t =>
+                {
+                    await t.ConnectAsync(cancellationToken).ConfigureAwait(false);
+                    return t.Messages.Subscribe(HandleMessage);
+                })).ConfigureAwait(false);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

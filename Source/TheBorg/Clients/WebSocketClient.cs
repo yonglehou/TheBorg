@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Data.SqlClient;
 using System.Net.WebSockets;
 using System.Reactive.Subjects;
 using System.Text;
@@ -53,6 +54,13 @@ namespace TheBorg.Clients
         {
             await _webSocket.ConnectAsync(uri, cancellationToken).ConfigureAwait(false);
             _receiverThread.Start();
+        }
+
+        public Task SendAsync(string message, CancellationToken cancellationToken)
+        {
+            var encoded = Encoding.UTF8.GetBytes(message);
+            var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
+            return _webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken);
         }
 
         private void Listen()

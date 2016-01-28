@@ -65,7 +65,7 @@
     <Compile Include="Core\ITime.cs" />
     <Compile Include="Core\ProcessMessageResult.cs" />
     <Compile Include="Core\Time.cs" />
-    <Compile Include="Tenants\ISlackTenant.cs" />
+    <Compile Include="Tenants\ITenant.cs" />
     <Compile Include="Clients\IWebSocketClient.cs" />
     <Compile Include="Clients\RestClient.cs" />
     <Compile Include="Tenants\SlackTenant.cs" />
@@ -74,6 +74,7 @@
     <Compile Include="Clients\Slack\DTOs\UserDto.cs" />
     <Compile Include="Tenants\Slack\RtmRequests\PingRtmRequest.cs" />
     <Compile Include="Tenants\Slack\RtmRequests\RtmRequest.cs" />
+    <Compile Include="Tenants\Slack\RtmResponses\PongRtmResponse.cs" />
     <Compile Include="ValueObjects\Address.cs" />
     <Compile Include="ValueObjects\Channel.cs" />
     <Compile Include="ValueObjects\SingleValueObject.cs" />

@@ -25,14 +25,15 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.ValueObjects;
 
-namespace TheBorg.Clients
+namespace TheBorg.Tenants
 {
-    public interface IWebSocketClient
+    public interface ITenant
     {
-        IObservable<string> Messages { get; }
+        IObservable<TenantMessage> Messages { get; }
 
-        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
-        Task SendAsync(string message, CancellationToken cancellationToken);
+        Task ConnectAsync(CancellationToken cancellationToken);
+        Task DisconnectAsync(CancellationToken cancellationToken);
     }
 }
