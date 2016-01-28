@@ -32,7 +32,7 @@ using Newtonsoft.Json;
 using Serilog;
 using TheBorg.Clients.Slack.ApiResponses;
 using TheBorg.Core;
-using TheBorg.ValueObjects;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Clients
 {

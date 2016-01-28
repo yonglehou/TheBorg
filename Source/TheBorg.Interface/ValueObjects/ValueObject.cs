@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace TheBorg.ValueObjects
+namespace TheBorg.Interface.ValueObjects
 {
     public abstract class ValueObject
     {

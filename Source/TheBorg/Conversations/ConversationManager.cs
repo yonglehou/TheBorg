@@ -32,7 +32,7 @@ using Serilog;
 using TheBorg.Commands;
 using TheBorg.Conversations.Attributes;
 using TheBorg.Core;
-using TheBorg.ValueObjects;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Conversations
 {

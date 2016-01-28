@@ -23,51 +23,32 @@
 //
 
 using System;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.ValueObjects
+namespace TheBorg.Interface.ValueObjects
 {
-    public abstract class SingleValueObject<T> : ValueObject, IComparable
-        where T : IComparable, IComparable<T>
+    public class TenantMessage
     {
-        public T Value { get; }
+        private readonly Func<string, CancellationToken, Task> _reply;
 
-        protected SingleValueObject(T value)
+        public TenantMessage(
+            string text,
+            Address sender,
+            Func<string, CancellationToken, Task> reply)
         {
-            Value = value;
+            Text = text;
+            Sender = sender;
+
+            _reply = reply;
         }
 
-        public int CompareTo(object obj)
+        public string Text { get; }
+        public Address Sender { get; }
+
+        public Task ReplyAsync(string text, CancellationToken cancellationToken)
         {
-            if (ReferenceEquals(null, obj))
-            {
-                throw new ArgumentNullException(nameof(obj));
-            }
-
-            var other = obj as SingleValueObject<T>;
-            if (other == null)
-            {
-                throw new ArgumentException($"Cannot compare '{GetType().Name}' and '{obj.GetType().Name}'");
-            }
-
-            return Value.CompareTo(other.Value);
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Value;
-        }
-
-        public override string ToString()
-        {
-            return ReferenceEquals(Value, null)
-                ? string.Empty
-                : Value.ToString();
-        }
-
-        public object GetValue()
-        {
-            return Value;
+            return _reply(text, cancellationToken);
         }
     }
 }

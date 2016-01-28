@@ -34,8 +34,8 @@ using TheBorg.Clients;
 using TheBorg.Clients.Slack.ApiResponses;
 using TheBorg.Clients.Slack.DTOs;
 using TheBorg.Core;
+using TheBorg.Interface.ValueObjects;
 using TheBorg.Tenants.Slack.RtmResponses;
-using TheBorg.ValueObjects;
 
 namespace TheBorg.Tenants
 {

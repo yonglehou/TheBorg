@@ -31,7 +31,7 @@ using Serilog;
 using TheBorg.Conversations;
 using TheBorg.Core;
 using TheBorg.Interface.Commands;
-using TheBorg.ValueObjects;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Commands
 {

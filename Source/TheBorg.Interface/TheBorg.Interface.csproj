@@ -43,6 +43,13 @@
     <Compile Include="Commands\CommandAttribute.cs" />
     <Compile Include="Commands\ICommandSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ValueObjects\Address.cs" />
+    <Compile Include="ValueObjects\Channel.cs" />
+    <Compile Include="ValueObjects\SingleValueObject.cs" />
+    <Compile Include="ValueObjects\Tenant.cs" />
+    <Compile Include="ValueObjects\TenantMessage.cs" />
+    <Compile Include="ValueObjects\User.cs" />
+    <Compile Include="ValueObjects\ValueObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

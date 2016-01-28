@@ -30,8 +30,8 @@ using System.Threading.Tasks;
 using TheBorg.Commands;
 using TheBorg.Conversations;
 using TheBorg.Core;
+using TheBorg.Interface.ValueObjects;
 using TheBorg.Tenants;
-using TheBorg.ValueObjects;
 
 namespace TheBorg
 {

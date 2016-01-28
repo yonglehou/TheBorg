@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.ValueObjects
+namespace TheBorg.Interface.ValueObjects
 {
     public class User : ValueObject
     {

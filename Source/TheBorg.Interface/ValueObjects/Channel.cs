@@ -22,11 +22,11 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.ValueObjects
+namespace TheBorg.Interface.ValueObjects
 {
-    public class Tenant : SingleValueObject<string>
+    public class Channel : SingleValueObject<string>
     {
-        public Tenant(string value) : base(value)
+        public Channel(string value) : base(value)
         {
         }
     }
