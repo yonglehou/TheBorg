@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Commands
+namespace TheBorg.Interface.Commands
 {
     public interface ICommandSet
     {

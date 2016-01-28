@@ -23,6 +23,7 @@
 //
 
 using System.Collections.Generic;
+using TheBorg.Interface.Commands;
 
 namespace TheBorg.Commands
 {

@@ -27,8 +27,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TheBorg.Clients;
+using TheBorg.Interface.Commands;
 using TheBorg.ValueObjects;
-using TheBorg.Commands.Attributes;
 
 namespace TheBorg.Commands.CommandSets
 {

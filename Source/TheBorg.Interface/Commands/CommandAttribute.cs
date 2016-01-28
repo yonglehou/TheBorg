@@ -24,7 +24,7 @@
 
 using System;
 
-namespace TheBorg.Commands.Attributes
+namespace TheBorg.Interface.Commands
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class CommandAttribute : Attribute

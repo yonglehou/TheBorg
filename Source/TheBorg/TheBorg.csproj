@@ -88,11 +88,9 @@
     <Compile Include="Tenants\Slack\RtmResponses\MessageRtmResponse.cs" />
     <Compile Include="Tenants\Slack\RtmResponses\RtmResponse.cs" />
     <Compile Include="Clients\WebSocketClient.cs" />
-    <Compile Include="Commands\Attributes\CommandAttribute.cs" />
     <Compile Include="Commands\CommandManager.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandManager.cs" />
-    <Compile Include="Commands\ICommandSet.cs" />
     <Compile Include="Core\UnderscoreMappingResolver.cs" />
     <Compile Include="ICollective.cs" />
     <Compile Include="Program.cs" />
@@ -105,6 +103,15 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="paket.references" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TheBorg.Interface\TheBorg.Interface.csproj">
+      <Project>{e1dcf0b9-ccf4-42e1-b39c-2191cc7c378b}</Project>
+      <Name>TheBorg.Interface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands\Attributes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

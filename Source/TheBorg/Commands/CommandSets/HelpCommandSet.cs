@@ -25,7 +25,7 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Commands.Attributes;
+using TheBorg.Interface.Commands;
 using TheBorg.ValueObjects;
 
 namespace TheBorg.Commands.CommandSets
