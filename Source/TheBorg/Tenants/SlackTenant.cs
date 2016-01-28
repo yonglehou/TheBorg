@@ -189,7 +189,7 @@ namespace TheBorg.Tenants
             {
                 while (true)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(10), _cancellationTokenSource.Token).ConfigureAwait(false);
                     var messageId = Interlocked.Increment(ref _messageId);
                     var json = JsonConvert.SerializeObject(
                         new
