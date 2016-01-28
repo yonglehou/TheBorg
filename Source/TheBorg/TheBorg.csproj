@@ -51,6 +51,7 @@
     <Compile Include="Clients\Slack\DTOs\ChannelDto.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandBuilder.cs" />
+    <Compile Include="Commands\CommandSets\StatusCommandSet.cs" />
     <Compile Include="Commands\ICommandBuilder.cs" />
     <Compile Include="Tenants\ISlackTenant.cs" />
     <Compile Include="Clients\IWebSocketClient.cs" />
@@ -74,7 +75,6 @@
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandManager.cs" />
     <Compile Include="Commands\ICommandSet.cs" />
-    <Compile Include="Commands\CommandSets\SlackCommandSet.cs" />
     <Compile Include="Core\UnderscoreMappingResolver.cs" />
     <Compile Include="ICollective.cs" />
     <Compile Include="Program.cs" />

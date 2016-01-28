@@ -32,7 +32,6 @@ using Serilog;
 using TheBorg.Clients;
 using TheBorg.Clients.Slack.DTOs;
 using TheBorg.Core;
-using TheBorg.Tenants.Slack;
 using TheBorg.Tenants.Slack.ApiResponses;
 using TheBorg.Tenants.Slack.RtmResponses;
 using TheBorg.ValueObjects;
@@ -46,7 +45,6 @@ namespace TheBorg.Tenants
         private readonly IWebSocketClient _webSocketClient;
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
         private readonly Subject<TenantMessage> _messages = new Subject<TenantMessage>();
-        private int _messageIdCounter;
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
             {
                 ContractResolver = new UnderscoreMappingResolver(),
@@ -82,11 +80,6 @@ namespace TheBorg.Tenants
                 .ConfigureAwait(false);
             _self = rtmStartResponse.Self;
             await _webSocketClient.ConnectAsync(rtmStartResponse.Url, cancellationToken).ConfigureAwait(false);
-        }
-
-        private int GetMessageId()
-        {
-            return Interlocked.Increment(ref _messageIdCounter);
         }
 
         private async void Received(string json)
@@ -140,7 +133,8 @@ namespace TheBorg.Tenants
                 messageRtmResponse.Text,
                 user,
                 new Channel(messageRtmResponse.Channel),
-                Tenant));
+                Tenant,
+                (t, c) => _slackApiClient.SendMessageAsync(messageRtmResponse.Channel, t, c)));
         }
     }
 }

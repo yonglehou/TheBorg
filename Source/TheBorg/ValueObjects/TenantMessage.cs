@@ -22,25 +22,39 @@
 // SOFTWARE.
 //
 
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace TheBorg.ValueObjects
 {
     public class TenantMessage
     {
+        private readonly Func<string, CancellationToken, Task> _reply;
+
         public TenantMessage(
             string text,
             User user,
             Channel channel,
-            Tenant tenant)
+            Tenant tenant,
+            Func<string, CancellationToken, Task> reply)
         {
             Text = text;
             User = user;
             Channel = channel;
             Tenant = tenant;
+
+            _reply = reply;
         }
 
         public string Text { get; }
         public User User { get; }
         public Channel Channel { get; }
         public Tenant Tenant { get; }
+
+        public Task ReplyAsync(string text, CancellationToken cancellationToken)
+        {
+            return _reply(text, cancellationToken);
+        }
     }
 }

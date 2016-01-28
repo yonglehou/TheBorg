@@ -22,60 +22,34 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Serilog;
-using TheBorg.Clients;
 using TheBorg.Commands.Attributes;
-using TheBorg.Tenants.Slack;
-using TheBorg.Tenants.Slack.ApiResponses;
 using TheBorg.ValueObjects;
 
 namespace TheBorg.Commands.CommandSets
 {
-    public class SlackCommandSet : ICommandSet
+    public class StatusCommandSet : ICommandSet
     {
-        private readonly ILogger _logger;
-        private readonly ISlackApiClient _slackApiClient;
-
-        public SlackCommandSet(
-            ILogger logger,
-            ISlackApiClient slackApiClient)
-        {
-            _logger = logger;
-            _slackApiClient = slackApiClient;
-        }
-
-        [Command(
-            "Ask the borg to join a specific Slack channel",
-            "^join slack channel (?<channel>[a-z0-9]+)$")]
-        public async Task JoinChannelAsync(
-            string channel,
-            CancellationToken cancellationToken)
-        {
-            var apiResponse = await _slackApiClient.CallApiAsync<ApiResponse>(
-                "channels.join",
-                cancellationToken,
-                new KeyValuePair<string, string>("name", channel))
-                .ConfigureAwait(false);
-            _logger.Debug($"Join channel result {apiResponse}");
-        }
-
         [Command(
             "Ping the borg",
             "^ping (?<message>.*)$")]
-        public async Task PingAsync(
+        public Task PingAsync(
             string message,
             TenantMessage tenantMessage,
             CancellationToken cancellationToken)
         {
-            var apiResponse = await _slackApiClient.SendMessageAsync(
-                tenantMessage.Channel.Value,
-                $"pong {message}",
-                cancellationToken)
-                .ConfigureAwait(false);
-            _logger.Debug($"Message pong result {apiResponse}");
+            return tenantMessage.ReplyAsync($"pong {message}", cancellationToken);
+        }
+
+        [Command(
+            "Ask how the borg is doing",
+            "^status$")]
+        public Task StatusAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
+        {
+            return tenantMessage.ReplyAsync(
+                $"I'm the Borg v{typeof (StatusCommandSet).Assembly.GetName().Version}",
+                cancellationToken);
         }
     }
 }
