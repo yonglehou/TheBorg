@@ -22,12 +22,11 @@
 // SOFTWARE.
 //
 
-using TheBorg.Conversations;
 using TheBorg.Core;
 
-namespace TheBorg.Commands
+namespace TheBorg.Conversations
 {
-    public interface ICommandManager : IMessageProcessor
+    public interface IConversationManager : IMessageProcessor
     {
     }
 }

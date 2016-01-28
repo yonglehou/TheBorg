@@ -22,12 +22,18 @@
 // SOFTWARE.
 //
 
-using TheBorg.Conversations;
+using System;
 using TheBorg.Core;
+using TheBorg.ValueObjects;
 
-namespace TheBorg.Commands
+namespace TheBorg.Conversations
 {
-    public interface ICommandManager : IMessageProcessor
+    public interface IActiveConversation : IMessageProcessor
     {
+        DateTimeOffset Started { get; }
+        Address With { get; }
+
+        bool TryGet<T>(string key, out T value);
+        bool TryAdd<T>(string key, T value);
     }
 }

@@ -22,12 +22,24 @@
 // SOFTWARE.
 //
 
-using TheBorg.Conversations;
-using TheBorg.Core;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Conversations.Attributes;
+using TheBorg.ValueObjects;
 
-namespace TheBorg.Commands
+namespace TheBorg.Conversations.Topics
 {
-    public interface ICommandManager : IMessageProcessor
+    [ConversationTopic(
+        "Octopus releases",
+        "^create octopus release$")]
+    public class OctopusCreateReleaseTopic : IConversationTopic
     {
+        public async Task StartAsync(
+            TenantMessage tenantMessage,
+            IActiveConversation activeConversation,
+            CancellationToken cancellationToken)
+        {
+            await tenantMessage.ReplyAsync("Ok, lets create a release", cancellationToken).ConfigureAwait(false);
+        }
     }
 }

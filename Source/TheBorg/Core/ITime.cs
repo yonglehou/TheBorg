@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
-using TheBorg.Conversations;
-using TheBorg.Core;
+using System;
 
-namespace TheBorg.Commands
+namespace TheBorg.Core
 {
-    public interface ICommandManager : IMessageProcessor
+    public interface ITime
     {
+        DateTimeOffset Now { get; }
     }
 }

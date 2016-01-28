@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using Autofac;
 using Serilog;
 using TheBorg.Commands;
+using TheBorg.Conversations;
 
 namespace TheBorg
 {
@@ -35,6 +36,7 @@ namespace TheBorg
         private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
             {
                 typeof(Command),
+                typeof(ActiveConversation)
             }; 
 
         protected override void Load(ContainerBuilder builder)

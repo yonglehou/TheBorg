@@ -23,13 +23,13 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Clients;
-using TheBorg.Clients.Slack;
 using TheBorg.Commands;
+using TheBorg.Conversations;
+using TheBorg.Core;
 using TheBorg.Tenants;
-using TheBorg.Tenants.Slack;
 using TheBorg.ValueObjects;
 
 namespace TheBorg
@@ -37,13 +37,16 @@ namespace TheBorg
     public class Collective : ICollective
     {
         private readonly ICommandManager _commandManager;
+        private readonly IConversationManager _conversationManager;
         private readonly ISlackTenant _slackTenant;
 
         public Collective(
             ICommandManager commandManager,
+            IConversationManager conversationManager,
             ISlackTenant slackTenant)
         {
             _commandManager = commandManager;
+            _conversationManager = conversationManager;
             _slackTenant = slackTenant;
         }
 
@@ -62,7 +65,20 @@ namespace TheBorg
         {
             // Yes, its async void
 
-            await _commandManager.ExecuteAsync(tenantMessage, CancellationToken.None).ConfigureAwait(false);
+            foreach (var messageProcessor in MessageProcessors())
+            {
+                var processMessageResult = await messageProcessor.ProcessAsync(tenantMessage, CancellationToken.None).ConfigureAwait(false);
+                if (processMessageResult == ProcessMessageResult.Handled)
+                {
+                    break;
+                }
+            }
         }
+
+        private IEnumerable<IMessageProcessor> MessageProcessors()
+        {
+            yield return _conversationManager;
+            yield return _commandManager;
+        } 
     }
 }

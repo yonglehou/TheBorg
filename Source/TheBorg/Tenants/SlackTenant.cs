@@ -129,11 +129,14 @@ namespace TheBorg.Tenants
 
             var user = await _slackApiClient.GetUserAsync(messageRtmResponse.User, CancellationToken.None).ConfigureAwait(false);
 
-            _messages.OnNext(new TenantMessage(
-                messageRtmResponse.Text,
+            var sender = new Address(
                 user,
                 new Channel(messageRtmResponse.Channel),
-                Tenant,
+                Tenant);
+
+            _messages.OnNext(new TenantMessage(
+                messageRtmResponse.Text,
+                sender,
                 (t, c) => _slackApiClient.SendMessageAsync(messageRtmResponse.Channel, t, c)));
         }
     }

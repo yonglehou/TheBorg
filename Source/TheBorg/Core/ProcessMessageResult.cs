@@ -22,12 +22,11 @@
 // SOFTWARE.
 //
 
-using TheBorg.Conversations;
-using TheBorg.Core;
-
-namespace TheBorg.Commands
+namespace TheBorg.Core
 {
-    public interface ICommandManager : IMessageProcessor
+    public enum ProcessMessageResult
     {
+        Handled,
+        Skipped,
     }
 }

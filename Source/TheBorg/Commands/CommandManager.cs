@@ -27,8 +27,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using TheBorg.Clients.Slack;
-using TheBorg.Tenants.Slack;
+using TheBorg.Core;
 using TheBorg.ValueObjects;
 
 namespace TheBorg.Commands
@@ -47,7 +46,7 @@ namespace TheBorg.Commands
             _commands = commandBuilder.BuildCommands(commandSets);
         }
 
-        public async Task ExecuteAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
+        public async Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var commandThatUnderstandMessage = _commands
                 .Where(c => c.IsMatch(tenantMessage.Text))
@@ -55,17 +54,19 @@ namespace TheBorg.Commands
             if (!commandThatUnderstandMessage.Any())
             {
                 _logger.Information($"Did not find any commands that understand: {tenantMessage.Text}");
-                return;
+                return ProcessMessageResult.Skipped;
             }
             if (commandThatUnderstandMessage.Count != 1)
             {
                 _logger.Warning($"Foung too many commands that understand: {tenantMessage.Text}");
-                return;
+                return ProcessMessageResult.Skipped;
             }
 
             var command = commandThatUnderstandMessage.Single();
 
             await command.ExecuteAsync(tenantMessage, cancellationToken).ConfigureAwait(false);
+
+            return ProcessMessageResult.Handled;
         }
     }
 }

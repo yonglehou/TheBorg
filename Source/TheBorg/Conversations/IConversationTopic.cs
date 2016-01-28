@@ -22,12 +22,17 @@
 // SOFTWARE.
 //
 
-using TheBorg.Conversations;
-using TheBorg.Core;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.ValueObjects;
 
-namespace TheBorg.Commands
+namespace TheBorg.Conversations
 {
-    public interface ICommandManager : IMessageProcessor
+    public interface IConversationTopic
     {
+        Task StartAsync(
+            TenantMessage tenantMessage,
+            IActiveConversation activeConversation,
+            CancellationToken cancellationToken);
     }
 }

@@ -53,6 +53,17 @@
     <Compile Include="Commands\CommandBuilder.cs" />
     <Compile Include="Commands\CommandSets\StatusCommandSet.cs" />
     <Compile Include="Commands\ICommandBuilder.cs" />
+    <Compile Include="Conversations\Attributes\ConversationTopicAttribute.cs" />
+    <Compile Include="Conversations\ActiveConversation.cs" />
+    <Compile Include="Conversations\ConversationManager.cs" />
+    <Compile Include="Conversations\IActiveConversation.cs" />
+    <Compile Include="Conversations\IConversationManager.cs" />
+    <Compile Include="Conversations\IConversationTopic.cs" />
+    <Compile Include="Core\IMessageProcessors.cs" />
+    <Compile Include="Conversations\Topics\OctopusCreateReleaseTopic.cs" />
+    <Compile Include="Core\ITime.cs" />
+    <Compile Include="Core\ProcessMessageResult.cs" />
+    <Compile Include="Core\Time.cs" />
     <Compile Include="Tenants\ISlackTenant.cs" />
     <Compile Include="Clients\IWebSocketClient.cs" />
     <Compile Include="Clients\RestClient.cs" />
@@ -62,6 +73,7 @@
     <Compile Include="Clients\Slack\DTOs\UserDto.cs" />
     <Compile Include="Tenants\Slack\RtmRequests\PingRtmRequest.cs" />
     <Compile Include="Tenants\Slack\RtmRequests\RtmRequest.cs" />
+    <Compile Include="ValueObjects\Address.cs" />
     <Compile Include="ValueObjects\Channel.cs" />
     <Compile Include="ValueObjects\SingleValueObject.cs" />
     <Compile Include="ValueObjects\Tenant.cs" />
@@ -88,6 +100,7 @@
     <None Include="App.config" />
     <None Include="paket.references" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

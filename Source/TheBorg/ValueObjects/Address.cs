@@ -22,12 +22,22 @@
 // SOFTWARE.
 //
 
-using TheBorg.Conversations;
-using TheBorg.Core;
-
-namespace TheBorg.Commands
+namespace TheBorg.ValueObjects
 {
-    public interface ICommandManager : IMessageProcessor
+    public class Address
     {
+        public Address(
+            User user,
+            Channel channel,
+            Tenant tenant)
+        {
+            User = user;
+            Channel = channel;
+            Tenant = tenant;
+        }
+
+        public User User { get; }
+        public Channel Channel { get; }
+        public Tenant Tenant { get; }
     }
 }

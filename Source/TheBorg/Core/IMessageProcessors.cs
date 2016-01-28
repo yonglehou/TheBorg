@@ -22,12 +22,14 @@
 // SOFTWARE.
 //
 
-using TheBorg.Conversations;
-using TheBorg.Core;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.ValueObjects;
 
-namespace TheBorg.Commands
+namespace TheBorg.Core
 {
-    public interface ICommandManager : IMessageProcessor
+    public interface IMessageProcessor
     {
+        Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
     }
 }

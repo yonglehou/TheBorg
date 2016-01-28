@@ -22,12 +22,22 @@
 // SOFTWARE.
 //
 
-using TheBorg.Conversations;
-using TheBorg.Core;
+using System;
 
-namespace TheBorg.Commands
+namespace TheBorg.Conversations.Attributes
 {
-    public interface ICommandManager : IMessageProcessor
+    [AttributeUsage(AttributeTargets.Class)]
+    public class ConversationTopicAttribute : Attribute
     {
+        public string Help { get; }
+        public string StartedBy { get; }
+
+        public ConversationTopicAttribute(
+            string help,
+            string startedBy)
+        {
+            Help = help;
+            StartedBy = startedBy;
+        }
     }
 }

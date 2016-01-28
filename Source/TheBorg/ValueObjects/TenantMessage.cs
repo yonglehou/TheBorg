@@ -34,23 +34,17 @@ namespace TheBorg.ValueObjects
 
         public TenantMessage(
             string text,
-            User user,
-            Channel channel,
-            Tenant tenant,
+            Address sender,
             Func<string, CancellationToken, Task> reply)
         {
             Text = text;
-            User = user;
-            Channel = channel;
-            Tenant = tenant;
+            Sender = sender;
 
             _reply = reply;
         }
 
         public string Text { get; }
-        public User User { get; }
-        public Channel Channel { get; }
-        public Tenant Tenant { get; }
+        public Address Sender { get; }
 
         public Task ReplyAsync(string text, CancellationToken cancellationToken)
         {
