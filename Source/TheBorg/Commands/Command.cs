@@ -46,6 +46,7 @@ namespace TheBorg.Commands
             MethodInfo methodInfo)
         {
             Help = help;
+            Regex = regex;
 
             _commandSet = commandSet;
             _regex = new Regex(regex, RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -53,6 +54,7 @@ namespace TheBorg.Commands
         }
 
         public string Help { get; }
+        public string Regex { get; }
 
         public bool IsMatch(string text)
         {

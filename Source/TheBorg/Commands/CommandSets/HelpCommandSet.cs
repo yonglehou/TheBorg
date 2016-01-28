@@ -22,18 +22,27 @@
 // SOFTWARE.
 //
 
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Commands.Attributes;
 using TheBorg.ValueObjects;
 
-namespace TheBorg.Commands
+namespace TheBorg.Commands.CommandSets
 {
-    public interface ICommand
+    public class HelpCommandSet : ICommandSet
     {
-        string Help { get; }
-        string Regex { get; }
-        bool IsMatch(string text);
-
-        Task ExecuteAsync(TenantMessage tenantMessage, CancellationToken cancellationToken, params object[] additionalArguments);
+        [Command(
+            "Show a list of commands",
+            "^help|help me$")]
+        public Task HelpAsync(TenantMessage tenantMessage, CommandDescriptions commandDescriptions, CancellationToken cancellationToken)
+        {
+            var stringBuilder = new StringBuilder().AppendLine();
+            foreach (var commandDescription in commandDescriptions.Descriptions)
+            {
+                stringBuilder.AppendLine($"\"{commandDescription.Regex}\": {commandDescription.Help}");
+            }
+            return tenantMessage.ReplyAsync(stringBuilder.ToString(), cancellationToken);
+        }
     }
 }

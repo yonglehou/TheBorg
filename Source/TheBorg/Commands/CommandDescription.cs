@@ -22,18 +22,19 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.ValueObjects;
-
 namespace TheBorg.Commands
 {
-    public interface ICommand
+    public class CommandDescription
     {
-        string Help { get; }
-        string Regex { get; }
-        bool IsMatch(string text);
+        public CommandDescription(
+            string help,
+            string regex)
+        {
+            Help = help;
+            Regex = regex;
+        }
 
-        Task ExecuteAsync(TenantMessage tenantMessage, CancellationToken cancellationToken, params object[] additionalArguments);
+        public string Help { get; }
+        public string Regex { get; }
     }
 }
