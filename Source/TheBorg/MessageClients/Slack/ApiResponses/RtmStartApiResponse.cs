@@ -23,20 +23,24 @@
 //
 
 using System;
+using TheBorg.Clients.Slack.DTOs;
 
 namespace TheBorg.MessageClients.Slack.ApiResponses
 {
-    public class RtmStartApiResponse
+    public class RtmStartApiResponse : ApiResponse
     {
         public RtmStartApiResponse(
             string ok,
-            Uri url)
+            string error,
+            Uri url,
+            UserDto self)
+            : base(ok, error)
         {
-            if (!bool.Parse(ok)) throw new ArgumentException("Response is not OK");
-
             Url = url;
+            Self = self;
         }
 
         public Uri Url { get; }
+        public UserDto Self { get; }
     }
 }

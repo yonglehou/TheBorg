@@ -68,8 +68,7 @@ namespace TheBorg.Clients
                     {
                         {"channel", channelId},
                         {"text", text},
-                        {"icon_url", "https://media.githubusercontent.com/media/rasmus/TheBorg/master/icon-512x512.jpg"},
-                        {"username", "The Borg"}
+                        {"as_user", "true"},
                     },
                 cancellationToken);
         }

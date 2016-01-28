@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using TheBorg.Clients;
+using TheBorg.Clients.Slack.DTOs;
 using TheBorg.Core;
 using TheBorg.MessageClients.Slack;
 using TheBorg.MessageClients.Slack.ApiResponses;
@@ -50,6 +51,8 @@ namespace TheBorg.MessageClients
                 ContractResolver = new UnderscoreMappingResolver(),
             };
 
+        private UserDto _self;
+
         public IObservable<SlackMessage> Messages => _messages; 
 
         public SlackMessageClient(
@@ -68,9 +71,14 @@ namespace TheBorg.MessageClients
         {
             var rtmStartResponse = await _slackApiClient.CallApiAsync<RtmStartApiResponse>(
                 "rtm.start",
+                new Dictionary<string, string>
+                    {
+                        {"simple_latest", "true"},
+                        {"no_unreads", "true" },
+                    },
                 cancellationToken)
                 .ConfigureAwait(false);
-
+            _self = rtmStartResponse.Self;
             await _webSocketClient.ConnectAsync(rtmStartResponse.Url, cancellationToken).ConfigureAwait(false);
         }
 
@@ -79,32 +87,56 @@ namespace TheBorg.MessageClients
             return Interlocked.Increment(ref _messageIdCounter);
         }
 
-        private void Received(string json)
+        private async void Received(string json)
         {
-            var rtmMessage = JsonConvert.DeserializeObject<RtmResponse>(json, _jsonSerializerSettings);
-
-            switch (rtmMessage.Type)
+            try
             {
-                case "hello":
-                    _logger.Information("Connected to Slack RTM web socket");
-                    break;
-                case "message":
-                    ReceivedMessage(JsonConvert.DeserializeObject<MessageRtmResponse>(json, _jsonSerializerSettings));
-                    break;
-                default:
-                    _logger.Verbose($"Ignoring Slack message type '{rtmMessage.Type}'");
-                    break;
+                var rtmMessage = JsonConvert.DeserializeObject<RtmResponse>(json, _jsonSerializerSettings);
+
+                switch (rtmMessage.Type)
+                {
+                    case "hello":
+                        _logger.Information("Connected to Slack RTM web socket");
+                        break;
+                    case "message":
+                        await ReceivedMessage(JsonConvert.DeserializeObject<MessageRtmResponse>(json, _jsonSerializerSettings)).ConfigureAwait(false);
+                        break;
+                    default:
+                        _logger.Verbose($"Ignoring Slack message type '{rtmMessage.Type}'");
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, $"Failed to process received message JSON: {json}");
             }
         }
 
-        private void ReceivedMessage(MessageRtmResponse messageRtmResponse)
+        private async Task ReceivedMessage(MessageRtmResponse messageRtmResponse)
         {
+            if (messageRtmResponse.User == _self.Id)
+            {
+                _logger.Verbose($"Skipping message from myself: {messageRtmResponse.Text}");
+                return;
+            }
+            if (!string.IsNullOrEmpty(messageRtmResponse.Subtype))
+            {
+                _logger.Verbose($"Skipping message with subtype '{messageRtmResponse.Subtype}': {messageRtmResponse.Text}");
+                return;
+            }
+            if (messageRtmResponse.IsEdit)
+            {
+                _logger.Verbose($"Skipping message edit: {messageRtmResponse.Text}");
+                return;
+            }
+
             _logger.Debug($"Slack message - {messageRtmResponse.User}@{messageRtmResponse.Channel}: {messageRtmResponse.Text}");
 
-            var username = _slackApiClient.GetUserAsync(messageRtmResponse.User, CancellationToken.None).Result?.Name ?? "<unknown>";
+            var user = await _slackApiClient.GetUserAsync(messageRtmResponse.User, CancellationToken.None).ConfigureAwait(false);
+
             _messages.OnNext(new SlackMessage(
                 messageRtmResponse.Text,
-                username,
+                user?.Name ?? "<unknown>",
                 messageRtmResponse.Channel));
         }
     }

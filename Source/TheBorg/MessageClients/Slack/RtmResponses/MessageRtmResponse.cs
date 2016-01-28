@@ -30,16 +30,22 @@ namespace TheBorg.MessageClients.Slack.RtmResponses
             string type,
             string channel,
             string user,
-            string text)
+            string text,
+            string subtype,
+            object edited)
             : base(type)
         {
             Channel = channel;
             User = user;
             Text = text;
+            Subtype = subtype;
+            IsEdit = edited != null;
         }
 
         public string Channel { get; }
         public string User { get; }
         public string Text { get; }
+        public string Subtype { get; }
+        public bool IsEdit { get; }
     }
 }
