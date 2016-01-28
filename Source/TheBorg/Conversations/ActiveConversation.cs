@@ -24,6 +24,8 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Commands;
@@ -35,17 +37,21 @@ namespace TheBorg.Conversations
     public class ActiveConversation : IActiveConversation
     {
         private readonly IConversationTopic _conversationTopic;
-        private readonly ConcurrentDictionary<string, object> _keyValueStore = new ConcurrentDictionary<string, object>(); 
+        private readonly ConcurrentDictionary<string, object> _keyValueStore = new ConcurrentDictionary<string, object>();
+        private readonly IReadOnlyCollection<ICommand> _commands;
 
         public ActiveConversation(
             Address with,
             ITime time,
-            IConversationTopic conversationTopic)
+            IConversationTopic conversationTopic,
+            ICommandBuilder commandBuilder)
         {
             With = with;
             Started = time.Now;
 
             _conversationTopic = conversationTopic;
+
+            _commands = commandBuilder.BuildCommands(new[] {conversationTopic});
         }
 
         public DateTimeOffset Started { get; }
@@ -64,14 +70,26 @@ namespace TheBorg.Conversations
             return true;
         }
 
-        public bool TryAdd<T>(string key, T value)
+        public bool TrySet<T>(string key, T value)
         {
             return _keyValueStore.TryAdd(key, value);
         }
 
-        public Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
+        public Task EndAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(ProcessMessageResult.Skipped);
+            return _conversationTopic.EndAsync(this, cancellationToken);
+        }
+
+        public async Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
+        {
+            var command = _commands.FirstOrDefault(c => c.IsMatch(tenantMessage.Text));
+            if (command == null)
+            {
+                return ProcessMessageResult.Skipped;
+            }
+
+            await command.ExecuteAsync(tenantMessage, cancellationToken, this).ConfigureAwait(false);
+            return ProcessMessageResult.Handled;
         }
     }
 }

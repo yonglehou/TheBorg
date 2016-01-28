@@ -24,14 +24,19 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Commands;
 using TheBorg.ValueObjects;
 
 namespace TheBorg.Conversations
 {
-    public interface IConversationTopic
+    public interface IConversationTopic : ICommandSet
     {
         Task StartAsync(
             TenantMessage tenantMessage,
+            IActiveConversation activeConversation,
+            CancellationToken cancellationToken);
+
+        Task EndAsync(
             IActiveConversation activeConversation,
             CancellationToken cancellationToken);
     }

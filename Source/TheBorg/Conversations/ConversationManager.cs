@@ -29,6 +29,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using TheBorg.Commands;
 using TheBorg.Conversations.Attributes;
 using TheBorg.Core;
 using TheBorg.ValueObjects;
@@ -39,16 +40,27 @@ namespace TheBorg.Conversations
     {
         private readonly ITime _time;
         private readonly ILogger _logger;
+        private readonly ICommandBuilder _commandBuilder;
         private readonly ConcurrentDictionary<Address, IActiveConversation> _activeConversations = new ConcurrentDictionary<Address, IActiveConversation>();
         private readonly IReadOnlyDictionary<Regex, IConversationTopic> _conversationTopics;
+
+        private static readonly IReadOnlyCollection<Regex> ConversationEnders = new[]
+            {
+                "^done$",
+                "^nevermind$",
+            }
+            .Select(s => new Regex(s, RegexOptions.Compiled | RegexOptions.IgnoreCase))
+            .ToList();
 
         public ConversationManager(
             ITime time,
             ILogger logger,
+            ICommandBuilder commandBuilder,
             IEnumerable<IConversationTopic> conversationTopics)
         {
             _time = time;
             _logger = logger;
+            _commandBuilder = commandBuilder;
             _conversationTopics = CreateTopicIndex(conversationTopics);
         }
 
@@ -58,6 +70,14 @@ namespace TheBorg.Conversations
             IActiveConversation activeConversation;
             if (_activeConversations.TryGetValue(tenantMessage.Sender, out activeConversation))
             {
+                if (ConversationEnders.Any(e => e.IsMatch(tenantMessage.Text)))
+                {
+                    _activeConversations.TryRemove(tenantMessage.Sender, out activeConversation);
+                    await activeConversation.EndAsync(cancellationToken).ConfigureAwait(false);
+                    await tenantMessage.ReplyAsync("Ok, lets talk about some else...", cancellationToken).ConfigureAwait(false);
+                    return ProcessMessageResult.Handled;
+                }
+
                 processMessageResult = await activeConversation.ProcessAsync(tenantMessage, cancellationToken).ConfigureAwait(false);
                 if (processMessageResult == ProcessMessageResult.Handled)
                 {
@@ -72,7 +92,8 @@ namespace TheBorg.Conversations
                     activeConversation = new ActiveConversation(
                         tenantMessage.Sender,
                         _time,
-                        kv.Value);
+                        kv.Value,
+                        _commandBuilder);
                     if (!_activeConversations.TryAdd(activeConversation.With, activeConversation))
                     {
                         _logger.Error("Failed to start conversation");

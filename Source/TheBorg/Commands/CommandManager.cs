@@ -27,6 +27,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using TheBorg.Conversations;
 using TheBorg.Core;
 using TheBorg.ValueObjects;
 
@@ -43,7 +44,7 @@ namespace TheBorg.Commands
             IEnumerable<ICommandSet> commandSets)
         {
             _logger = logger;
-            _commands = commandBuilder.BuildCommands(commandSets);
+            _commands = commandBuilder.BuildCommands(commandSets.Where(s => !(s is IConversationTopic)));
         }
 
         public async Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)

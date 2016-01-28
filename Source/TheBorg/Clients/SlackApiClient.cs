@@ -29,21 +29,25 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Serilog;
+using TheBorg.Clients.Slack.ApiResponses;
 using TheBorg.Clients.Slack.DTOs;
-using TheBorg.Tenants.Slack.ApiResponses;
 using TheBorg.ValueObjects;
 
 namespace TheBorg.Clients
 {
     public class SlackApiClient : ISlackApiClient
     {
+        private readonly ILogger _logger;
         private readonly IRestClient _restClient;
         private readonly ConcurrentDictionary<string, Task<User>> _userCache = new ConcurrentDictionary<string, Task<User>>();
         private static readonly Tenant Tenant = new Tenant("slack");
 
         public SlackApiClient(
+            ILogger logger,
             IRestClient restClient)
         {
+            _logger = logger;
             _restClient = restClient;
         }
 
@@ -58,12 +62,12 @@ namespace TheBorg.Clients
 
         private async Task<User> InternalGetUserAsync(string userId, CancellationToken cancellationToken)
         {
-            var userDto = await CallApiAsync<UserDto>(
+            var userInfoApiResponse = await CallApiAsync<UserInfoApiResponse>(
                 "users.info",
                 cancellationToken,
                 new KeyValuePair<string, string>("user", userId))
                 .ConfigureAwait(false);
-            return new User(userDto.Name, userDto.Id, Tenant);
+            return new User(userInfoApiResponse.User.Name, userInfoApiResponse.User.Id, Tenant);
         }
 
         public Task<ApiResponse> SendMessageAsync(

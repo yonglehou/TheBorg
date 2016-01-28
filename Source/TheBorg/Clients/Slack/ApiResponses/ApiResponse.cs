@@ -22,22 +22,24 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Core;
-using TheBorg.ValueObjects;
-
-namespace TheBorg.Conversations
+namespace TheBorg.Clients.Slack.ApiResponses
 {
-    public interface IActiveConversation : IMessageProcessor
+    public class ApiResponse
     {
-        DateTimeOffset Started { get; }
-        Address With { get; }
+        public ApiResponse(
+            string ok,
+            string error)
+        {
+            Error = error ?? string.Empty;
+            IsOk = bool.Parse(ok);
+        }
 
-        bool TryGet<T>(string key, out T value);
-        bool TrySet<T>(string key, T value);
+        public string Error { get; }
+        public bool IsOk { get; }
 
-        Task EndAsync(CancellationToken cancellationToken);
+        public override string ToString()
+        {
+            return $"IsOk: {IsOk}, Error: {Error}";
+        }
     }
 }

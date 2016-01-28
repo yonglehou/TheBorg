@@ -24,11 +24,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Tenants.Slack;
 using TheBorg.ValueObjects;
 
 namespace TheBorg.Commands
@@ -48,7 +48,7 @@ namespace TheBorg.Commands
             Help = help;
 
             _commandSet = commandSet;
-            _regex = new Regex(regex, RegexOptions.Compiled);
+            _regex = new Regex(regex, RegexOptions.Compiled | RegexOptions.IgnoreCase);
             _methodInfo = methodInfo;
         }
 
@@ -59,7 +59,10 @@ namespace TheBorg.Commands
             return _regex.IsMatch(text);
         }
 
-        public Task ExecuteAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
+        public Task ExecuteAsync(
+            TenantMessage tenantMessage,
+            CancellationToken cancellationToken,
+            params object[] additionalArguments)
         {
             var match = _regex.Match(tenantMessage.Text);
             if (!match.Success)
@@ -78,6 +81,13 @@ namespace TheBorg.Commands
                 if (parameterInfo.ParameterType == typeof (TenantMessage))
                 {
                     arguments.Add(tenantMessage);
+                    continue;
+                }
+
+                var additionalArgument = additionalArguments.FirstOrDefault(a => parameterInfo.ParameterType.IsInstanceOfType(a));
+                if (additionalArgument != null)
+                {
+                    arguments.Add(additionalArgument);
                     continue;
                 }
                 

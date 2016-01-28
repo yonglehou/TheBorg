@@ -24,7 +24,7 @@
 
 namespace TheBorg.ValueObjects
 {
-    public class Address
+    public class Address : ValueObject
     {
         public Address(
             User user,

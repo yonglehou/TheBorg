@@ -24,6 +24,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Commands.Attributes;
 using TheBorg.Conversations.Attributes;
 using TheBorg.ValueObjects;
 
@@ -40,6 +41,27 @@ namespace TheBorg.Conversations.Topics
             CancellationToken cancellationToken)
         {
             await tenantMessage.ReplyAsync("Ok, lets create a release", cancellationToken).ConfigureAwait(false);
+        }
+
+        public Task EndAsync(IActiveConversation activeConversation, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(0);
+        }
+
+        [Command(
+            "Set the project to create a release for",
+            @"^project is (?<project>[a-zA-Z0-9\-]+)$")]
+        public async Task SetProjectAsync(
+            string project,
+            TenantMessage tenantMessage,
+            IActiveConversation activeConversation,
+            CancellationToken cancellationToken)
+        {
+            activeConversation.TrySet("project-name", project);
+
+            // TODO: Validate that the project actally exists
+
+            await tenantMessage.ReplyAsync($"Ok, I'll use the project '{project}' for the release", cancellationToken).ConfigureAwait(false);
         }
     }
 }

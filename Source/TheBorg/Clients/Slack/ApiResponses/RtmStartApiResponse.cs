@@ -22,24 +22,25 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Tenants.Slack.ApiResponses
+using System;
+using TheBorg.Clients.Slack.DTOs;
+
+namespace TheBorg.Clients.Slack.ApiResponses
 {
-    public class ApiResponse
+    public class RtmStartApiResponse : ApiResponse
     {
-        public ApiResponse(
+        public RtmStartApiResponse(
             string ok,
-            string error)
+            string error,
+            Uri url,
+            UserDto self)
+            : base(ok, error)
         {
-            Error = error ?? string.Empty;
-            IsOk = bool.Parse(ok);
+            Url = url;
+            Self = self;
         }
 
-        public string Error { get; }
-        public bool IsOk { get; }
-
-        public override string ToString()
-        {
-            return $"IsOk: {IsOk}, Error: {Error}";
-        }
+        public Uri Url { get; }
+        public UserDto Self { get; }
     }
 }
