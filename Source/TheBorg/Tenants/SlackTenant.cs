@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
@@ -84,6 +85,7 @@ namespace TheBorg.Tenants
 
         private async void Received(string json)
         {
+            _logger.Verbose(json);
             try
             {
                 var rtmMessage = JsonConvert.DeserializeObject<RtmResponse>(json, _jsonSerializerSettings);
@@ -125,6 +127,15 @@ namespace TheBorg.Tenants
                 return;
             }
 
+            var toMe = $"{_self.Id}: ";
+            var text = SanitiseText(messageRtmResponse.Text);
+            if (!text.StartsWith(toMe) && messageRtmResponse.Channel[0] != 'D')
+            {
+                _logger.Verbose($"Skipping message as its not for me: {messageRtmResponse.Text}");
+                return;
+            }
+
+            text = text.Replace(toMe, string.Empty).Trim();
             _logger.Debug($"Slack message - {messageRtmResponse.User}@{messageRtmResponse.Channel}: {messageRtmResponse.Text}");
 
             var user = await _slackApiClient.GetUserAsync(messageRtmResponse.User, CancellationToken.None).ConfigureAwait(false);
@@ -134,10 +145,29 @@ namespace TheBorg.Tenants
                 new Channel(messageRtmResponse.Channel),
                 Tenant);
 
+
             _messages.OnNext(new TenantMessage(
-                messageRtmResponse.Text,
+                text,
                 sender,
-                (t, c) => _slackApiClient.SendMessageAsync(messageRtmResponse.Channel, t, c)));
+                (t, c) => ReplyToAsync(messageRtmResponse, t, c)));
+        }
+
+        private Task ReplyToAsync(
+            MessageRtmResponse messageRtmResponse,
+            string text,
+            CancellationToken cancellationToken)
+        {
+            if (messageRtmResponse.Channel[0] != 'D')
+            {
+                text = $"<@{messageRtmResponse.User}>: {text}";
+            }
+            return _slackApiClient.SendMessageAsync(messageRtmResponse.Channel, text, cancellationToken);
+        }
+
+        private static readonly string[] InvalidStrings = {"<", ">", "@"};
+        private static string SanitiseText(string text)
+        {
+            return InvalidStrings.Aggregate(text, ((s, t) => s.Replace(t, string.Empty)));
         }
     }
 }

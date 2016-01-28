@@ -1,0 +1,9 @@
+﻿Autofac
+Newtonsoft.Json
+Rx-Main
+Serilog
+Topshelf
+
+group Test
+	FluentAssertions
+	NUnit

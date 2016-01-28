@@ -5,3 +5,9 @@ nuget Newtonsoft.Json 8.0.2
 nuget Rx-Main 2.2.5
 nuget Serilog 1.5.14
 nuget Topshelf 3.3.1
+
+group Test
+	source https://www.nuget.org/api/v2/
+
+	nuget FluentAssertions 4.2.1
+	nuget NUnit 2.6.4
