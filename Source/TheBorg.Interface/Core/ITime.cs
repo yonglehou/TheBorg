@@ -22,21 +22,12 @@
 // SOFTWARE.
 //
 
-using TheBorg.Clients.Slack.DTOs;
+using System;
 
-namespace TheBorg.Clients.Slack.ApiResponses
+namespace TheBorg.Interface.Core
 {
-    public class UserInfoApiResponse : ApiResponse
+    public interface ITime
     {
-        public UserDto User { get; }
-
-        public UserInfoApiResponse(
-            string ok,
-            string error,
-            UserDto user)
-            : base(ok, error)
-        {
-            User = user;
-        }
+        DateTimeOffset Now { get; }
     }
 }

@@ -23,24 +23,40 @@
 //
 
 using System;
-using TheBorg.Clients.Slack.DTOs;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Clients.Slack.ApiResponses
+namespace TheBorg.Interface.Core
 {
-    public class RtmStartApiResponse : ApiResponse
+    public interface IRestClient
     {
-        public RtmStartApiResponse(
-            string ok,
-            string error,
-            Uri url,
-            UserDto self)
-            : base(ok, error)
-        {
-            Url = url;
-            Self = self;
-        }
+        Task<TResult> PostAsync<TResult, T>(
+            Uri uri,
+            T obj,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
 
-        public Uri Url { get; }
-        public UserDto Self { get; }
+        Task<T> GetAsync<T>(
+            Uri uri,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<T> GetAsync<T>(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> queryString,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<T> PostFormAsync<T>(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> keyValuePairs,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage httpRequestMessage,
+            CancellationToken cancellationToken);
     }
 }

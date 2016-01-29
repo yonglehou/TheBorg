@@ -22,22 +22,24 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Clients.Slack.DTOs
+namespace TheBorg.Services.Slack.ApiResponses
 {
-    /// <summary>
-    ///     https://api.slack.com/types/channel
-    /// </summary>
-    public class ChannelDto
+    public class ApiResponse
     {
-        public ChannelDto(
-            string id,
-            string name)
+        public ApiResponse(
+            string ok,
+            string error)
         {
-            Id = id;
-            Name = name;
+            Error = error ?? string.Empty;
+            IsOk = bool.Parse(ok);
         }
 
-        public string Id { get; }
-        public string Name { get; }
+        public string Error { get; }
+        public bool IsOk { get; }
+
+        public override string ToString()
+        {
+            return $"IsOk: {IsOk}, Error: {Error}";
+        }
     }
 }

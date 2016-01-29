@@ -22,18 +22,21 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
+using TheBorg.Services.Slack.DTOs;
 
-namespace TheBorg.Tenants
+namespace TheBorg.Services.Slack.ApiResponses
 {
-    public interface ITenant
+    public class UserInfoApiResponse : ApiResponse
     {
-        IObservable<TenantMessage> Messages { get; }
+        public UserDto User { get; }
 
-        Task ConnectAsync(CancellationToken cancellationToken);
-        Task DisconnectAsync(CancellationToken cancellationToken);
+        public UserInfoApiResponse(
+            string ok,
+            string error,
+            UserDto user)
+            : base(ok, error)
+        {
+            User = user;
+        }
     }
 }

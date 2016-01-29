@@ -22,24 +22,29 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Clients.Slack.ApiResponses
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using TheBorg.Interface.Core;
+
+namespace TheBorg.Core
 {
-    public class ApiResponse
+    public class JsonSerializer : IJsonSerializer
     {
-        public ApiResponse(
-            string ok,
-            string error)
+        private static readonly IReadOnlyDictionary<JsonFormat, JsonSerializerSettings> JsonFormats = new Dictionary<JsonFormat, JsonSerializerSettings>
+            {
+                {JsonFormat.LowerSnakeCase, new JsonSerializerSettings { ContractResolver = new UnderscoreMappingResolver(), } },
+                {JsonFormat.CamelCase, new JsonSerializerSettings() },
+                {JsonFormat.PascalCase, new JsonSerializerSettings() },
+            };
+
+        public T Deserialize<T>(string json, JsonFormat jsonFormat = JsonFormat.CamelCase)
         {
-            Error = error ?? string.Empty;
-            IsOk = bool.Parse(ok);
+            return JsonConvert.DeserializeObject<T>(json, JsonFormats[jsonFormat]);
         }
 
-        public string Error { get; }
-        public bool IsOk { get; }
-
-        public override string ToString()
+        public string Serialize<T>(T obj, JsonFormat jsonFormat = JsonFormat.CamelCase)
         {
-            return $"IsOk: {IsOk}, Error: {Error}";
+            return JsonConvert.SerializeObject(obj, JsonFormats[jsonFormat]);
         }
     }
 }

@@ -25,9 +25,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using TheBorg.Clients;
 using TheBorg.Interface.Commands;
+using TheBorg.Interface.Core;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Commands.CommandSets
@@ -47,11 +46,11 @@ namespace TheBorg.Commands.CommandSets
             "^joke|tell a joke$")]
         public async Task TellJokeAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
-            var json = await _restClient.GetAsync(
+            var joke = await _restClient.GetAsync<JokeContainer>(
                 new Uri("http://api.icndb.com/jokes/random"),
+                JsonFormat.CamelCase,
                 cancellationToken)
                 .ConfigureAwait(false);
-            var joke = JsonConvert.DeserializeObject<JokeContainer>(json);
             await tenantMessage.ReplyAsync(joke.Value.Joke, cancellationToken).ConfigureAwait(false);
         }
 

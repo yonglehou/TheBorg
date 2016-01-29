@@ -30,11 +30,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
-using TheBorg.Clients;
-using TheBorg.Clients.Slack.ApiResponses;
-using TheBorg.Clients.Slack.DTOs;
 using TheBorg.Core;
+using TheBorg.Interface.Core;
+using TheBorg.Interface.Tenants;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Services;
+using TheBorg.Services.Slack.ApiResponses;
+using TheBorg.Services.Slack.DTOs;
 using TheBorg.Tenants.Slack.RtmResponses;
 
 namespace TheBorg.Tenants
@@ -42,7 +44,7 @@ namespace TheBorg.Tenants
     public class SlackTenant : ITenant
     {
         private readonly ILogger _logger;
-        private readonly ISlackApiClient _slackApiClient;
+        private readonly ISlackService _slackService;
         private readonly IWebSocketClient _webSocketClient;
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
         private readonly Subject<TenantMessage> _messages = new Subject<TenantMessage>();
@@ -60,11 +62,11 @@ namespace TheBorg.Tenants
 
         public SlackTenant(
             ILogger logger,
-            ISlackApiClient slackApiClient,
+            ISlackService slackService,
             IWebSocketClient webSocketClient)
         {
             _logger = logger;
-            _slackApiClient = slackApiClient;
+            _slackService = slackService;
             _webSocketClient = webSocketClient;
 
             _disposables.Add(_webSocketClient.Messages.Subscribe(Received));
@@ -72,7 +74,7 @@ namespace TheBorg.Tenants
 
         public async Task ConnectAsync(CancellationToken cancellationToken)
         {
-            var rtmStartResponse = await _slackApiClient.CallApiAsync<RtmStartApiResponse>(
+            var rtmStartResponse = await _slackService.CallApiAsync<RtmStartApiResponse>(
                 "rtm.start",
                 new Dictionary<string, string>
                     {
@@ -153,7 +155,7 @@ namespace TheBorg.Tenants
             text = text.Replace(toMe, string.Empty).Trim();
             _logger.Debug($"Slack message - {messageRtmResponse.User}@{messageRtmResponse.Channel}: {messageRtmResponse.Text}");
 
-            var user = await _slackApiClient.GetUserAsync(messageRtmResponse.User, CancellationToken.None).ConfigureAwait(false);
+            var user = await _slackService.GetUserAsync(messageRtmResponse.User, CancellationToken.None).ConfigureAwait(false);
             var sender = new Address(
                 user,
                 new Channel(messageRtmResponse.Channel),
@@ -174,7 +176,7 @@ namespace TheBorg.Tenants
             {
                 text = $"<@{messageRtmResponse.User}>: {text}";
             }
-            return _slackApiClient.SendMessageAsync(messageRtmResponse.Channel, text, cancellationToken);
+            return _slackService.SendMessageAsync(messageRtmResponse.Channel, text, cancellationToken);
         }
 
         private static readonly string[] InvalidStrings = {"<", ">", "@"};

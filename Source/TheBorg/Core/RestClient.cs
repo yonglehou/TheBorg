@@ -23,7 +23,6 @@
 //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -34,30 +33,40 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using Serilog;
+using TheBorg.Interface.Core;
 
-namespace TheBorg.Clients
+namespace TheBorg.Core
 {
     public class RestClient : IRestClient
     {
         private readonly ILogger _logger;
+        private readonly IJsonSerializer _jsonSerializer;
         private static readonly HttpClient HttpClient = new HttpClient();
 
         public RestClient(
-            ILogger logger)
+            ILogger logger,
+            IJsonSerializer jsonSerializer)
         {
             _logger = logger;
+            _jsonSerializer = jsonSerializer;
         }
 
-        public Task<string> GetAsync(
+        public Task<T> GetAsync<T>(
             Uri uri,
+            JsonFormat jsonFormat,
             CancellationToken cancellationToken)
         {
-            return GetAsync(uri, Enumerable.Empty<KeyValuePair<string, string>>(), cancellationToken);
+            return GetAsync<T>(
+                uri,
+                Enumerable.Empty<KeyValuePair<string, string>>(),
+                jsonFormat,
+                cancellationToken);
         }
 
-        public async Task<string> GetAsync(
+        public async Task<T> GetAsync<T>(
             Uri uri,
             IEnumerable<KeyValuePair<string, string>> queryString,
+            JsonFormat jsonFormat,
             CancellationToken cancellationToken)
         {
             var queryStringValues = HttpUtility.ParseQueryString(string.Empty);
@@ -72,35 +81,41 @@ namespace TheBorg.Clients
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
             using (var httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
             {
-                return await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return _jsonSerializer.Deserialize<T>(json, jsonFormat);
             }
         }
 
-        public async Task<string> PostFormAsync(
+        public async Task<T> PostFormAsync<T>(
             Uri uri,
             IEnumerable<KeyValuePair<string, string>> keyValuePairs,
+            JsonFormat jsonFormat,
             CancellationToken cancellationToken)
         {
             var formUrlEncodedContent = new FormUrlEncodedContent(keyValuePairs);
+
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri) { Content = formUrlEncodedContent, })
             using (var httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
             {
-                return await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return _jsonSerializer.Deserialize<T>(json, jsonFormat);
             }
         }
 
-        public async Task<string> PostAsync<T>(
+        public async Task<TResult> PostAsync<TResult, T>(
             Uri uri,
             T obj,
+            JsonFormat jsonFormat,
             CancellationToken cancellationToken)
         {
-            var json = JsonConvert.SerializeObject(obj);
+            var requestJson = JsonConvert.SerializeObject(obj);
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri))
             {
-                httpRequestMessage.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                httpRequestMessage.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
                 using (var httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
                 {
-                    return await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var responseJson = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    return _jsonSerializer.Deserialize<TResult>(responseJson, jsonFormat);
                 }
             }
         }

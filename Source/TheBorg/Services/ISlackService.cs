@@ -22,13 +22,33 @@
 // SOFTWARE.
 //
 
-using System;
-using TheBorg.Interface.Core;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.Services.Slack.ApiResponses;
 
-namespace TheBorg.Core
+namespace TheBorg.Services
 {
-    public class Time : ITime
+    public interface ISlackService
     {
-        public DateTimeOffset Now => DateTimeOffset.Now;
+        Task<User> GetUserAsync(
+            string userId,
+            CancellationToken cancellationToken);
+
+        Task<ApiResponse> SendMessageAsync(
+            string channelId,
+            string text,
+            CancellationToken cancellationToken);
+
+        Task<T> CallApiAsync<T>(
+            string method,
+            Dictionary<string, string> arguments,
+            CancellationToken cancellationToken);
+
+        Task<T> CallApiAsync<T>(
+            string method,
+            CancellationToken cancellationToken,
+            params KeyValuePair<string, string>[] keyValuePairs);
     }
 }

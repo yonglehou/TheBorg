@@ -22,32 +22,29 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace TheBorg.Clients
+namespace TheBorg.Interface.Core
 {
-    public interface IRestClient
+    public enum JsonFormat
     {
-        Task<string> PostAsync<T>(
-            Uri uri,
-            T obj,
-            CancellationToken cancellationToken);
+        /// <summary>
+        /// properties_are_like_this
+        /// </summary>
+        LowerSnakeCase,
 
-        Task<string> GetAsync(
-            Uri uri,
-            CancellationToken cancellationToken);
+        /// <summary>
+        /// propertiesAreLikeThis
+        /// </summary>
+        CamelCase,
 
-        Task<string> GetAsync(
-            Uri uri,
-            IEnumerable<KeyValuePair<string, string>> queryString,
-            CancellationToken cancellationToken);
+        /// <summary>
+        /// PropertiesAreLikeThis
+        /// </summary>
+        PascalCase,
+    }
 
-        Task<string> PostFormAsync(
-            Uri uri,
-            IEnumerable<KeyValuePair<string, string>> keyValuePairs,
-            CancellationToken cancellationToken);
+    public interface IJsonSerializer
+    {
+        T Deserialize<T>(string json, JsonFormat jsonFormat = JsonFormat.CamelCase);
+        string Serialize<T>(T obj, JsonFormat jsonFormat = JsonFormat.CamelCase);
     }
 }

@@ -23,15 +23,15 @@
 //
 
 using System;
-using System.Data.SqlClient;
 using System.Net.WebSockets;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using TheBorg.Interface.Core;
 
-namespace TheBorg.Clients
+namespace TheBorg.Core
 {
     public class WebSocketClient : IWebSocketClient, IDisposable
     {

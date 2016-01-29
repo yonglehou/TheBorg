@@ -22,12 +22,22 @@
 // SOFTWARE.
 //
 
-using System;
-
-namespace TheBorg.Core
+namespace TheBorg.Services.Slack.DTOs
 {
-    public interface ITime
+    /// <summary>
+    ///     https://api.slack.com/types/user
+    /// </summary>
+    public class UserDto
     {
-        DateTimeOffset Now { get; }
+        public UserDto(
+            string id,
+            string name)
+        {
+            Id = id;
+            Name = name;
+        }
+
+        public string Id { get; }
+        public string Name { get; }
     }
 }

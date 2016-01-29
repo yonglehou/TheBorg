@@ -22,33 +22,22 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Clients.Slack.ApiResponses;
-using TheBorg.Interface.ValueObjects;
-
-namespace TheBorg.Clients
+namespace TheBorg.Services.Slack.DTOs
 {
-    public interface ISlackApiClient
+    /// <summary>
+    ///     https://api.slack.com/types/channel
+    /// </summary>
+    public class ChannelDto
     {
-        Task<User> GetUserAsync(
-            string userId,
-            CancellationToken cancellationToken);
+        public ChannelDto(
+            string id,
+            string name)
+        {
+            Id = id;
+            Name = name;
+        }
 
-        Task<ApiResponse> SendMessageAsync(
-            string channelId,
-            string text,
-            CancellationToken cancellationToken);
-
-        Task<T> CallApiAsync<T>(
-            string method,
-            Dictionary<string, string> arguments,
-            CancellationToken cancellationToken);
-
-        Task<T> CallApiAsync<T>(
-            string method,
-            CancellationToken cancellationToken,
-            params KeyValuePair<string, string>[] keyValuePairs);
+        public string Id { get; }
+        public string Name { get; }
     }
 }

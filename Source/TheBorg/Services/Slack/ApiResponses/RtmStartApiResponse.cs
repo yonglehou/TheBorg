@@ -23,12 +23,24 @@
 //
 
 using System;
-using TheBorg.Interface.Core;
+using TheBorg.Services.Slack.DTOs;
 
-namespace TheBorg.Core
+namespace TheBorg.Services.Slack.ApiResponses
 {
-    public class Time : ITime
+    public class RtmStartApiResponse : ApiResponse
     {
-        public DateTimeOffset Now => DateTimeOffset.Now;
+        public RtmStartApiResponse(
+            string ok,
+            string error,
+            Uri url,
+            UserDto self)
+            : base(ok, error)
+        {
+            Url = url;
+            Self = self;
+        }
+
+        public Uri Url { get; }
+        public UserDto Self { get; }
     }
 }

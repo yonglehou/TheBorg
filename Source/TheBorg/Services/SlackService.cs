@@ -28,26 +28,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Serilog;
-using TheBorg.Clients.Slack.ApiResponses;
-using TheBorg.Core;
+using TheBorg.Interface.Core;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Services.Slack.ApiResponses;
 
-namespace TheBorg.Clients
+namespace TheBorg.Services
 {
-    public class SlackApiClient : ISlackApiClient
+    public class SlackService : ISlackService
     {
         private readonly ILogger _logger;
         private readonly IRestClient _restClient;
         private readonly ConcurrentDictionary<string, Task<User>> _userCache = new ConcurrentDictionary<string, Task<User>>();
         private static readonly Tenant Tenant = new Tenant("slack");
-        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
-            {
-                ContractResolver = new UnderscoreMappingResolver(),
-            };
 
-        public SlackApiClient(
+        public SlackService(
             ILogger logger,
             IRestClient restClient)
         {
@@ -90,7 +85,7 @@ namespace TheBorg.Clients
                 cancellationToken);
         }
 
-        public async Task<T> CallApiAsync<T>(
+        public Task<T> CallApiAsync<T>(
             string method,
             Dictionary<string, string> arguments,
             CancellationToken cancellationToken)
@@ -99,12 +94,12 @@ namespace TheBorg.Clients
             {
                 arguments.Add("token", Environment.GetEnvironmentVariable("SLACK_TOKEN"));
             }
-            var json = await _restClient.PostFormAsync(
+
+            return _restClient.PostFormAsync<T>(
                 new Uri(new Uri("https://slack.com/api/"), method),
                 arguments,
-                cancellationToken)
-                .ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<T>(json, _jsonSerializerSettings);
+                JsonFormat.LowerSnakeCase,
+                cancellationToken);
         }
 
         public Task<T> CallApiAsync<T>(

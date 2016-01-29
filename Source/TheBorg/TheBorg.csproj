@@ -48,11 +48,11 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Clients\IRestClient.cs" />
-    <Compile Include="Clients\ISlackApiClient.cs" />
-    <Compile Include="Clients\SlackApiClient.cs" />
-    <Compile Include="Clients\Slack\ApiResponses\UserInfoApiResponse.cs" />
-    <Compile Include="Clients\Slack\DTOs\ChannelDto.cs" />
+    <Compile Include="Core\JsonSerializer.cs" />
+    <Compile Include="Services\ISlackService.cs" />
+    <Compile Include="Services\SlackService.cs" />
+    <Compile Include="Services\Slack\ApiResponses\UserInfoApiResponse.cs" />
+    <Compile Include="Services\Slack\DTOs\ChannelDto.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandBuilder.cs" />
     <Compile Include="Commands\CommandDescription.cs" />
@@ -66,23 +66,20 @@
     <Compile Include="Conversations\IConversationManager.cs" />
     <Compile Include="Core\IMessageProcessors.cs" />
     <Compile Include="Conversations\Topics\OctopusCreateReleaseTopic.cs" />
-    <Compile Include="Core\ITime.cs" />
     <Compile Include="Core\ProcessMessageResult.cs" />
     <Compile Include="Core\Time.cs" />
-    <Compile Include="Tenants\ITenant.cs" />
-    <Compile Include="Clients\IWebSocketClient.cs" />
-    <Compile Include="Clients\RestClient.cs" />
+    <Compile Include="Core\RestClient.cs" />
     <Compile Include="Tenants\SlackTenant.cs" />
-    <Compile Include="Clients\Slack\ApiResponses\ApiResponse.cs" />
-    <Compile Include="Clients\Slack\ApiResponses\RtmStartApiResponse.cs" />
-    <Compile Include="Clients\Slack\DTOs\UserDto.cs" />
+    <Compile Include="Services\Slack\ApiResponses\ApiResponse.cs" />
+    <Compile Include="Services\Slack\ApiResponses\RtmStartApiResponse.cs" />
+    <Compile Include="Services\Slack\DTOs\UserDto.cs" />
     <Compile Include="Tenants\Slack\RtmRequests\PingRtmRequest.cs" />
     <Compile Include="Tenants\Slack\RtmRequests\RtmRequest.cs" />
     <Compile Include="Tenants\Slack\RtmResponses\PongRtmResponse.cs" />
     <Compile Include="Tenants\Slack\RtmResponses\HelloRtmResponse.cs" />
     <Compile Include="Tenants\Slack\RtmResponses\MessageRtmResponse.cs" />
     <Compile Include="Tenants\Slack\RtmResponses\RtmResponse.cs" />
-    <Compile Include="Clients\WebSocketClient.cs" />
+    <Compile Include="Core\WebSocketClient.cs" />
     <Compile Include="Commands\CommandManager.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandManager.cs" />
