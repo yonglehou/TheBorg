@@ -158,7 +158,7 @@ namespace TheBorg.Tenants
             var user = await _slackService.GetUserAsync(messageRtmResponse.User, CancellationToken.None).ConfigureAwait(false);
             var sender = new Address(
                 user,
-                new Channel(messageRtmResponse.Channel),
+                new TenantChannel(messageRtmResponse.Channel),
                 Tenant);
 
             _messages.OnNext(new TenantMessage(

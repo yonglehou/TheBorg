@@ -24,10 +24,20 @@
 
 namespace TheBorg.Interface.ValueObjects
 {
-    public class Channel : SingleValueObject<string>
+    public class TenantUser : ValueObject
     {
-        public Channel(string value) : base(value)
+        public TenantUser(
+            string name,
+            string id,
+            Tenant tenant)
         {
+            Name = name;
+            Id = id;
+            Tenant = tenant;
         }
+
+        public string Name { get; }
+        public string Id { get; }
+        public Tenant Tenant { get; }
     }
 }

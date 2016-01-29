@@ -39,7 +39,7 @@ namespace TheBorg.Services
     {
         private readonly ILogger _logger;
         private readonly IRestClient _restClient;
-        private readonly ConcurrentDictionary<string, Task<User>> _userCache = new ConcurrentDictionary<string, Task<User>>();
+        private readonly ConcurrentDictionary<string, Task<TenantUser>> _userCache = new ConcurrentDictionary<string, Task<TenantUser>>();
         private static readonly Tenant Tenant = new Tenant("slack");
 
         public SlackService(
@@ -50,23 +50,23 @@ namespace TheBorg.Services
             _restClient = restClient;
         }
 
-        public Task<User> GetUserAsync(string userId, CancellationToken cancellationToken)
+        public Task<TenantUser> GetUserAsync(string userId, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(userId)) return Task.FromResult(null as User);
+            if (string.IsNullOrEmpty(userId)) return Task.FromResult(null as TenantUser);
 
             return _userCache.GetOrAdd(
                 userId,
                 id => InternalGetUserAsync(id, cancellationToken));
         }
 
-        private async Task<User> InternalGetUserAsync(string userId, CancellationToken cancellationToken)
+        private async Task<TenantUser> InternalGetUserAsync(string userId, CancellationToken cancellationToken)
         {
             var userInfoApiResponse = await CallApiAsync<UserInfoApiResponse>(
                 "users.info",
                 cancellationToken,
                 new KeyValuePair<string, string>("user", userId))
                 .ConfigureAwait(false);
-            return new User(userInfoApiResponse.User.Name, userInfoApiResponse.User.Id, Tenant);
+            return new TenantUser(userInfoApiResponse.User.Name, userInfoApiResponse.User.Id, Tenant);
         }
 
         public Task<ApiResponse> SendMessageAsync(

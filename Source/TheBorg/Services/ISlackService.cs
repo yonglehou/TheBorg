@@ -32,7 +32,7 @@ namespace TheBorg.Services
 {
     public interface ISlackService
     {
-        Task<User> GetUserAsync(
+        Task<TenantUser> GetUserAsync(
             string userId,
             CancellationToken cancellationToken);
 

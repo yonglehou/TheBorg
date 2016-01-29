@@ -27,17 +27,17 @@ namespace TheBorg.Interface.ValueObjects
     public class Address : ValueObject
     {
         public Address(
-            User user,
-            Channel channel,
+            TenantUser tenantUser,
+            TenantChannel tenantChannel,
             Tenant tenant)
         {
-            User = user;
-            Channel = channel;
+            TenantUser = tenantUser;
+            TenantChannel = tenantChannel;
             Tenant = tenant;
         }
 
-        public User User { get; }
-        public Channel Channel { get; }
+        public TenantUser TenantUser { get; }
+        public TenantChannel TenantChannel { get; }
         public Tenant Tenant { get; }
     }
 }
