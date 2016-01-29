@@ -41,6 +41,7 @@ namespace TheBorg.Conversations
     {
         private readonly ITime _time;
         private readonly ILogger _logger;
+        private readonly IJsonSerializer _jsonSerializer;
         private readonly ICommandBuilder _commandBuilder;
         private readonly ConcurrentDictionary<Address, ActiveConversation> _activeConversations = new ConcurrentDictionary<Address, ActiveConversation>();
         private readonly IReadOnlyDictionary<Regex, IConversationTopic> _conversationTopics;
@@ -56,11 +57,13 @@ namespace TheBorg.Conversations
         public ConversationManager(
             ITime time,
             ILogger logger,
+            IJsonSerializer jsonSerializer,
             ICommandBuilder commandBuilder,
             IEnumerable<IConversationTopic> conversationTopics)
         {
             _time = time;
             _logger = logger;
+            _jsonSerializer = jsonSerializer;
             _commandBuilder = commandBuilder;
             _conversationTopics = CreateTopicIndex(conversationTopics);
         }
@@ -93,6 +96,7 @@ namespace TheBorg.Conversations
                     activeConversation = new ActiveConversation(
                         tenantMessage.Sender,
                         _time,
+                        _jsonSerializer,
                         kv.Value,
                         _commandBuilder);
                     if (!_activeConversations.TryAdd(activeConversation.Recipient, activeConversation))

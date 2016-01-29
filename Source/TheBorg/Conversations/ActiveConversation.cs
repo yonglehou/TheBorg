@@ -38,19 +38,22 @@ namespace TheBorg.Conversations
 {
     public class ActiveConversation : IActiveConversation
     {
+        private readonly IJsonSerializer _jsonSerializer;
         private readonly IConversationTopic _conversationTopic;
-        private readonly ConcurrentDictionary<string, object> _keyValueStore = new ConcurrentDictionary<string, object>();
+        private readonly ConcurrentDictionary<string, string> _keyValueStore = new ConcurrentDictionary<string, string>();
         private readonly IReadOnlyCollection<ICommand> _commands;
 
         public ActiveConversation(
             Address recipient,
             ITime time,
+            IJsonSerializer jsonSerializer,
             IConversationTopic conversationTopic,
             ICommandBuilder commandBuilder)
         {
             Recipient = recipient;
             Started = time.Now;
 
+            _jsonSerializer = jsonSerializer;
             _conversationTopic = conversationTopic;
 
             _commands = commandBuilder.BuildCommands(new[] {conversationTopic});
@@ -60,21 +63,22 @@ namespace TheBorg.Conversations
         public Address Recipient { get; }
         public bool TryGet<T>(string key, out T value)
         {
-            object obj;
+            string json;
 
-            if (!_keyValueStore.TryGetValue(key, out obj))
+            if (!_keyValueStore.TryGetValue(key, out json))
             {
                 value = default(T);
                 return false;
             }
 
-            value = (T) obj;
+            value = _jsonSerializer.Deserialize<T>(json, JsonFormat.PascalCase);
             return true;
         }
 
         public bool TrySet<T>(string key, T value)
         {
-            return _keyValueStore.TryAdd(key, value);
+            var json = _jsonSerializer.Serialize(value, JsonFormat.PascalCase);
+            return _keyValueStore.TryAdd(key, json);
         }
 
         public Task EndAsync(CancellationToken cancellationToken)

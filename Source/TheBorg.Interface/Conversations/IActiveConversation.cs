@@ -33,6 +33,10 @@ namespace TheBorg.Interface.Conversations
         Address Recipient { get; }
 
         bool TryGet<T>(string key, out T value);
+
+        /// <summary>
+        ///     Value is serialized to JSON when stored
+        /// </summary>
         bool TrySet<T>(string key, T value);
     }
 }
