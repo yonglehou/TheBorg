@@ -41,6 +41,8 @@ namespace TheBorg
 
         protected override void Load(ContainerBuilder builder)
         {
+            Serilog.Debugging.SelfLog.Out = Console.Out;
+
             var logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.ColoredConsole()

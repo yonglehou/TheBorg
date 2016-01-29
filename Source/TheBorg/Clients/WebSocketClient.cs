@@ -67,7 +67,7 @@ namespace TheBorg.Clients
         {
             try
             {
-                ListenAsync().Wait();
+                ListenAsync().GetAwaiter().GetResult();
             }
             catch (OperationCanceledException) { }
             catch (Exception e)

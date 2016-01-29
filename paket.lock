@@ -20,6 +20,15 @@ NUGET
     Serilog (1.5.14)
     Topshelf (3.3.1)
 
+GROUP Build
+REDIRECTS: OFF
+NUGET
+  remote: https://www.nuget.org/api/v2
+  specs:
+    FAKE (4.14.5)
+    ilmerge (2.14.1208)
+    NUnit.Runners (2.6.4)
+
 GROUP Test
 NUGET
   remote: https://www.nuget.org/api/v2
