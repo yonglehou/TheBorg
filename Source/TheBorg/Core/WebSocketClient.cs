@@ -72,7 +72,7 @@ namespace TheBorg.Core
             catch (OperationCanceledException) { }
             catch (Exception e)
             {
-                //_messages.OnError(e);
+                _messages.OnError(e);
                 _logger.Error(e, "Web socket failed");
             }
 

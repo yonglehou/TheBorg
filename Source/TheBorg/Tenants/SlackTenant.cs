@@ -69,7 +69,7 @@ namespace TheBorg.Tenants
             _slackService = slackService;
             _webSocketClient = webSocketClient;
 
-            _disposables.Add(_webSocketClient.Messages.Subscribe(Received));
+            _disposables.Add(_webSocketClient.Messages.Subscribe(Received, Error, Completed));
         }
 
         public async Task ConnectAsync(CancellationToken cancellationToken)
@@ -124,6 +124,21 @@ namespace TheBorg.Tenants
             {
                 _logger.Error(e, $"Failed to process received message JSON: {json}");
             }
+        }
+
+        private void Error(Exception e)
+        {
+            _logger.Error(e, "Slack client encountered an error");
+        }
+
+        private async void Completed()
+        {
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                return;
+            }
+
+            await ConnectAsync(_cancellationTokenSource.Token).ConfigureAwait(false);
         }
 
         private async Task ReceivedMessage(MessageRtmResponse messageRtmResponse)
