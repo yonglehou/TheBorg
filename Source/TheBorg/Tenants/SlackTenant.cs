@@ -69,7 +69,7 @@ namespace TheBorg.Tenants
             _slackService = slackService;
             _webSocketClient = webSocketClient;
 
-            _disposables.Add(_webSocketClient.Messages.Subscribe(Received, Error, Completed));
+            _disposables.Add(_webSocketClient.Messages.Subscribe(Received, Error));
         }
 
         public async Task ConnectAsync(CancellationToken cancellationToken)
@@ -126,17 +126,14 @@ namespace TheBorg.Tenants
             }
         }
 
-        private void Error(Exception e)
-        {
-            _logger.Error(e, "Slack client encountered an error");
-        }
-
-        private async void Completed()
+        private async void Error(Exception e)
         {
             if (_cancellationTokenSource.IsCancellationRequested)
             {
                 return;
             }
+
+            _logger.Information("Slack tenant disconnected, reconnecting...");
 
             await ConnectAsync(_cancellationTokenSource.Token).ConfigureAwait(false);
         }
