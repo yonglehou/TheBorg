@@ -25,7 +25,7 @@
 using System;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Interface.Conversations
+namespace TheBorg.Conversations
 {
     public interface IActiveConversation
     {

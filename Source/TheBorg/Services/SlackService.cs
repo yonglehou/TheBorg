@@ -29,7 +29,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using TheBorg.Interface.Core;
+using TheBorg.Core;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Services.Slack.ApiResponses;
 

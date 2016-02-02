@@ -26,7 +26,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TheBorg.Interface.Core
+namespace TheBorg.Core
 {
     public interface IWebSocketClient
     {

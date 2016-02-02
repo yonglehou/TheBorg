@@ -25,18 +25,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using Halibut;
 using TheBorg.Commands;
 using TheBorg.Conversations;
 using TheBorg.Core;
-using TheBorg.Extensions;
-using TheBorg.Interface.Tenants;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Plugins;
-using TheBorg.Plugins.Dummy;
+using TheBorg.Tenants;
 
 namespace TheBorg
 {
@@ -44,29 +39,20 @@ namespace TheBorg
     {
         private readonly ICommandManager _commandManager;
         private readonly IConversationManager _conversationManager;
-        private readonly IPluginService _pluginService;
         private readonly IReadOnlyCollection<ITenant> _tenants;
 
         public Collective(
             ICommandManager commandManager,
             IConversationManager conversationManager,
-            IEnumerable<ITenant> tenants,
-            IPluginService pluginService)
+            IEnumerable<ITenant> tenants)
         {
             _commandManager = commandManager;
             _conversationManager = conversationManager;
-            _pluginService = pluginService;
             _tenants = tenants.ToList();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var pluginPath = typeof(Plugin).Assembly.GetCodeBase();
-
-            await _pluginService.LoadPluginAsync(pluginPath).ConfigureAwait(false);
-
-            Thread.Sleep(100000);
-
             var disposables = await Task.WhenAll(_tenants.Select(async t =>
                 {
                     await t.ConnectAsync(cancellationToken).ConfigureAwait(false);

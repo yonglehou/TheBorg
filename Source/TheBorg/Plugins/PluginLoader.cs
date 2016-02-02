@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -38,7 +39,7 @@ using TheBorg.Interface;
 
 namespace TheBorg.Plugins
 {
-    public class PluginService : IPluginService
+    public class PluginLoader : IPluginLoader
     {
         private readonly ILogger _logger;
         private readonly IPluginHost _pluginHost;
@@ -48,7 +49,7 @@ namespace TheBorg.Plugins
         private readonly HalibutRuntime _halibutRuntimeServer;
         private readonly int _tcpPort = TcpHelper.GetFreePort();
 
-        public PluginService(
+        public PluginLoader(
             ILogger logger,
             IPluginHost pluginHost)
         {
@@ -64,6 +65,7 @@ namespace TheBorg.Plugins
         {
             if (!File.Exists(dllPath)) throw new ArgumentException($"Plugin '{dllPath}' does not exist");
 
+            var stopWatch = Stopwatch.StartNew();
             var appDomainSetup = new AppDomainSetup
                 {
                     ShadowCopyFiles = "true",
@@ -100,14 +102,10 @@ namespace TheBorg.Plugins
             var halibutRuntime = new HalibutRuntime(_serverCertifiate);
             var plugin = halibutRuntime.CreateClient<IPlugin>($"https://127.0.0.1:{clientPort}", clientThumbprint);
 
-            try
-            {
-                plugin.Ping();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            plugin.Ping();
+
+            stopWatch.Stop();
+            _logger.Debug($"Loaded plugin '{friendlyName}' in {stopWatch.Elapsed.TotalSeconds:0.00} seconds");
 
             return Task.FromResult<IPluginProxy>(new PluginProxy(plugin, halibutRuntime, appDomain));
         }

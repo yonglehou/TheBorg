@@ -24,7 +24,7 @@
 
 using System;
 
-namespace TheBorg.Interface.Conversations
+namespace TheBorg.Conversations
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class ConversationTopicAttribute : Attribute

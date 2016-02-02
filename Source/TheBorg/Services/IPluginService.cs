@@ -22,18 +22,13 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Tenants
+namespace TheBorg.Services
 {
-    public interface ITenant
+    public interface IPluginService
     {
-        IObservable<TenantMessage> Messages { get; }
-
-        Task ConnectAsync(CancellationToken cancellationToken);
-        Task DisconnectAsync(CancellationToken cancellationToken);
+        Task LoadPluginAsync(string name);
+        Task UnloadPluginAsync(string name);
     }
 }

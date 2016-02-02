@@ -25,8 +25,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Interface.Commands;
-using TheBorg.Interface.Core;
+using TheBorg.Core;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Commands.CommandSets

@@ -59,7 +59,6 @@ namespace TheBorg.Host
             var pluginType = assembly.GetTypes().Single(t => typeof (IPlugin).IsAssignableFrom(t));
             var plugin = (IPlugin) Activator.CreateInstance(pluginType);
 
-
             plugin.Launch(this);
 
             var delegateServiceFactory = new DelegateServiceFactory();

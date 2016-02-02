@@ -24,7 +24,6 @@
 
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using TheBorg.Interface.Core;
 
 namespace TheBorg.Core
 {

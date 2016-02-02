@@ -29,6 +29,7 @@ using Serilog;
 using TheBorg.Commands;
 using TheBorg.Conversations;
 using TheBorg.Plugins;
+using TheBorg.Services;
 
 namespace TheBorg
 {
@@ -39,6 +40,12 @@ namespace TheBorg
                 typeof(Command),
                 typeof(ActiveConversation),
                 typeof(PluginProxy),
+                typeof(PluginService)
+            };
+
+        private static readonly IReadOnlyCollection<Type> Singletons = new[]
+            {
+                typeof(PluginService),
             }; 
 
         protected override void Load(ContainerBuilder builder)
@@ -55,6 +62,11 @@ namespace TheBorg
                 .RegisterAssemblyTypes(typeof (TheBorgModule).Assembly)
                 .Where(t => !TypesNotRegisteredByConvention.Contains(t))
                 .AsImplementedInterfaces();
+
+            foreach (var singleton in Singletons)
+            {
+                builder.RegisterType(singleton).AsImplementedInterfaces().SingleInstance();
+            }
         }
     }
 }

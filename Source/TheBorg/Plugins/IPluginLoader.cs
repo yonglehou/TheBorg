@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 
 namespace TheBorg.Plugins
 {
-    public interface IPluginService
+    public interface IPluginLoader
     {
         Task<IPluginProxy> LoadPluginAsync(string dllPath);
     }

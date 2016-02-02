@@ -31,8 +31,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using TheBorg.Core;
-using TheBorg.Interface.Core;
-using TheBorg.Interface.Tenants;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Services;
 using TheBorg.Services.Slack.ApiResponses;

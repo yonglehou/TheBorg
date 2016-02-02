@@ -25,10 +25,11 @@
 using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Interface.Services
+namespace TheBorg.Services
 {
     public interface IMessageService
     {
         Task ReplyAsync(TenantMessage tenantMessage, string text);
+        Task SendAsync(Address address, string text);
     }
 }

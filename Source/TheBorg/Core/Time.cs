@@ -23,7 +23,6 @@
 //
 
 using System;
-using TheBorg.Interface.Core;
 
 namespace TheBorg.Core
 {

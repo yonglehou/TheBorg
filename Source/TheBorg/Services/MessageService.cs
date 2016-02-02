@@ -22,17 +22,30 @@
 // SOFTWARE.
 //
 
+using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Interface.Services;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Services
 {
     public class MessageService : IMessageService
     {
-        public async Task ReplyAsync(TenantMessage tenantMessage, string text)
+        private readonly ISlackService _slackService;
+
+        public MessageService(
+            ISlackService slackService)
         {
-            await Task.Delay(10000).ConfigureAwait(false);
+            _slackService = slackService;
+        }
+
+        public Task ReplyAsync(TenantMessage tenantMessage, string text)
+        {
+            return SendAsync(tenantMessage.Sender, text);
+        }
+
+        public Task SendAsync(Address address, string text)
+        {
+            return _slackService.SendMessageAsync(address.TenantChannel.Value, text, CancellationToken.None);
         }
     }
 }

@@ -25,17 +25,21 @@
 using Serilog;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Services;
 
 namespace TheBorg.Plugins
 {
     public class PluginHostServer : IPluginHost
     {
         private readonly ILogger _logger;
+        private readonly IMessageService _messageService;
 
         public PluginHostServer(
-            ILogger logger)
+            ILogger logger,
+            IMessageService messageService)
         {
             _logger = logger;
+            _messageService = messageService;
         }
 
         public void Log(LogMessage logMessage)
@@ -43,12 +47,14 @@ namespace TheBorg.Plugins
             _logger.Debug(logMessage.Text);
         }
 
-        public void Send(Address address, string text)
+        public async void Send(Address address, string text)
         {
+            await _messageService.SendAsync(address, text).ConfigureAwait(false);
         }
 
-        public void Reply(TenantMessage tenantMessage, string text)
+        public async void Reply(TenantMessage tenantMessage, string text)
         {
+            await _messageService.ReplyAsync(tenantMessage, text).ConfigureAwait(false);
         }
     }
 }

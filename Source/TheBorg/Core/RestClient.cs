@@ -33,7 +33,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using Serilog;
-using TheBorg.Interface.Core;
 
 namespace TheBorg.Core
 {

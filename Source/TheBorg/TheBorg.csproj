@@ -49,6 +49,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Commands\CommandAttribute.cs" />
+    <Compile Include="Commands\CommandSets\PluginCommandSet.cs" />
     <Compile Include="Commands\ICommandSet.cs" />
     <Compile Include="Conversations\ConversationTopicAttribute.cs" />
     <Compile Include="Conversations\IActiveConversation.cs" />
@@ -62,13 +63,15 @@
     <Compile Include="Core\TcpHelper.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Plugins\IPluginProxy.cs" />
-    <Compile Include="Plugins\IPluginService.cs" />
+    <Compile Include="Plugins\IPluginLoader.cs" />
     <Compile Include="Plugins\PluginHostServer.cs" />
     <Compile Include="Plugins\PluginProxy.cs" />
-    <Compile Include="Plugins\PluginService.cs" />
+    <Compile Include="Plugins\PluginLoader.cs" />
     <Compile Include="Services\IMessageService.cs" />
+    <Compile Include="Services\IPluginService.cs" />
     <Compile Include="Services\ISlackService.cs" />
     <Compile Include="Services\MessageService.cs" />
+    <Compile Include="Services\PluginService.cs" />
     <Compile Include="Services\SlackService.cs" />
     <Compile Include="Services\Slack\ApiResponses\UserInfoApiResponse.cs" />
     <Compile Include="Services\Slack\DTOs\ChannelDto.cs" />

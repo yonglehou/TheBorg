@@ -24,7 +24,7 @@
 
 using System;
 
-namespace TheBorg.Interface.Core
+namespace TheBorg.Core
 {
     public interface ITime
     {

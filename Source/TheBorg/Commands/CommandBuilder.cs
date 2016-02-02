@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Serilog;
-using TheBorg.Interface.Commands;
 
 namespace TheBorg.Commands
 {

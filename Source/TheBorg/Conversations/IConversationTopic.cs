@@ -24,10 +24,10 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Interface.Commands;
+using TheBorg.Commands;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Interface.Conversations
+namespace TheBorg.Conversations
 {
     public interface IConversationTopic : ICommandSet
     {
