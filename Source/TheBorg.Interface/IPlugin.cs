@@ -23,38 +23,12 @@
 //
 
 using System;
-using System.Collections.Generic;
-using Autofac;
-using Serilog;
-using TheBorg.Commands;
-using TheBorg.Conversations;
-using TheBorg.Plugins;
+using System.Threading.Tasks;
 
-namespace TheBorg
+namespace TheBorg.Interface
 {
-    public class TheBorgModule : Module
+    public interface IPlugin : IDisposable
     {
-        private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
-            {
-                typeof(Command),
-                typeof(ActiveConversation),
-                typeof(PluginProxy)
-            }; 
-
-        protected override void Load(ContainerBuilder builder)
-        {
-            Serilog.Debugging.SelfLog.Out = Console.Out;
-
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-
-            builder.RegisterInstance(logger);
-            builder
-                .RegisterAssemblyTypes(typeof (TheBorgModule).Assembly)
-                .Where(t => !TypesNotRegisteredByConvention.Contains(t))
-                .AsImplementedInterfaces();
-        }
+        Task LaunchAsync();
     }
 }

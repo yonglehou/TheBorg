@@ -23,38 +23,27 @@
 //
 
 using System;
-using System.Collections.Generic;
-using Autofac;
-using Serilog;
-using TheBorg.Commands;
-using TheBorg.Conversations;
-using TheBorg.Plugins;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
-namespace TheBorg
+namespace TheBorg.Interface
 {
-    public class TheBorgModule : Module
+    public class PluginHost : MarshalByRefObject
     {
-        private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
-            {
-                typeof(Command),
-                typeof(ActiveConversation),
-                typeof(PluginProxy)
-            }; 
-
-        protected override void Load(ContainerBuilder builder)
+        public void Launch(string pluginPath, AppDomain appDomain)
         {
-            Serilog.Debugging.SelfLog.Out = Console.Out;
-
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-
-            builder.RegisterInstance(logger);
-            builder
-                .RegisterAssemblyTypes(typeof (TheBorgModule).Assembly)
-                .Where(t => !TypesNotRegisteredByConvention.Contains(t))
-                .AsImplementedInterfaces();
+            var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
+            var pluginDirectory = Path.GetDirectoryName(pluginPath);
+            appDomain.AssemblyResolve += (sender, args) =>
+                {
+                    var ad = sender as AppDomain;
+                    var path = Path.Combine(pluginDirectory, args.Name.Split(',')[0] + ".dll");
+                    return ad.Load(path);
+                };
+            var pluginType = assembly.GetTypes().Single(t => typeof (IPlugin).IsAssignableFrom(t));
+            var plugin = (IPlugin) Activator.CreateInstance(pluginType);
+            plugin.LaunchAsync().Wait();
         }
     }
 }

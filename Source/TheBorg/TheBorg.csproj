@@ -49,6 +49,11 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Core\JsonSerializer.cs" />
+    <Compile Include="Extensions\AssemblyExtensions.cs" />
+    <Compile Include="Plugins\IPluginProxy.cs" />
+    <Compile Include="Plugins\IPluginService.cs" />
+    <Compile Include="Plugins\PluginProxy.cs" />
+    <Compile Include="Plugins\PluginService.cs" />
     <Compile Include="Services\ISlackService.cs" />
     <Compile Include="Services\SlackService.cs" />
     <Compile Include="Services\Slack\ApiResponses\UserInfoApiResponse.cs" />
@@ -98,6 +103,14 @@
     <ProjectReference Include="..\TheBorg.Interface\TheBorg.Interface.csproj">
       <Project>{e1dcf0b9-ccf4-42e1-b39c-2191cc7c378b}</Project>
       <Name>TheBorg.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Plugins.Dummy\TheBorg.Plugins.Dummy.csproj">
+      <Project>{8fbdcf89-381b-4a25-9b23-0e4c5557fbc2}</Project>
+      <Name>TheBorg.Plugins.Dummy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Plugins\TheBorg.Plugins.csproj">
+      <Project>{6037d1b8-0a18-43e6-90ba-f64320791170}</Project>
+      <Name>TheBorg.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

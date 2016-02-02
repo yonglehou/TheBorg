@@ -30,8 +30,11 @@ using System.Threading.Tasks;
 using TheBorg.Commands;
 using TheBorg.Conversations;
 using TheBorg.Core;
+using TheBorg.Extensions;
 using TheBorg.Interface.Tenants;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Plugins;
+using TheBorg.Plugins.Dummy;
 
 namespace TheBorg
 {
@@ -39,15 +42,18 @@ namespace TheBorg
     {
         private readonly ICommandManager _commandManager;
         private readonly IConversationManager _conversationManager;
+        private readonly IPluginService _pluginService;
         private readonly IReadOnlyCollection<ITenant> _tenants;
 
         public Collective(
             ICommandManager commandManager,
             IConversationManager conversationManager,
-            IEnumerable<ITenant> tenants)
+            IEnumerable<ITenant> tenants,
+            IPluginService pluginService)
         {
             _commandManager = commandManager;
             _conversationManager = conversationManager;
+            _pluginService = pluginService;
             _tenants = tenants.ToList();
         }
 

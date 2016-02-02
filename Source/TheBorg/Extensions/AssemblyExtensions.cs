@@ -23,38 +23,18 @@
 //
 
 using System;
-using System.Collections.Generic;
-using Autofac;
-using Serilog;
-using TheBorg.Commands;
-using TheBorg.Conversations;
-using TheBorg.Plugins;
+using System.IO;
+using System.Reflection;
 
-namespace TheBorg
+namespace TheBorg.Extensions
 {
-    public class TheBorgModule : Module
+    public static class AssemblyExtensions
     {
-        private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
-            {
-                typeof(Command),
-                typeof(ActiveConversation),
-                typeof(PluginProxy)
-            }; 
-
-        protected override void Load(ContainerBuilder builder)
+        public static string GetCodeBase(this Assembly assembly)
         {
-            Serilog.Debugging.SelfLog.Out = Console.Out;
-
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-
-            builder.RegisterInstance(logger);
-            builder
-                .RegisterAssemblyTypes(typeof (TheBorgModule).Assembly)
-                .Where(t => !TypesNotRegisteredByConvention.Contains(t))
-                .AsImplementedInterfaces();
+            var codebase = assembly.GetName().CodeBase;
+            var uri = new UriBuilder(codebase);
+            return Path.GetFullPath(Uri.UnescapeDataString(uri.Path));
         }
     }
 }
