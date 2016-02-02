@@ -22,10 +22,17 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface
+using System.Threading.Tasks;
+using TheBorg.Interface.Services;
+using TheBorg.Interface.ValueObjects;
+
+namespace TheBorg.Services
 {
-    public interface IPlugin
+    public class MessageService : IMessageService
     {
-        void Launch(IPluginHost pluginHost);
+        public async Task ReplyAsync(TenantMessage tenantMessage, string text)
+        {
+            await Task.Delay(10000).ConfigureAwait(false);
+        }
     }
 }

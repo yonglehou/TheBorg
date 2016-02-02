@@ -13,6 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Plugins", "Source\T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Plugins.Dummy", "Source\TheBorg.Plugins.Dummy\TheBorg.Plugins.Dummy.csproj", "{8FBDCF89-381B-4A25-9B23-0E4C5557FBC2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Host", "Source\TheBorg.Host\TheBorg.Host.csproj", "{D2645D5A-CB41-4A08-AB0F-3EB297A62148}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{510ED3E3-28DB-4DCB-BC76-EC1CAFA6D7EA}"
+	ProjectSection(SolutionItems) = preProject
+		paket.dependencies = paket.dependencies
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +46,10 @@ Global
 		{8FBDCF89-381B-4A25-9B23-0E4C5557FBC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FBDCF89-381B-4A25-9B23-0E4C5557FBC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FBDCF89-381B-4A25-9B23-0E4C5557FBC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2645D5A-CB41-4A08-AB0F-3EB297A62148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2645D5A-CB41-4A08-AB0F-3EB297A62148}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2645D5A-CB41-4A08-AB0F-3EB297A62148}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2645D5A-CB41-4A08-AB0F-3EB297A62148}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

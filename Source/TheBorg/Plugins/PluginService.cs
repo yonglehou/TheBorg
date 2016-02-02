@@ -25,10 +25,13 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using Halibut.ServiceModel;
 using Serilog;
-using TheBorg.Interface;
+using TheBorg.Core;
+using TheBorg.Host;
 
 namespace TheBorg.Plugins
 {
@@ -36,11 +39,15 @@ namespace TheBorg.Plugins
     {
         private readonly ILogger _logger;
         private readonly AppDomainManager _appDomainManager = new AppDomainManager();
+        private readonly X509Certificate2 _serverCertifiate = CertificateGenerator.CreateSelfSignCertificate();
+        private readonly DelegateServiceFactory _delegateServiceFactory = new DelegateServiceFactory();
 
         public PluginService(
             ILogger logger)
         {
             _logger = logger;
+
+            _delegateServiceFactory.Register();
         }
 
         public Task<IPluginProxy> LoadPluginAsync(string dllPath)
@@ -60,13 +67,15 @@ namespace TheBorg.Plugins
 
             var friendlyName = Path.GetFileName(dllPath);
             var appDomain = _appDomainManager.CreateDomain(friendlyName, null, appDomainSetup);
+            var bytes = CertificateGenerator.CreateSelfSignCertificatePfx(DateTime.MinValue, DateTime.MaxValue);
+            var clientThumbprint = new X509Certificate2(bytes).Thumbprint;
 
             var pluginHost = appDomain.CreateInstanceAndUnwrap(Assembly.GetAssembly(typeof(PluginHost)).FullName, typeof(PluginHost).ToString()) as PluginHost;
             ThreadPool.QueueUserWorkItem(_ =>
                 {
                     try
                     {
-                        pluginHost.Launch(dllPath, appDomain);
+                        pluginHost.Launch(dllPath, appDomain, bytes, _serverCertifiate.Thumbprint, 0);
                     }
                     catch (Exception e)
                     {

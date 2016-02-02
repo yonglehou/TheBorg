@@ -1,6 +1,7 @@
 source https://www.nuget.org/api/v2
 
 nuget Autofac 3.5.2
+nuget Halibut 2.2.0.53
 nuget Newtonsoft.Json 8.0.2
 nuget Rx-Main 2.2.5
 nuget Serilog 1.5.14

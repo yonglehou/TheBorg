@@ -43,20 +43,11 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Commands\CommandAttribute.cs" />
-    <Compile Include="Commands\ICommandSet.cs" />
-    <Compile Include="Conversations\ConversationTopicAttribute.cs" />
-    <Compile Include="Conversations\IActiveConversation.cs" />
-    <Compile Include="Conversations\IConversationTopic.cs" />
-    <Compile Include="Core\IJsonSerializer.cs" />
-    <Compile Include="Core\IRestClient.cs" />
-    <Compile Include="Core\IWebSocketClient.cs" />
     <Compile Include="IPlugin.cs" />
-    <Compile Include="PluginHost.cs" />
+    <Compile Include="IPluginHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\ITime.cs" />
-    <Compile Include="Tenants\ITenant.cs" />
     <Compile Include="ValueObjects\Address.cs" />
+    <Compile Include="ValueObjects\Log.cs" />
     <Compile Include="ValueObjects\TenantChannel.cs" />
     <Compile Include="ValueObjects\SingleValueObject.cs" />
     <Compile Include="ValueObjects\Tenant.cs" />
@@ -64,7 +55,6 @@
     <Compile Include="ValueObjects\TenantUser.cs" />
     <Compile Include="ValueObjects\ValueObject.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

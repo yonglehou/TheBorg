@@ -22,10 +22,30 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface
+namespace TheBorg.Interface.ValueObjects
 {
-    public interface IPlugin
+    public enum LogLevel
     {
-        void Launch(IPluginHost pluginHost);
+        Verbose,
+        Debug,
+        Warning,
+        Error,
+        Fatal
+    }
+
+    public class Log : ValueObject
+    {
+        public static Log With(LogLevel level, string message) { return new Log(level, message); }
+
+        public Log(
+            LogLevel level,
+            string message)
+        {
+            Level = level;
+            Message = message;
+        }
+
+        public LogLevel Level { get; }
+        public string Message { get; }
     }
 }

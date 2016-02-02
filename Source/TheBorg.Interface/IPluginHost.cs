@@ -22,28 +22,12 @@
 // SOFTWARE.
 //
 
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Interface
 {
-    public class PluginHost : MarshalByRefObject
+    public interface IPluginHost
     {
-        public void Launch(string pluginPath, AppDomain appDomain)
-        {
-            var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
-            var pluginDirectory = Path.GetDirectoryName(pluginPath);
-            appDomain.AssemblyResolve += (sender, args) =>
-                {
-                    var ad = sender as AppDomain;
-                    var path = Path.Combine(pluginDirectory, args.Name.Split(',')[0] + ".dll");
-                    return ad.Load(path);
-                };
-            var pluginType = assembly.GetTypes().Single(t => typeof (IPlugin).IsAssignableFrom(t));
-            var plugin = (IPlugin) Activator.CreateInstance(pluginType);
-            plugin.LaunchAsync().Wait();
-        }
+        void Log(Log log);
     }
 }

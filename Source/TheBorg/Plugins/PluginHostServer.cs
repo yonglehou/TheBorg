@@ -22,10 +22,15 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface
+using TheBorg.Interface;
+using TheBorg.Interface.ValueObjects;
+
+namespace TheBorg.Plugins
 {
-    public interface IPlugin
+    public class PluginHostServer : IPluginHost
     {
-        void Launch(IPluginHost pluginHost);
+        public void Log(Log log)
+        {
+        }
     }
 }

@@ -22,20 +22,17 @@
 // SOFTWARE.
 //
 
-using System.Threading.Tasks;
+using System.Threading;
 using TheBorg.Interface;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Plugins.Dummy
 {
     public class Plugin : IPlugin
     {
-        public void Dispose()
+        public void Launch(IPluginHost pluginHost)
         {
-        }
-
-        public Task LaunchAsync()
-        {
-            return Task.FromResult(0);
+            pluginHost.LogAsync(Log.With(LogLevel.Debug, ""), CancellationToken.None).Wait();
         }
     }
 }
