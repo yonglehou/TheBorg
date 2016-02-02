@@ -24,28 +24,19 @@
 
 namespace TheBorg.Interface.ValueObjects
 {
-    public enum LogLevel
+    public class LogMessage : ValueObject
     {
-        Verbose,
-        Debug,
-        Warning,
-        Error,
-        Fatal
-    }
+        public static LogMessage With(LogLevel level, string text) { return new LogMessage(level, text); }
 
-    public class Log : ValueObject
-    {
-        public static Log With(LogLevel level, string message) { return new Log(level, message); }
-
-        public Log(
+        public LogMessage(
             LogLevel level,
-            string message)
+            string text)
         {
             Level = level;
-            Message = message;
+            Text = text;
         }
 
         public LogLevel Level { get; }
-        public string Message { get; }
+        public string Text { get; }
     }
 }

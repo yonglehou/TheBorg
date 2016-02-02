@@ -24,7 +24,7 @@
 
 using Serilog;
 using TheBorg.Interface;
-using Log = TheBorg.Interface.ValueObjects.Log;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Plugins
 {
@@ -38,9 +38,17 @@ namespace TheBorg.Plugins
             _logger = logger;
         }
 
-        public void Log(Log log)
+        public void Log(LogMessage logMessage)
         {
-            _logger.Debug(log.Message);
+            _logger.Debug(logMessage.Text);
+        }
+
+        public void Send(Address address, string text)
+        {
+        }
+
+        public void Reply(TenantMessage tenantMessage, string text)
+        {
         }
     }
 }

@@ -28,6 +28,8 @@ namespace TheBorg.Interface
 {
     public interface IPluginHost
     {
-        void Log(Log log);
+        void Log(LogMessage logMessage);
+        void Send(Address address, string text);
+        void Reply(TenantMessage tenantMessage, string text);
     }
 }

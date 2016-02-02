@@ -22,7 +22,6 @@
 // SOFTWARE.
 //
 
-using System.Threading;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
 
@@ -35,12 +34,12 @@ namespace TheBorg.Plugins.Dummy
         public void Launch(IPluginHost pluginHost)
         {
             _pluginHost = pluginHost;
-            _pluginHost.Log(Log.With(LogLevel.Debug, "Hello"));
+            _pluginHost.Log(LogMessage.With(LogLevel.Debug, "Hello"));
         }
 
         public void Ping()
         {
-            _pluginHost.Log(Log.With(LogLevel.Debug, "Pong"));
+            _pluginHost.Log(LogMessage.With(LogLevel.Debug, "Pong"));
         }
     }
 }

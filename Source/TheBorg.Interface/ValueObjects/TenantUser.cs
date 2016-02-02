@@ -22,8 +22,11 @@
 // SOFTWARE.
 //
 
+using System;
+
 namespace TheBorg.Interface.ValueObjects
 {
+    [Serializable]
     public class TenantUser : ValueObject
     {
         public TenantUser(

@@ -43,6 +43,11 @@ namespace TheBorg.Host
 
         public void Launch(string pluginPath, AppDomain appDomain, byte[] x509CertificateBytes, string serverThumbprint, int serverPort, int clientPort)
         {
+            var x509Certificate2 = new X509Certificate2(x509CertificateBytes);
+            _halibutRuntimeClient = new HalibutRuntime(x509Certificate2);
+            _halibutRuntimeClient.Trust(serverThumbprint);
+            _pluginHost = _halibutRuntimeClient.CreateClient<IPluginHost>($"https://127.0.0.1:{serverPort}", serverThumbprint);
+
             var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
             var pluginDirectory = Path.GetDirectoryName(pluginPath);
             appDomain.AssemblyResolve += (sender, args) =>
@@ -54,10 +59,6 @@ namespace TheBorg.Host
             var pluginType = assembly.GetTypes().Single(t => typeof (IPlugin).IsAssignableFrom(t));
             var plugin = (IPlugin) Activator.CreateInstance(pluginType);
 
-            var x509Certificate2 = new X509Certificate2(x509CertificateBytes);
-            _halibutRuntimeClient = new HalibutRuntime(x509Certificate2);
-            _halibutRuntimeClient.Trust(serverThumbprint);
-            _pluginHost = _halibutRuntimeClient.CreateClient<IPluginHost>($"https://127.0.0.1:{serverPort}", serverThumbprint);
 
             plugin.Launch(this);
 
@@ -69,9 +70,19 @@ namespace TheBorg.Host
             _halibutRuntimeServer.Listen(new IPEndPoint(IPAddress.Loopback, clientPort));
         }
 
-        public void Log(Log log)
+        public void Log(LogMessage logMessage)
         {
-            _pluginHost.Log(log);
+            _pluginHost.Log(logMessage);
+        }
+
+        public void Send(Address address, string text)
+        {
+            _pluginHost.Send(address, text);
+        }
+
+        public void Reply(TenantMessage tenantMessage, string text)
+        {
+            _pluginHost.Reply(tenantMessage, text);
         }
     }
 }

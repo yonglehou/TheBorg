@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 
 namespace TheBorg.Interface.ValueObjects
 {
+    [Serializable]
     public class TenantMessage
     {
         private readonly Func<string, CancellationToken, Task> _reply;

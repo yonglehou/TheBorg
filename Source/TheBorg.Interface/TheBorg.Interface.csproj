@@ -47,7 +47,8 @@
     <Compile Include="IPluginHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueObjects\Address.cs" />
-    <Compile Include="ValueObjects\Log.cs" />
+    <Compile Include="ValueObjects\LogLevel.cs" />
+    <Compile Include="ValueObjects\LogMessage.cs" />
     <Compile Include="ValueObjects\TenantChannel.cs" />
     <Compile Include="ValueObjects\SingleValueObject.cs" />
     <Compile Include="ValueObjects\Tenant.cs" />

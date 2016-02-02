@@ -27,20 +27,12 @@ using System;
 namespace TheBorg.Interface.ValueObjects
 {
     [Serializable]
-    public class Address : ValueObject
+    public enum LogLevel
     {
-        public Address(
-            TenantUser tenantUser,
-            TenantChannel tenantChannel,
-            Tenant tenant)
-        {
-            TenantUser = tenantUser;
-            TenantChannel = tenantChannel;
-            Tenant = tenant;
-        }
-
-        public TenantUser TenantUser { get; }
-        public TenantChannel TenantChannel { get; }
-        public Tenant Tenant { get; }
+        Verbose,
+        Debug,
+        Warning,
+        Error,
+        Fatal
     }
 }
