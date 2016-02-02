@@ -25,6 +25,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Halibut;
@@ -36,10 +37,11 @@ namespace TheBorg.Host
 {
     public class PluginHostClient : MarshalByRefObject, IPluginHost
     {
-        private HalibutRuntime _halibutRuntime;
+        private HalibutRuntime _halibutRuntimeClient;
+        private HalibutRuntime _halibutRuntimeServer;
         private IPluginHost _pluginHost;
 
-        public void Launch(string pluginPath, AppDomain appDomain, byte[] x509CertificateBytes, string serverThumbprint, int serverPort)
+        public void Launch(string pluginPath, AppDomain appDomain, byte[] x509CertificateBytes, string serverThumbprint, int serverPort, int clientPort)
         {
             var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
             var pluginDirectory = Path.GetDirectoryName(pluginPath);
@@ -52,18 +54,24 @@ namespace TheBorg.Host
             var pluginType = assembly.GetTypes().Single(t => typeof (IPlugin).IsAssignableFrom(t));
             var plugin = (IPlugin) Activator.CreateInstance(pluginType);
 
+            var x509Certificate2 = new X509Certificate2(x509CertificateBytes);
+            _halibutRuntimeClient = new HalibutRuntime(x509Certificate2);
+            _halibutRuntimeClient.Trust(serverThumbprint);
+            _pluginHost = _halibutRuntimeClient.CreateClient<IPluginHost>($"https://127.0.0.1:{serverPort}", serverThumbprint);
+
+            plugin.Launch(this);
+
             var delegateServiceFactory = new DelegateServiceFactory();
             delegateServiceFactory.Register(() => plugin);
 
-            var x509Certificate2 = new X509Certificate2(x509CertificateBytes);
-            _halibutRuntime = new HalibutRuntime(delegateServiceFactory, x509Certificate2);
-            _halibutRuntime.Trust(serverThumbprint);
-
-            plugin.Launch(this);
+            _halibutRuntimeServer = new HalibutRuntime(delegateServiceFactory, x509Certificate2);
+            _halibutRuntimeServer.Trust(serverThumbprint);
+            _halibutRuntimeServer.Listen(new IPEndPoint(IPAddress.Loopback, clientPort));
         }
 
         public void Log(Log log)
         {
+            _pluginHost.Log(log);
         }
     }
 }

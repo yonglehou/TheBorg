@@ -24,30 +24,40 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using Halibut;
 using Halibut.ServiceModel;
 using Serilog;
 using TheBorg.Core;
 using TheBorg.Host;
+using TheBorg.Interface;
 
 namespace TheBorg.Plugins
 {
     public class PluginService : IPluginService
     {
         private readonly ILogger _logger;
+        private readonly IPluginHost _pluginHost;
         private readonly AppDomainManager _appDomainManager = new AppDomainManager();
         private readonly X509Certificate2 _serverCertifiate = CertificateGenerator.CreateSelfSignCertificate();
         private readonly DelegateServiceFactory _delegateServiceFactory = new DelegateServiceFactory();
+        private readonly HalibutRuntime _halibutRuntimeServer;
+        private readonly int _tcpPort = TcpHelper.GetFreePort();
 
         public PluginService(
-            ILogger logger)
+            ILogger logger,
+            IPluginHost pluginHost)
         {
             _logger = logger;
+            _pluginHost = pluginHost;
 
-            _delegateServiceFactory.Register();
+            _delegateServiceFactory.Register(() => _pluginHost);
+            _halibutRuntimeServer = new HalibutRuntime(_delegateServiceFactory, _serverCertifiate);
+            _halibutRuntimeServer.Listen(new IPEndPoint(IPAddress.Loopback, _tcpPort));
         }
 
         public Task<IPluginProxy> LoadPluginAsync(string dllPath)
@@ -67,24 +77,39 @@ namespace TheBorg.Plugins
 
             var friendlyName = Path.GetFileName(dllPath);
             var appDomain = _appDomainManager.CreateDomain(friendlyName, null, appDomainSetup);
-            var bytes = CertificateGenerator.CreateSelfSignCertificatePfx(DateTime.MinValue, DateTime.MaxValue);
+            var bytes = CertificateGenerator.CreateSelfSignCertificatePfx(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(40));
             var clientThumbprint = new X509Certificate2(bytes).Thumbprint;
+            _halibutRuntimeServer.Trust(clientThumbprint);
 
-            var pluginHost = appDomain.CreateInstanceAndUnwrap(Assembly.GetAssembly(typeof(PluginHost)).FullName, typeof(PluginHost).ToString()) as PluginHost;
-            ThreadPool.QueueUserWorkItem(_ =>
-                {
-                    try
-                    {
-                        pluginHost.Launch(dllPath, appDomain, bytes, _serverCertifiate.Thumbprint, 0);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.Error(e, $"Plugin '{friendlyName}' failed");
-                        AppDomain.Unload(appDomain);
-                    }
-                });
+            var pluginHost = appDomain.CreateInstanceAndUnwrap(Assembly.GetAssembly(typeof(PluginHostClient)).FullName, typeof(PluginHostClient).ToString()) as PluginHostClient;
+            var autoResetEvent = new AutoResetEvent(false);
+            var clientPort = TcpHelper.GetFreePort();
 
-            return Task.FromResult<IPluginProxy>(new PluginProxy(appDomain));
+            try
+            {
+                pluginHost.Launch(dllPath, appDomain, bytes, _serverCertifiate.Thumbprint, _tcpPort, clientPort);
+                autoResetEvent.Set();
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, $"Plugin '{friendlyName}' failed");
+                AppDomain.Unload(appDomain);
+                throw;
+            }
+
+            var halibutRuntime = new HalibutRuntime(_serverCertifiate);
+            var plugin = halibutRuntime.CreateClient<IPlugin>($"https://127.0.0.1:{clientPort}", clientThumbprint);
+
+            try
+            {
+                plugin.Ping();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return Task.FromResult<IPluginProxy>(new PluginProxy(plugin, halibutRuntime, appDomain));
         }
     }
 }

@@ -59,6 +59,7 @@
     <Compile Include="Core\ITime.cs" />
     <Compile Include="Core\IWebSocketClient.cs" />
     <Compile Include="Core\JsonSerializer.cs" />
+    <Compile Include="Core\TcpHelper.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Plugins\IPluginProxy.cs" />
     <Compile Include="Plugins\IPluginService.cs" />

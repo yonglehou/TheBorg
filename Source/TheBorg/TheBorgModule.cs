@@ -38,7 +38,7 @@ namespace TheBorg
             {
                 typeof(Command),
                 typeof(ActiveConversation),
-                typeof(PluginProxy)
+                typeof(PluginProxy),
             }; 
 
         protected override void Load(ContainerBuilder builder)

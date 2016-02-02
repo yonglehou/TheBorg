@@ -11,7 +11,7 @@ namespace TheBorg.Core
     {
         public static X509Certificate2 CreateSelfSignCertificate()
         {
-            return CreateSelfSignCertificate(DateTime.MinValue, DateTime.MaxValue);
+            return CreateSelfSignCertificate(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(40));
         }
 
         public static X509Certificate2 CreateSelfSignCertificate(

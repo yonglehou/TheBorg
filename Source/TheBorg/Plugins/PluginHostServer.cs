@@ -22,15 +22,25 @@
 // SOFTWARE.
 //
 
+using Serilog;
 using TheBorg.Interface;
-using TheBorg.Interface.ValueObjects;
+using Log = TheBorg.Interface.ValueObjects.Log;
 
 namespace TheBorg.Plugins
 {
     public class PluginHostServer : IPluginHost
     {
+        private readonly ILogger _logger;
+
+        public PluginHostServer(
+            ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public void Log(Log log)
         {
+            _logger.Debug(log.Message);
         }
     }
 }

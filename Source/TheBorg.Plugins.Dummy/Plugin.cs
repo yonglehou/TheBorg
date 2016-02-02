@@ -30,9 +30,17 @@ namespace TheBorg.Plugins.Dummy
 {
     public class Plugin : IPlugin
     {
+        private IPluginHost _pluginHost;
+
         public void Launch(IPluginHost pluginHost)
         {
-            pluginHost.LogAsync(Log.With(LogLevel.Debug, ""), CancellationToken.None).Wait();
+            _pluginHost = pluginHost;
+            _pluginHost.Log(Log.With(LogLevel.Debug, "Hello"));
+        }
+
+        public void Ping()
+        {
+            _pluginHost.Log(Log.With(LogLevel.Debug, "Pong"));
         }
     }
 }
