@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="System.Web" />
@@ -55,6 +56,8 @@
     <Compile Include="Conversations\IActiveConversation.cs" />
     <Compile Include="Conversations\IConversationTopic.cs" />
     <Compile Include="Core\CertificateGenerator.cs" />
+    <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\IConfigurationService.cs" />
     <Compile Include="Core\IJsonSerializer.cs" />
     <Compile Include="Core\IRestClient.cs" />
     <Compile Include="Core\ITime.cs" />
