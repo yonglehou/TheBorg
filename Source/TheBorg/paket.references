@@ -1,6 +1,7 @@
 ﻿Autofac
 Halibut
 Newtonsoft.Json
+Octokit
 Rx-Main
 Serilog
 Topshelf
