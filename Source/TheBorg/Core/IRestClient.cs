@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Core
 {
@@ -57,6 +58,10 @@ namespace TheBorg.Core
 
         Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage httpRequestMessage,
+            CancellationToken cancellationToken);
+
+        Task<TempFile> DownloadAsync(
+            Uri uri,
             CancellationToken cancellationToken);
     }
 }

@@ -23,25 +23,51 @@
 //
 
 using System;
+using System.IO;
+using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Core;
+using Serilog;
+using TheBorg.Extensions;
 
 namespace TheBorg.Plugins
 {
     public class PluginInstaller : IPluginInstaller
     {
-        private readonly IRestClient _restClient;
+        private readonly ILogger _logger;
 
         public PluginInstaller(
-            IRestClient restClient)
+            ILogger logger)
         {
-            _restClient = restClient;
+            _logger = logger;
         }
 
-        private Task InstallFromGitHubAsync(string owner, string name, CancellationToken cancellationToken)
+        public Task<string> InstallPluginAsync(
+            string name,
+            string version,
+            string path,
+            PluginPackageType packageType,
+            CancellationToken cancellationToken)
         {
-            return Task.FromResult(0);
+            var serviceDirectory = Path.GetDirectoryName(typeof (PluginInstaller).Assembly.GetCodeBase());
+            _logger.Verbose($"Service install location is '{serviceDirectory}'");
+
+            var installDirectory = Path.Combine(serviceDirectory, name, version);
+            _logger.Verbose($"Plugin install directory is '{installDirectory}'");
+            Directory.CreateDirectory(installDirectory);
+
+            switch (packageType)
+            {
+                case PluginPackageType.Zip:
+                    {
+                        ZipFile.ExtractToDirectory(path, installDirectory);
+                        var pluginDll = Path.Combine(installDirectory, $"{name}.dll");
+                        _logger.Verbose($"Guessing that plugin location is '{pluginDll}'");
+                        return Task.FromResult(pluginDll);
+                    }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(packageType), packageType, null);
+            }
         }
     }
 }

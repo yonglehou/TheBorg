@@ -22,22 +22,36 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Core;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Plugins;
 using TheBorg.Services;
 
 namespace TheBorg.Commands.CommandSets
 {
     public class PluginCommandSet : ICommandSet
     {
+        private readonly IRestClient _restClient;
+        private readonly IGitHubService _gitHubService;
         private readonly IPluginService _pluginService;
+        private readonly IPluginInstaller _pluginInstaller;
 
         public PluginCommandSet(
-            IPluginService pluginService)
+            IRestClient restClient,
+            IGitHubService gitHubService,
+            IPluginService pluginService,
+            IPluginInstaller pluginInstaller)
         {
+            _restClient = restClient;
+            _gitHubService = gitHubService;
             _pluginService = pluginService;
+            _pluginInstaller = pluginInstaller;
         }
 
         [Command(
@@ -62,6 +76,59 @@ namespace TheBorg.Commands.CommandSets
             await _pluginService.UnloadPluginAsync(pluginName).ConfigureAwait(false);
             var time = stopwatch.Elapsed;
             await tenantMessage.ReplyAsync($"It took me {time.TotalSeconds:0.00} seconds to unload '{pluginName}'", cancellationToken).ConfigureAwait(false);
+        }
+
+        [Command(
+            "install plugin from github <owner>/<repo>",
+            @"^install plugin from github (?<owner>[\.a-z\-0-9]+)/(?<repo>[\.a-z\-0-9]+)$")]
+        public async Task InstallPluginFromGitHubAsync(
+            string owner,
+            string repo,
+            TenantMessage tenantMessage,
+            CancellationToken cancellationToken)
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            await tenantMessage.ReplyAsync($"Finding all relases for {owner}/{repo}", cancellationToken).ConfigureAwait(false);
+            var releases = (await _gitHubService.GetAllReleasesAsync(owner, repo, cancellationToken).ConfigureAwait(false))
+                .Take(5)
+                .ToList();
+            if (!releases.Any())
+            {
+                await tenantMessage.ReplyAsync($"There's no releases for {owner}/{repo}, stopping install!", cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
+            var stringBuilder = releases.Aggregate(
+                new StringBuilder().AppendLine($"This is the first {releases.Count} releases for {owner}/{repo}"),
+                (s, r) => s.AppendLine($"{r.Name} [{r.TagName}]"));
+            var release = releases[0];
+            stringBuilder.AppendLine($"Picking {release.Name} [{release.TagName}] to install");
+            await tenantMessage.ReplyAsync(stringBuilder.ToString(), cancellationToken).ConfigureAwait(false);
+
+            // TODO: Better searching for the right file!
+            var releaseAsset = release.ReleaseAssets.Single(a => a.Uri.ToString().Contains("TheBorg.Plugins"));
+
+            using (var tempFile = await _restClient.DownloadAsync(releaseAsset.Uri, cancellationToken).ConfigureAwait(false))
+            {
+                var dllLocation = await _pluginInstaller.InstallPluginAsync(
+                    releaseAsset.Name.Replace(".zip", string.Empty),
+                    release.Name,
+                    tempFile.Path,
+                    PluginPackageType.Zip,
+                    cancellationToken)
+                    .ConfigureAwait(false);
+
+                await _pluginService.LoadPluginAsync(
+                    dllLocation)
+                    .ConfigureAwait(false);
+            }
+
+            stopwatch.Stop();
+            await tenantMessage.ReplyAsync(
+                $"Finished installing plugin {owner}/{repo} - {release.Name} [{release.TagName}] in {stopwatch.Elapsed.TotalSeconds:0.00} seconds",
+                cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }

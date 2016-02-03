@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -33,6 +34,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using Serilog;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Core
 {
@@ -117,6 +119,23 @@ namespace TheBorg.Core
                     return _jsonSerializer.Deserialize<TResult>(responseJson, jsonFormat);
                 }
             }
+        }
+
+        public async Task<TempFile> DownloadAsync(
+            Uri uri,
+            CancellationToken cancellationToken)
+        {
+            var tempFile = TempFile.New;
+
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
+            using (var httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
+            using (var fileStream = new FileStream(tempFile.Path, FileMode.CreateNew))
+            using (var responseStream = await httpResponseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false))
+            {
+                await responseStream.CopyToAsync(fileStream).ConfigureAwait(false);
+            }
+
+            return tempFile;
         }
 
         public Task<HttpResponseMessage> SendAsync(

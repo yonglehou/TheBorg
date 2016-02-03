@@ -66,6 +66,7 @@ namespace TheBorg.Services
         private static IEnumerable<GitHubReleaseAsset> CreateReleaseAssets(IEnumerable<ReleaseAsset> releaseAssets)
         {
             return releaseAssets.Select(a => new GitHubReleaseAsset(
+                a.Name,
                 new Uri(a.BrowserDownloadUrl, UriKind.Absolute)));
         }
     }

@@ -46,15 +46,19 @@ namespace TheBorg.Services
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
 
-            name = name.ToLowerInvariant().Trim();
-            if (!name.EndsWith(".dll"))
+            var pluginPath = name;
+            if (!Path.IsPathRooted(name))
             {
-                name += ".dll";
-            }
+                name = name.ToLowerInvariant().Trim();
+                if (!name.EndsWith(".dll"))
+                {
+                    name += ".dll";
+                }
 
-            var pluginPath = Path.Combine(
-                Path.GetDirectoryName(typeof (PluginService).Assembly.GetCodeBase()),
-                name);
+                pluginPath = Path.Combine(
+                    Path.GetDirectoryName(typeof(PluginService).Assembly.GetCodeBase()),
+                    name);
+            }
 
             var plugin = await _pluginLoader.LoadPluginAsync(pluginPath).ConfigureAwait(false);
 

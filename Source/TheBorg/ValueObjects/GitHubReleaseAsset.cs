@@ -29,12 +29,15 @@ namespace TheBorg.ValueObjects
 {
     public class GitHubReleaseAsset : ValueObject
     {
-        public Uri Uri { get; }
-
         public GitHubReleaseAsset(
+            string name,
             Uri uri)
         {
+            Name = name;
             Uri = uri;
         }
+
+        public string Name { get; }
+        public Uri Uri { get; }
     }
 }

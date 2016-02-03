@@ -36,6 +36,8 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Net" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -122,6 +124,7 @@
     <Compile Include="TheBorgModule.cs" />
     <Compile Include="ValueObjects\GitHubRelease.cs" />
     <Compile Include="ValueObjects\GitHubReleaseAsset.cs" />
+    <Compile Include="ValueObjects\TempFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -137,14 +140,6 @@
     <ProjectReference Include="..\TheBorg.Interface\TheBorg.Interface.csproj">
       <Project>{e1dcf0b9-ccf4-42e1-b39c-2191cc7c378b}</Project>
       <Name>TheBorg.Interface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Plugins.Dummy\TheBorg.Plugins.Dummy.csproj">
-      <Project>{8fbdcf89-381b-4a25-9b23-0e4c5557fbc2}</Project>
-      <Name>TheBorg.Plugins.Dummy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Plugins\TheBorg.Plugins.csproj">
-      <Project>{6037d1b8-0a18-43e6-90ba-f64320791170}</Project>
-      <Name>TheBorg.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

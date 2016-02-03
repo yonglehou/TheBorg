@@ -22,23 +22,30 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
+using System;
+using System.IO;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Plugins
+namespace TheBorg.ValueObjects
 {
-    public enum PluginPackageType
+    public class TempFile : ValueObject, IDisposable
     {
-        Zip,
-    }
+        public static TempFile New => new TempFile(System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString("N")));
 
-    public interface IPluginInstaller
-    {
-        Task<string> InstallPluginAsync(
-            string name,
-            string version,
-            string path,
-            PluginPackageType packageType,
-            CancellationToken cancellationToken);
+        private TempFile(
+            string path)
+        {
+            Path = path;
+        }
+
+        public string Path { get; }
+
+        public void Dispose()
+        {
+            if (File.Exists(Path))
+            {
+                File.Delete(Path);
+            }
+        }
     }
 }
