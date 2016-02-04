@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TheBorg.Plugins.Dummy")]
+[assembly: AssemblyTitle("TheBorg.Plugins.Tester")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TheBorg.Plugins.Dummy")]
+[assembly: AssemblyProduct("TheBorg.Plugins.Tester")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8fbdcf89-381b-4a25-9b23-0e4c5557fbc2")]
+[assembly: Guid("b23a319e-b602-49ff-a3c9-3d689c1be846")]
 
 // Version information for an assembly consists of the following four values:
 //

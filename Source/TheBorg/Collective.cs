@@ -24,28 +24,39 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using TheBorg.Commands;
 using TheBorg.Conversations;
 using TheBorg.Core;
+using TheBorg.Extensions;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Services;
 using TheBorg.Tenants;
 
 namespace TheBorg
 {
     public class Collective : ICollective
     {
+        private readonly ILogger _logger;
+        private readonly IPluginService _pluginService;
         private readonly ICommandManager _commandManager;
         private readonly IConversationManager _conversationManager;
         private readonly IReadOnlyCollection<ITenant> _tenants;
 
         public Collective(
+            ILogger logger,
+            IPluginService pluginService,
             ICommandManager commandManager,
             IConversationManager conversationManager,
             IEnumerable<ITenant> tenants)
         {
+            _logger = logger;
+            _pluginService = pluginService;
             _commandManager = commandManager;
             _conversationManager = conversationManager;
             _tenants = tenants.ToList();
@@ -53,6 +64,8 @@ namespace TheBorg
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            LoadTest();
+
             var disposables = await Task.WhenAll(_tenants.Select(async t =>
                 {
                     await t.ConnectAsync(cancellationToken).ConfigureAwait(false);
@@ -76,6 +89,21 @@ namespace TheBorg
                 {
                     break;
                 }
+            }
+        }
+
+        [Conditional("DEBUG")]
+        private async void LoadTest()
+        {
+            try
+            {
+                await _pluginService.LoadPluginAsync(Path.Combine(
+                    Path.GetDirectoryName(typeof (Collective).Assembly.GetCodeBase()),
+                    "TheBorg.Plugins.Tester"))
+                    .ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
             }
         }
 

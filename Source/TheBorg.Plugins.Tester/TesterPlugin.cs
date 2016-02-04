@@ -25,21 +25,17 @@
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Plugins.Dummy
+namespace TheBorg.Plugins.Tester
 {
-    public class Plugin : IPlugin
+    public class TesterPlugin : IPlugin
     {
-        private IPluginHost _pluginHost;
-
         public void Launch(IPluginHost pluginHost)
         {
-            _pluginHost = pluginHost;
-            _pluginHost.Log(LogMessage.With(LogLevel.Debug, "Hello"));
+            pluginHost.Log(LogMessage.With(LogLevel.Debug, "Hello from tester plugin"));
         }
 
         public void Ping()
         {
-            _pluginHost.Log(LogMessage.With(LogLevel.Debug, "Pong"));
         }
     }
 }
