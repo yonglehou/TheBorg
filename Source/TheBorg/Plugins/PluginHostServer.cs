@@ -47,14 +47,20 @@ namespace TheBorg.Plugins
             _logger.Debug(logMessage.Text);
         }
 
-        public async void Send(string text, Address address)
+        public void Send(string text, Address address)
         {
-            await _messageService.SendAsync(address, text).ConfigureAwait(false);
+            using (var a = AsyncHelper.Wait)
+            {
+                a.Run(_messageService.SendAsync(address, text));
+            }
         }
 
-        public async void Reply(string text, TenantMessage tenantMessage)
+        public void Reply(string text, TenantMessage tenantMessage)
         {
-            await _messageService.ReplyAsync(tenantMessage, text).ConfigureAwait(false);
+            using (var a = AsyncHelper.Wait)
+            {
+                a.Run(_messageService.ReplyAsync(tenantMessage, text));
+            }
         }
     }
 }
