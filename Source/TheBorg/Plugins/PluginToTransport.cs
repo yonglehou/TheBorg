@@ -22,17 +22,32 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
+using TheBorg.Host;
+using TheBorg.Interface;
 
-namespace TheBorg.Interface
+namespace TheBorg.Plugins
 {
-    public interface IPluginHost
+    public class PluginToTransport : IPlugin
     {
-        void Log(LogLevel level, string message);
+        private readonly IPluginTransport _pluginTransport;
 
-        Task SendAsync(string text, Address address, CancellationToken cancellationToken);
-        Task ReplyAsync(string text, TenantMessage tenantMessage, CancellationToken cancellationToken);
+        public PluginToTransport(
+            IPluginTransport pluginTransport)
+        {
+            _pluginTransport = pluginTransport;
+        }
+
+        public Task LaunchAsync(IPluginHost pluginHost, CancellationToken cancellationToken)
+        {
+            throw new Exception("SHOULD NEVER HAPPEN");
+        }
+
+        public Task PingAsync(CancellationToken cancellationToken)
+        {
+            return Task.Run(() => _pluginTransport.Ping(), cancellationToken);
+        }
     }
 }

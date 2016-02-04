@@ -28,6 +28,8 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
 using Halibut;
 using Halibut.ServiceModel;
 using TheBorg.Interface;
@@ -39,14 +41,15 @@ namespace TheBorg.Host
     {
         private HalibutRuntime _halibutRuntimeClient;
         private HalibutRuntime _halibutRuntimeServer;
-        private IPluginHost _pluginHost;
+        private IPluginHostTransport _pluginHost;
+        private IPluginTransport _pluginTransport;
 
         public void Launch(string pluginPath, AppDomain appDomain, byte[] x509CertificateBytes, string serverThumbprint, int serverPort, int clientPort)
         {
             var x509Certificate2 = new X509Certificate2(x509CertificateBytes);
             _halibutRuntimeClient = new HalibutRuntime(x509Certificate2);
             _halibutRuntimeClient.Trust(serverThumbprint);
-            _pluginHost = _halibutRuntimeClient.CreateClient<IPluginHost>($"https://127.0.0.1:{serverPort}", serverThumbprint);
+            _pluginHost = _halibutRuntimeClient.CreateClient<IPluginHostTransport>($"https://127.0.0.1:{serverPort}", serverThumbprint);
 
             var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
             var pluginDirectory = Path.GetDirectoryName(pluginPath);
@@ -58,30 +61,37 @@ namespace TheBorg.Host
                 };
             var pluginType = assembly.GetTypes().Single(t => typeof (IPlugin).IsAssignableFrom(t));
             var plugin = (IPlugin) Activator.CreateInstance(pluginType);
+            _pluginTransport = new PluginTransport(plugin);
 
-            plugin.Launch(this);
+            using (var a = AsyncHelper.Wait)
+            {
+                a.Run(plugin.LaunchAsync(this, CancellationToken.None));
+            }
 
             var delegateServiceFactory = new DelegateServiceFactory();
-            delegateServiceFactory.Register(() => plugin);
+            delegateServiceFactory.Register(() => _pluginTransport);
 
             _halibutRuntimeServer = new HalibutRuntime(delegateServiceFactory, x509Certificate2);
             _halibutRuntimeServer.Trust(serverThumbprint);
             _halibutRuntimeServer.Listen(new IPEndPoint(IPAddress.Loopback, clientPort));
         }
 
-        public void Log(LogMessage logMessage)
+        public void Log(LogLevel level, string message)
         {
-            _pluginHost.Log(logMessage);
+            // Need real async communication
+            _pluginHost.Log(LogMessage.With(level, message));
         }
 
-        public void Send(Address address, string text)
+        public Task SendAsync(string text, Address address, CancellationToken cancellationToken)
         {
-            _pluginHost.Send(address, text);
+            // Need real async communication
+            return Task.Run(() => _pluginHost.Send(text, address), cancellationToken);
         }
 
-        public void Reply(TenantMessage tenantMessage, string text)
+        public Task ReplyAsync(string text, TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
-            _pluginHost.Reply(tenantMessage, text);
+            // Need real async communication
+            return Task.Run(() => _pluginHost.Reply(text, tenantMessage), cancellationToken);
         }
     }
 }

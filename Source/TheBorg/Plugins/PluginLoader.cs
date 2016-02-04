@@ -42,7 +42,7 @@ namespace TheBorg.Plugins
     public class PluginLoader : IPluginLoader
     {
         private readonly ILogger _logger;
-        private readonly IPluginHost _pluginHost;
+        private readonly IPluginHostTransport _pluginHostTransport;
         private readonly AppDomainManager _appDomainManager = new AppDomainManager();
         private readonly X509Certificate2 _serverCertifiate = CertificateGenerator.CreateSelfSignCertificate();
         private readonly DelegateServiceFactory _delegateServiceFactory = new DelegateServiceFactory();
@@ -51,12 +51,12 @@ namespace TheBorg.Plugins
 
         public PluginLoader(
             ILogger logger,
-            IPluginHost pluginHost)
+            IPluginHostTransport pluginHostTransport)
         {
             _logger = logger;
-            _pluginHost = pluginHost;
+            _pluginHostTransport = pluginHostTransport;
 
-            _delegateServiceFactory.Register(() => _pluginHost);
+            _delegateServiceFactory.Register(() => _pluginHostTransport);
             _halibutRuntimeServer = new HalibutRuntime(_delegateServiceFactory, _serverCertifiate);
             _halibutRuntimeServer.Listen(new IPEndPoint(IPAddress.Loopback, _tcpPort));
         }
@@ -100,14 +100,15 @@ namespace TheBorg.Plugins
             }
 
             var halibutRuntime = new HalibutRuntime(_serverCertifiate);
-            var plugin = halibutRuntime.CreateClient<IPlugin>($"https://127.0.0.1:{clientPort}", clientThumbprint);
-
-            plugin.Ping();
+            var pluginTransport = halibutRuntime.CreateClient<IPluginTransport>($"https://127.0.0.1:{clientPort}", clientThumbprint);
 
             stopWatch.Stop();
             _logger.Debug($"Loaded plugin '{friendlyName}' in {stopWatch.Elapsed.TotalSeconds:0.00} seconds");
 
-            return Task.FromResult<IPluginProxy>(new PluginProxy(plugin, halibutRuntime, appDomain));
+            var pluginProxy = new PluginProxy(pluginTransport, halibutRuntime, appDomain);
+            pluginProxy.Plugin.PingAsync(CancellationToken.None);
+
+            return Task.FromResult<IPluginProxy>(pluginProxy);
         }
     }
 }

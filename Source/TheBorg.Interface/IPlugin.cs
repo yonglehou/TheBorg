@@ -22,12 +22,15 @@
 // SOFTWARE.
 //
 
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace TheBorg.Interface
 {
     public interface IPlugin
     {
-        void Launch(IPluginHost pluginHost);
+        Task LaunchAsync(IPluginHost pluginHost, CancellationToken cancellationToken);
 
-        void Ping();
+        Task PingAsync(CancellationToken cancellationToken);
     }
 }

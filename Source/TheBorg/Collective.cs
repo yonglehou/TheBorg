@@ -99,11 +99,12 @@ namespace TheBorg
             {
                 await _pluginService.LoadPluginAsync(Path.Combine(
                     Path.GetDirectoryName(typeof (Collective).Assembly.GetCodeBase()),
-                    "TheBorg.Plugins.Tester"))
+                    "TheBorg.Plugins.Tester.dll"))
                     .ConfigureAwait(false);
             }
             catch (Exception e)
             {
+                _logger.Error(e, "Failed to load test");
             }
         }
 

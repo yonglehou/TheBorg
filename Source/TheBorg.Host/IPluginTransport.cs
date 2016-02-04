@@ -22,17 +22,10 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
-
-namespace TheBorg.Interface
+namespace TheBorg.Host
 {
-    public interface IPluginHost
+    public interface IPluginTransport
     {
-        void Log(LogLevel level, string message);
-
-        Task SendAsync(string text, Address address, CancellationToken cancellationToken);
-        Task ReplyAsync(string text, TenantMessage tenantMessage, CancellationToken cancellationToken);
+        void Ping();
     }
 }

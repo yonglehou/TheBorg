@@ -23,13 +23,13 @@
 //
 
 using Serilog;
-using TheBorg.Interface;
+using TheBorg.Host;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Services;
 
 namespace TheBorg.Plugins
 {
-    public class PluginHostServer : IPluginHost
+    public class PluginHostServer : IPluginHostTransport
     {
         private readonly ILogger _logger;
         private readonly IMessageService _messageService;
@@ -47,12 +47,12 @@ namespace TheBorg.Plugins
             _logger.Debug(logMessage.Text);
         }
 
-        public async void Send(Address address, string text)
+        public async void Send(string text, Address address)
         {
             await _messageService.SendAsync(address, text).ConfigureAwait(false);
         }
 
-        public async void Reply(TenantMessage tenantMessage, string text)
+        public async void Reply(string text, TenantMessage tenantMessage)
         {
             await _messageService.ReplyAsync(tenantMessage, text).ConfigureAwait(false);
         }

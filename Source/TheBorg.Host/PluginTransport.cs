@@ -23,16 +23,26 @@
 //
 
 using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface;
 
-namespace TheBorg.Interface
+namespace TheBorg.Host
 {
-    public interface IPluginHost
+    public class PluginTransport : IPluginTransport
     {
-        void Log(LogLevel level, string message);
+        private readonly IPlugin _plugin;
 
-        Task SendAsync(string text, Address address, CancellationToken cancellationToken);
-        Task ReplyAsync(string text, TenantMessage tenantMessage, CancellationToken cancellationToken);
+        public PluginTransport(
+            IPlugin plugin)
+        {
+            _plugin = plugin;
+        }
+
+        public void Ping()
+        {
+            using (var a = AsyncHelper.Wait)
+            {
+                a.Run(_plugin.PingAsync(CancellationToken.None));
+            }
+        }
     }
 }

@@ -61,6 +61,7 @@
     <Compile Include="Core\CertificateGenerator.cs" />
     <Compile Include="Plugins\IPluginInstaller.cs" />
     <Compile Include="Plugins\PluginInstaller.cs" />
+    <Compile Include="Plugins\PluginToTransport.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\GitHubService.cs" />
     <Compile Include="Services\IConfigurationService.cs" />
@@ -140,6 +141,10 @@
     <ProjectReference Include="..\TheBorg.Interface\TheBorg.Interface.csproj">
       <Project>{e1dcf0b9-ccf4-42e1-b39c-2191cc7c378b}</Project>
       <Name>TheBorg.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Plugins.Tester\TheBorg.Plugins.Tester.csproj">
+      <Project>{b23a319e-b602-49ff-a3c9-3d689c1be846}</Project>
+      <Name>TheBorg.Plugins.Tester</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

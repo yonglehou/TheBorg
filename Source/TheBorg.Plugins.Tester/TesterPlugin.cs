@@ -22,6 +22,8 @@
 // SOFTWARE.
 //
 
+using System.Threading;
+using System.Threading.Tasks;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
 
@@ -29,13 +31,19 @@ namespace TheBorg.Plugins.Tester
 {
     public class TesterPlugin : IPlugin
     {
-        public void Launch(IPluginHost pluginHost)
+        private IPluginHost _pluginHost;
+
+        public Task LaunchAsync(IPluginHost pluginHost, CancellationToken cancellationToken)
         {
-            pluginHost.Log(LogMessage.With(LogLevel.Debug, "Hello from tester plugin"));
+            _pluginHost = pluginHost;
+            _pluginHost.Log(LogLevel.Debug, "Hello from tester plugin");
+            return Task.FromResult(0);
         }
 
-        public void Ping()
+        public Task PingAsync(CancellationToken cancellationToken)
         {
+            _pluginHost.Log(LogLevel.Debug, "Pong from tester plugin");
+            return Task.FromResult(0);
         }
     }
 }

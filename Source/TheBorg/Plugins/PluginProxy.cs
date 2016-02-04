@@ -24,6 +24,7 @@
 
 using System;
 using Halibut;
+using TheBorg.Host;
 using TheBorg.Interface;
 
 namespace TheBorg.Plugins
@@ -34,11 +35,11 @@ namespace TheBorg.Plugins
         private readonly AppDomain _appDomain;
 
         public PluginProxy(
-            IPlugin plugin,
+            IPluginTransport pluginTransport,
             HalibutRuntime halibutRuntime,
             AppDomain appDomain)
         {
-            Plugin = plugin;
+            Plugin = new PluginToTransport(pluginTransport);
             _halibutRuntime = halibutRuntime;
             _appDomain = appDomain;
         }

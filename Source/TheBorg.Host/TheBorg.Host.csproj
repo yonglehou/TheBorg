@@ -40,7 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncHelper.cs" />
+    <Compile Include="IPluginHostTransport.cs" />
+    <Compile Include="IPluginTransport.cs" />
     <Compile Include="PluginHostClient.cs" />
+    <Compile Include="PluginTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
