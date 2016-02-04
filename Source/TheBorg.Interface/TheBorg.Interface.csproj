@@ -43,6 +43,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Extensions\PluginHostExtensions.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="IPluginHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
