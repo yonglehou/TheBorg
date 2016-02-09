@@ -2,8 +2,6 @@ NUGET
   remote: https://www.nuget.org/api/v2
   specs:
     Autofac (3.5.2)
-    Halibut (2.2.0.53)
-      Newtonsoft.Json (> 6.0.0)
     Microsoft.Bcl (1.1.10)
       Microsoft.Bcl.Build (>= 1.0.14)
     Microsoft.Bcl.Build (1.0.21) - import_targets: false

@@ -23,28 +23,18 @@
 //
 
 using System;
-using Halibut;
-using TheBorg.Host;
-using TheBorg.Interface;
 
 namespace TheBorg.Plugins
 {
     public class PluginProxy : IPluginProxy
     {
-        private readonly HalibutRuntime _halibutRuntime;
         private readonly AppDomain _appDomain;
 
         public PluginProxy(
-            IPluginTransport pluginTransport,
-            HalibutRuntime halibutRuntime,
             AppDomain appDomain)
         {
-            Plugin = new PluginToTransport(pluginTransport);
-            _halibutRuntime = halibutRuntime;
             _appDomain = appDomain;
         }
-
-        public IPlugin Plugin { get; }
 
         public void Dispose()
         {

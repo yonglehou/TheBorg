@@ -28,7 +28,7 @@ using TheBorg.Interface;
 
 namespace TheBorg.Host
 {
-    public class PluginApi
+    public class PluginApi : IHttpApi
     {
         [HttpApi(Method.Get, "_plugin/ping")]
         public Task<string> PingAsync(CancellationToken cancellationToken)

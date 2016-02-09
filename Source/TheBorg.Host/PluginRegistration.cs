@@ -26,25 +26,37 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Nancy;
 using TheBorg.Interface;
 
 namespace TheBorg.Host
 {
     public class PluginRegistration : IPluginRegistration
     {
+        private readonly Dictionary<Type, Func<IHttpApiContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiContext, INancyModule>>(); 
+
         public IPluginRegistration RegisterApi<T>(T instance) where T : IHttpApi
         {
+            return RegisterApi(_ => instance);
+        }
+
+        public IPluginRegistration RegisterApi<T>(Func<IHttpApiContext, T> factory)
+            where T : IHttpApi
+        {
+            var apiEndpoints = GatherEndpoints<T>();
+            _factories.Add(typeof(T), c => new ApiModule<T>(hc => factory(hc), apiEndpoints)); // TODO: Check for false!
             return this;
         }
 
-        public IPluginRegistration RegisterApi<T>(Func<IHttpApiContext, T> factory) where T : IHttpApi
+        public IEnumerable<KeyValuePair<Type, Func<IHttpApiContext, INancyModule>>> GetModules()
         {
-            return this;
+            return _factories;
         }
 
-        private IEnumerable<ApiEndpoint> GatherEndpoints(IHttpApi httpApi)
+        private static IEnumerable<ApiEndpoint> GatherEndpoints<T>()
+            where T : IHttpApi
         {
-            return httpApi.GetType()
+            return typeof(T)
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public)
                 .Select(mi => new
                     {
@@ -52,9 +64,21 @@ namespace TheBorg.Host
                         MethodInfo = mi,
                     })
                 .Where(a => a.HttpApi != null)
+                .Select(a => CreateApiEndpoint(a.MethodInfo, a.HttpApi));
         }
 
+        private static ApiEndpoint CreateApiEndpoint(MethodInfo methodInfo, HttpApiAttribute httpApiAttribute)
+        {
+            // TODO: Build argument list
 
-
+            return new ApiEndpoint(
+                httpApiAttribute.HttpMethod,
+                httpApiAttribute.Path,
+                async (context, token, api) =>
+                    {
+                        dynamic task = methodInfo.Invoke(api, new object[] {});
+                        return await task.ConfigureAwait(false);
+                    });
+        }
     }
 }

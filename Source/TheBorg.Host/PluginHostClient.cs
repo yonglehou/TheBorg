@@ -25,31 +25,15 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
-using System.Threading.Tasks;
-using Halibut;
-using Halibut.ServiceModel;
 using TheBorg.Interface;
-using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Host
 {
-    public class PluginHostClient : MarshalByRefObject, IPluginHost
+    public class PluginHostClient : MarshalByRefObject
     {
-        private HalibutRuntime _halibutRuntimeClient;
-        private HalibutRuntime _halibutRuntimeServer;
-        private IPluginHostTransport _pluginHost;
-        private IPluginTransport _pluginTransport;
-
-        public void Launch(string pluginPath, AppDomain appDomain, byte[] x509CertificateBytes, string serverThumbprint, int serverPort, int clientPort)
+        public void Launch(string pluginPath, AppDomain appDomain, int serverPort, int clientPort)
         {
-            var x509Certificate2 = new X509Certificate2(x509CertificateBytes);
-            _halibutRuntimeClient = new HalibutRuntime(x509Certificate2);
-            _halibutRuntimeClient.Trust(serverThumbprint);
-            _pluginHost = _halibutRuntimeClient.CreateClient<IPluginHostTransport>($"https://127.0.0.1:{serverPort}", serverThumbprint);
 
             var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
             var pluginDirectory = Path.GetDirectoryName(pluginPath);
@@ -59,39 +43,13 @@ namespace TheBorg.Host
                     var path = Path.Combine(pluginDirectory, args.Name.Split(',')[0] + ".dll");
                     return ad.Load(path);
                 };
-            var pluginType = assembly.GetTypes().Single(t => typeof (IPlugin).IsAssignableFrom(t));
-            var plugin = (IPlugin) Activator.CreateInstance(pluginType);
-            _pluginTransport = new PluginTransport(plugin);
+            var pluginBootstrapperType = assembly.GetTypes().Single(t => typeof (IPluginBootstrapper).IsAssignableFrom(t));
+            var pluginBootstrapper = (IPluginBootstrapper) Activator.CreateInstance(pluginBootstrapperType);
 
-            using (var a = AsyncHelper.Wait)
-            {
-                a.Run(plugin.LaunchAsync(this, CancellationToken.None));
-            }
 
-            var delegateServiceFactory = new DelegateServiceFactory();
-            delegateServiceFactory.Register(() => _pluginTransport);
-
-            _halibutRuntimeServer = new HalibutRuntime(delegateServiceFactory, x509Certificate2);
-            _halibutRuntimeServer.Trust(serverThumbprint);
-            _halibutRuntimeServer.Listen(new IPEndPoint(IPAddress.Loopback, clientPort));
-        }
-
-        public void Log(LogLevel level, string message)
-        {
-            // Need real async communication
-            _pluginHost.Log(LogMessage.With(level, message));
-        }
-
-        public Task SendAsync(string text, Address address, CancellationToken cancellationToken)
-        {
-            // Need real async communication
-            return Task.Run(() => _pluginHost.Send(text, address), cancellationToken);
-        }
-
-        public Task ReplyAsync(string text, TenantMessage tenantMessage, CancellationToken cancellationToken)
-        {
-            // Need real async communication
-            return Task.Run(() => _pluginHost.Reply(text, tenantMessage), cancellationToken);
+            var pluginRegistration = new PluginRegistration();
+            var apiHost = new ApiHost();
+            apiHost.Start(clientPort, pluginRegistration);
         }
     }
 }

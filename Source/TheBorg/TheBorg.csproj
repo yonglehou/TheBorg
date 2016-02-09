@@ -61,7 +61,6 @@
     <Compile Include="Core\CertificateGenerator.cs" />
     <Compile Include="Plugins\IPluginInstaller.cs" />
     <Compile Include="Plugins\PluginInstaller.cs" />
-    <Compile Include="Plugins\PluginToTransport.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\GitHubService.cs" />
     <Compile Include="Services\IConfigurationService.cs" />
@@ -74,7 +73,6 @@
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Plugins\IPluginProxy.cs" />
     <Compile Include="Plugins\IPluginLoader.cs" />
-    <Compile Include="Plugins\PluginHostServer.cs" />
     <Compile Include="Plugins\PluginProxy.cs" />
     <Compile Include="Plugins\PluginLoader.cs" />
     <Compile Include="Services\IGitHubService.cs" />
@@ -175,13 +173,6 @@
       </ItemGroup>
     </When>
   </Choose>
-  <ItemGroup>
-    <Reference Include="Halibut">
-      <HintPath>..\..\packages\Halibut\lib\Halibut.dll</HintPath>
-      <Private>True</Private>
-      <Paket>True</Paket>
-    </Reference>
-  </ItemGroup>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0')">
       <ItemGroup>

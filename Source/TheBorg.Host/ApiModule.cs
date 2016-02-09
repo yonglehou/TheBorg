@@ -29,10 +29,11 @@ using TheBorg.Interface;
 
 namespace TheBorg.Host
 {
-    public class ApiModule : NancyModule
+    public class ApiModule<T> : NancyModule
+        where T : IHttpApi
     {
         public ApiModule(
-            IHttpApi httpApi,
+            Func<IHttpApiContext, IHttpApi> httpApiFactory,
             IEnumerable<ApiEndpoint> apiEndpoints)
         {
             foreach (var apiEndpoint in apiEndpoints)
@@ -51,7 +52,11 @@ namespace TheBorg.Host
                         throw new ArgumentOutOfRangeException();
                 }
 
-                routeBuilder[apiEndpoint.Path, true] = (_, t) => apiEndpoint.Invoker(new HttpApiContext(), t, httpApi);
+                routeBuilder[apiEndpoint.Path, true] = (_, t) =>
+                    {
+                        var ss = new HttpApiContext();
+                        return apiEndpoint.Invoker(ss, t, httpApiFactory(ss));
+                    };
             }
         }
     }
