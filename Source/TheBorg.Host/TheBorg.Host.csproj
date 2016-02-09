@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiBootstrapper.cs" />
+    <Compile Include="ApiEndpoint.cs" />
+    <Compile Include="HttpApiContext.cs" />
     <Compile Include="ApiHost.cs" />
     <Compile Include="ApiModule.cs" />
     <Compile Include="AsyncHelper.cs" />
@@ -49,6 +51,7 @@
     <Compile Include="IPluginTransport.cs" />
     <Compile Include="PluginApi.cs" />
     <Compile Include="PluginHostClient.cs" />
+    <Compile Include="PluginRegistration.cs" />
     <Compile Include="PluginTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

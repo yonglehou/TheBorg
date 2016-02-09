@@ -22,28 +22,11 @@
 // SOFTWARE.
 //
 
-using System;
+using TheBorg.Interface;
 
-namespace TheBorg.Interface
+namespace TheBorg.Host
 {
-    public enum Method
+    public class HttpApiContext : IHttpApiContext
     {
-        Get,
-        Post,
-    }
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HttpApiAttribute : Attribute
-    {
-        public HttpApiAttribute(
-            Method httpMethod,
-            string path)
-        {
-            HttpMethod = httpMethod;
-            Path = path;
-        }
-
-        public Method HttpMethod { get; }
-        public string Path { get; }
     }
 }

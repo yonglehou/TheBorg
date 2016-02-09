@@ -26,24 +26,8 @@ using System;
 
 namespace TheBorg.Interface
 {
-    public enum Method
+    public interface IPluginBootstrapper
     {
-        Get,
-        Post,
-    }
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HttpApiAttribute : Attribute
-    {
-        public HttpApiAttribute(
-            Method httpMethod,
-            string path)
-        {
-            HttpMethod = httpMethod;
-            Path = path;
-        }
-
-        public Method HttpMethod { get; }
-        public string Path { get; }
+        void Start(Action<IPluginRegistration> pluginRegistra);
     }
 }

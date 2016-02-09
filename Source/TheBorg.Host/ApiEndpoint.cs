@@ -23,27 +23,26 @@
 //
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface;
 
-namespace TheBorg.Interface
+namespace TheBorg.Host
 {
-    public enum Method
+    public class ApiEndpoint
     {
-        Get,
-        Post,
-    }
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HttpApiAttribute : Attribute
-    {
-        public HttpApiAttribute(
-            Method httpMethod,
-            string path)
+        public ApiEndpoint(
+            Method method,
+            string path,
+            Func<IHttpApiContext, CancellationToken, IHttpApi, Task<dynamic>> invoker)
         {
-            HttpMethod = httpMethod;
+            Method = method;
             Path = path;
+            Invoker = invoker;
         }
 
-        public Method HttpMethod { get; }
+        public Method Method { get; }
         public string Path { get; }
+        public Func<IHttpApiContext, CancellationToken, IHttpApi, Task<dynamic>> Invoker { get; }
     }
 }

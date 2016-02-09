@@ -23,27 +23,14 @@
 //
 
 using System;
+using TheBorg.Interface;
 
-namespace TheBorg.Interface
+namespace TheBorg.Plugins.Tester
 {
-    public enum Method
+    public class TesterPluginBootstrapper : IPluginBootstrapper
     {
-        Get,
-        Post,
-    }
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HttpApiAttribute : Attribute
-    {
-        public HttpApiAttribute(
-            Method httpMethod,
-            string path)
+        public void Start(Action<IPluginRegistration> pluginRegistra)
         {
-            HttpMethod = httpMethod;
-            Path = path;
         }
-
-        public Method HttpMethod { get; }
-        public string Path { get; }
     }
 }

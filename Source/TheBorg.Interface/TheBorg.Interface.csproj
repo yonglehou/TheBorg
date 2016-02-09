@@ -45,9 +45,12 @@
     </Compile>
     <Compile Include="Extensions\PluginHostExtensions.cs" />
     <Compile Include="HttpMethodAttribute.cs" />
+    <Compile Include="IHttpApiContext.cs" />
     <Compile Include="IHttpApi.cs" />
     <Compile Include="IPlugin.cs" />
+    <Compile Include="IPluginBootstrapper.cs" />
     <Compile Include="IPluginHost.cs" />
+    <Compile Include="IPluginRegistration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueObjects\Address.cs" />
     <Compile Include="ValueObjects\LogLevel.cs" />

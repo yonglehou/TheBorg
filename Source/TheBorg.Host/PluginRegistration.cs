@@ -23,27 +23,38 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using TheBorg.Interface;
 
-namespace TheBorg.Interface
+namespace TheBorg.Host
 {
-    public enum Method
+    public class PluginRegistration : IPluginRegistration
     {
-        Get,
-        Post,
-    }
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HttpApiAttribute : Attribute
-    {
-        public HttpApiAttribute(
-            Method httpMethod,
-            string path)
+        public IPluginRegistration RegisterApi<T>(T instance) where T : IHttpApi
         {
-            HttpMethod = httpMethod;
-            Path = path;
+            return this;
         }
 
-        public Method HttpMethod { get; }
-        public string Path { get; }
+        public IPluginRegistration RegisterApi<T>(Func<IHttpApiContext, T> factory) where T : IHttpApi
+        {
+            return this;
+        }
+
+        private IEnumerable<ApiEndpoint> GatherEndpoints(IHttpApi httpApi)
+        {
+            return httpApi.GetType()
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Select(mi => new
+                    {
+                        HttpApi = mi.GetCustomAttribute<HttpApiAttribute>(),
+                        MethodInfo = mi,
+                    })
+                .Where(a => a.HttpApi != null)
+        }
+
+
+
     }
 }

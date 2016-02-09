@@ -23,40 +23,35 @@
 //
 
 using System;
-using System.Linq;
-using System.Reflection;
+using System.Collections.Generic;
 using Nancy;
 using TheBorg.Interface;
 
 namespace TheBorg.Host
 {
-    internal class ApiModule : NancyModule
+    public class ApiModule : NancyModule
     {
-        private readonly IHttpApi _httpApi;
-
         public ApiModule(
-            IHttpApi httpApi)
+            IHttpApi httpApi,
+            IEnumerable<ApiEndpoint> apiEndpoints)
         {
-            _httpApi = httpApi;
-
-            Get["", true] = async (_, token) => "";
-        }
-
-
-        private void GatherEndpoints(IHttpApi httpApi)
-        {
-            var methods = httpApi.GetType()
-                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                .Select(mi => new
-                    {
-                        HttpApi = mi.GetCustomAttribute<HttpApiAttribute>(),
-                        MethodInfo = mi,
-                    })
-                .Where(a => a.HttpApi != null)
-                .ToList();
-            if (!methods.Any())
+            foreach (var apiEndpoint in apiEndpoints)
             {
-                throw new ArgumentException($"The type '{httpApi.GetType()}' does not have any API methods!");
+                RouteBuilder routeBuilder;
+
+                switch (apiEndpoint.Method)
+                {
+                    case Method.Get:
+                        routeBuilder = Get;
+                        break;
+                    case Method.Post:
+                        routeBuilder = Post;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                routeBuilder[apiEndpoint.Path, true] = (_, t) => apiEndpoint.Invoker(new HttpApiContext(), t, httpApi);
             }
         }
     }

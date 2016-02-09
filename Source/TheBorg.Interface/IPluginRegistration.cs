@@ -26,24 +26,11 @@ using System;
 
 namespace TheBorg.Interface
 {
-    public enum Method
+    public interface IPluginRegistration
     {
-        Get,
-        Post,
-    }
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HttpApiAttribute : Attribute
-    {
-        public HttpApiAttribute(
-            Method httpMethod,
-            string path)
-        {
-            HttpMethod = httpMethod;
-            Path = path;
-        }
-
-        public Method HttpMethod { get; }
-        public string Path { get; }
+        IPluginRegistration RegisterApi<T>(T instance)
+            where T : IHttpApi;
+        IPluginRegistration RegisterApi<T>(Func<IHttpApiContext, T> factory)
+            where T : IHttpApi;
     }
 }

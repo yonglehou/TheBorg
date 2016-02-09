@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Nancy;
 using Nancy.TinyIoc;
+using TheBorg.Interface;
 
 namespace TheBorg.Host
 {
@@ -35,7 +36,7 @@ namespace TheBorg.Host
         private readonly ApiCatalog _apiCatalog;
 
         public ApiBootstrapper(
-            IEnumerable<INancyModule> nancyModules)
+            IEnumerable<KeyValuePair<Type, Func<IHttpApiContext, INancyModule>>> nancyModules)
         {
             _apiCatalog = new ApiCatalog(nancyModules);
         }
@@ -47,25 +48,27 @@ namespace TheBorg.Host
 
         private class ApiCatalog : INancyModuleCatalog
         {
-            private readonly IReadOnlyDictionary<Type, INancyModule> _nancyModules;
+            private readonly IReadOnlyDictionary<Type, Func<IHttpApiContext, INancyModule>> _nancyModules;
 
             public ApiCatalog(
-                IEnumerable<INancyModule> nancyModules)
+                IEnumerable<KeyValuePair<Type, Func<IHttpApiContext, INancyModule>>> nancyModules)
             {
-                _nancyModules = nancyModules.ToDictionary(m => m.GetType(), m => m);
+                _nancyModules = nancyModules.ToDictionary(kv => kv.Key, kv => kv.Value);
             }
 
             public IEnumerable<INancyModule> GetAllModules(NancyContext context)
             {
-                return _nancyModules.Values;
+                var apiContext = new HttpApiContext();
+                return _nancyModules.Values.Select(f => f(apiContext));
             }
 
             public INancyModule GetModule(Type moduleType, NancyContext context)
             {
-                INancyModule nancyModule;
+                Func<IHttpApiContext, INancyModule> nancyModule;
                 if (_nancyModules.TryGetValue(moduleType, out nancyModule))
                 {
-                    return nancyModule;
+                    var apiContext = new HttpApiContext();
+                    return nancyModule(apiContext);
                 }
 
                 throw new Exception($"Module with type '{moduleType}' not found");
