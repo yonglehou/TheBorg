@@ -40,12 +40,12 @@ namespace TheBorg.Host
             {
                 RouteBuilder routeBuilder;
 
-                switch (apiEndpoint.Method)
+                switch (apiEndpoint.HttpApiMethod)
                 {
-                    case Method.Get:
+                    case HttpApiMethod.Get:
                         routeBuilder = Get;
                         break;
-                    case Method.Post:
+                    case HttpApiMethod.Post:
                         routeBuilder = Post;
                         break;
                     default:

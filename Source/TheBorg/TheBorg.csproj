@@ -59,7 +59,9 @@
     <Compile Include="Conversations\IActiveConversation.cs" />
     <Compile Include="Conversations\IConversationTopic.cs" />
     <Compile Include="Core\CertificateGenerator.cs" />
+    <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\IPluginInstaller.cs" />
+    <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\PluginInstaller.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\GitHubService.cs" />

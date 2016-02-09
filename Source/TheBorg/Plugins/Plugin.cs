@@ -23,27 +23,39 @@
 //
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Core;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Interface
+namespace TheBorg.Plugins
 {
-    public enum HttpApiMethod
+    public class Plugin : IPlugin
     {
-        Get,
-        Post,
-    }
+        private readonly Uri _baseUri;
+        private readonly IRestClient _restClient;
 
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HttpApiAttribute : Attribute
-    {
-        public HttpApiAttribute(
-            HttpApiMethod httpApiMethod,
-            string path)
+        public Plugin(
+            Uri baseUri,
+            IRestClient restClient)
         {
-            HttpApiMethod = httpApiMethod;
-            Path = path;
+            _baseUri = baseUri;
+            _restClient = restClient;
         }
 
-        public HttpApiMethod HttpApiMethod { get; }
-        public string Path { get; }
+        public Task PingAsync(CancellationToken cancellationToken)
+        {
+            return GetAsync<object>("_plugin/ping", cancellationToken);
+        }
+
+        public Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private Task<T> GetAsync<T>(string path, CancellationToken cancellationToken)
+        {
+            return _restClient.GetAsync<T>(new Uri(_baseUri, path), JsonFormat.CamelCase, cancellationToken);
+        }
     }
 }

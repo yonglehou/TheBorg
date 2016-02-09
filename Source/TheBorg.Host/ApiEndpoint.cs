@@ -32,16 +32,16 @@ namespace TheBorg.Host
     public class ApiEndpoint
     {
         public ApiEndpoint(
-            Method method,
+            HttpApiMethod httpApiMethod,
             string path,
             Func<IHttpApiContext, CancellationToken, IHttpApi, Task<dynamic>> invoker)
         {
-            Method = method;
+            HttpApiMethod = httpApiMethod;
             Path = path;
             Invoker = invoker;
         }
 
-        public Method Method { get; }
+        public HttpApiMethod HttpApiMethod { get; }
         public string Path { get; }
         public Func<IHttpApiContext, CancellationToken, IHttpApi, Task<dynamic>> Invoker { get; }
     }

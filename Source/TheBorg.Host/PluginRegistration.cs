@@ -72,7 +72,7 @@ namespace TheBorg.Host
             // TODO: Build argument list
 
             return new ApiEndpoint(
-                httpApiAttribute.HttpMethod,
+                httpApiAttribute.HttpApiMethod,
                 httpApiAttribute.Path,
                 async (context, token, api) =>
                     {

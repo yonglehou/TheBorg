@@ -22,13 +22,14 @@
 // SOFTWARE.
 //
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TheBorg.Services
 {
     public interface IPluginService
     {
-        Task LoadPluginAsync(string name);
+        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
         Task UnloadPluginAsync(string name);
     }
 }

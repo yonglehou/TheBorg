@@ -31,10 +31,14 @@ namespace TheBorg.Plugins
         private readonly AppDomain _appDomain;
 
         public PluginProxy(
-            AppDomain appDomain)
+            AppDomain appDomain,
+            IPlugin plugin)
         {
+            Plugin = plugin;
             _appDomain = appDomain;
         }
+
+        public IPlugin Plugin { get; }
 
         public void Dispose()
         {

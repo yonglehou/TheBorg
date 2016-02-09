@@ -28,5 +28,6 @@ namespace TheBorg.Plugins
 {
     public interface IPluginProxy : IDisposable
     {
+        IPlugin Plugin { get; }
     }
 }

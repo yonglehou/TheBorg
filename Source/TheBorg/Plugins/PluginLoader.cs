@@ -49,7 +49,7 @@ namespace TheBorg.Plugins
             _restClient = restClient;
         }
 
-        public Task<IPluginProxy> LoadPluginAsync(string dllPath)
+        public async Task<IPluginProxy> LoadPluginAsync(string dllPath, CancellationToken cancellationToken)
         {
             if (!File.Exists(dllPath)) throw new ArgumentException($"Plugin '{dllPath}' does not exist");
 
@@ -87,9 +87,11 @@ namespace TheBorg.Plugins
             stopWatch.Stop();
             _logger.Debug($"Loaded plugin '{friendlyName}' in {stopWatch.Elapsed.TotalSeconds:0.00} seconds");
 
-            var pluginProxy = new PluginProxy(appDomain);
+            var pluginProxy = new PluginProxy(appDomain, new Plugin(new Uri($"http://127.0.0.1:{clientPort}"), _restClient));
 
-            return Task.FromResult<IPluginProxy>(pluginProxy);
+            await pluginProxy.Plugin.PingAsync(cancellationToken).ConfigureAwait(false);
+
+            return pluginProxy;
         }
     }
 }

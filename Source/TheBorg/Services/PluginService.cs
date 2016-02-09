@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Extensions;
 using TheBorg.Plugins;
@@ -42,7 +43,7 @@ namespace TheBorg.Services
             _pluginLoader = pluginLoader;
         }
 
-        public async Task LoadPluginAsync(string name)
+        public async Task LoadPluginAsync(string name, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
 
@@ -60,7 +61,7 @@ namespace TheBorg.Services
                     name);
             }
 
-            var plugin = await _pluginLoader.LoadPluginAsync(pluginPath).ConfigureAwait(false);
+            var plugin = await _pluginLoader.LoadPluginAsync(pluginPath, cancellationToken).ConfigureAwait(false);
 
             _plugins.Add(name, plugin);
         }

@@ -30,7 +30,7 @@ namespace TheBorg.Plugins.Tester
 {
     public class TesterApi : IHttpApi
     {
-        [HttpApi(Method.Post, "tester")]
+        [HttpApi(HttpApiMethod.Post, "tester")]
         public Task<PluginInformation> Tester()
         {
             return Task.FromResult(new PluginInformation(

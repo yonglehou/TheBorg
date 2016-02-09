@@ -99,7 +99,7 @@ namespace TheBorg
             {
                 await _pluginService.LoadPluginAsync(Path.Combine(
                     Path.GetDirectoryName(typeof (Collective).Assembly.GetCodeBase()),
-                    "TheBorg.Plugins.Tester.dll"))
+                    "TheBorg.Plugins.Tester.dll"), CancellationToken.None)
                     .ConfigureAwait(false);
             }
             catch (Exception e)
