@@ -29,12 +29,21 @@ using System.Reflection;
 using System.Threading;
 using Nancy;
 using TheBorg.Interface;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Host
 {
     public class PluginRegistration : IPluginRegistration
     {
-        private readonly Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>>(); 
+        private readonly Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>>();
+
+        public PluginInformation PluginInformation { get; private set; }
+
+        public IPluginRegistration SetPluginInformation(PluginInformation pluginInformation)
+        {
+            PluginInformation = pluginInformation;
+            return this;
+        }
 
         public IPluginRegistration RegisterApi<T>(T instance) where T : IHttpApi
         {

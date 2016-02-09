@@ -48,7 +48,14 @@ namespace TheBorg.Host
             var pluginBootstrapper = (IPluginBootstrapper) Activator.CreateInstance(pluginBootstrapperType);
 
             var pluginRegistration = new PluginRegistration();
-            pluginBootstrapper.Start(a => a(pluginRegistration));
+            pluginBootstrapper.Start(a =>
+                {
+                    a(pluginRegistration);
+                    if (pluginRegistration.PluginInformation == null)
+                    {
+                        throw new InvalidOperationException("You must call SetPluginInformation(...)");
+                    }
+                });
             
             _apiHost = new ApiHost();
             _apiHost.Start(clientPort, pluginRegistration);

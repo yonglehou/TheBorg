@@ -30,10 +30,12 @@ namespace TheBorg.Host
     public class ApiHost : IApiHost
     {
         private NancyHost _nancyHost;
-        private readonly PluginApi _pluginApi = new PluginApi();
+        private PluginApi _pluginApi;
 
         public void Start(int port, PluginRegistration pluginRegistration)
         {
+            _pluginApi = new PluginApi(pluginRegistration.PluginInformation);
+
             pluginRegistration.RegisterApi(_pluginApi);
 
             var apiBootstrapper = new ApiBootstrapper(pluginRegistration.GetModules());

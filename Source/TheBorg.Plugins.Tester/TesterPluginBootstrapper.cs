@@ -24,6 +24,7 @@
 
 using System;
 using TheBorg.Interface;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Plugins.Tester
 {
@@ -31,7 +32,14 @@ namespace TheBorg.Plugins.Tester
     {
         public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
         {
-            pluginRegistra(r => r.RegisterApi(new TesterApi()));
+            pluginRegistra(r =>
+                {
+                    r.SetPluginInformation(new PluginInformation(
+                        "Test plugin",
+                        typeof(TesterPluginBootstrapper).Assembly.GetName().Version.ToString(),
+                        "Used to test initialization of plugins"));
+                    r.RegisterApi(new TesterApi());
+                });
         }
     }
 }

@@ -23,11 +23,13 @@
 //
 
 using System;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Interface
 {
     public interface IPluginRegistration
     {
+        IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
         IPluginRegistration RegisterApi<T>(T instance)
             where T : IHttpApi;
         IPluginRegistration RegisterApi<T>(Func<IHttpApiRequestContext, T> factory)

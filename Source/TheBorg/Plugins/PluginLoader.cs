@@ -87,7 +87,7 @@ namespace TheBorg.Plugins
             stopWatch.Stop();
             _logger.Debug($"Loaded plugin '{friendlyName}' in {stopWatch.Elapsed.TotalSeconds:0.00} seconds");
 
-            var pluginProxy = new PluginProxy(appDomain, new Plugin(new Uri($"http://127.0.0.1:{clientPort}"), _restClient));
+            var pluginProxy = new PluginProxy(appDomain, new Plugin(_logger, new Uri($"http://127.0.0.1:{clientPort}"), _restClient));
 
             await pluginProxy.Plugin.PingAsync(cancellationToken).ConfigureAwait(false);
 

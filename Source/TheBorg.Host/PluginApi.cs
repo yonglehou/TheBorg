@@ -25,15 +25,30 @@
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Host
 {
     public class PluginApi : IHttpApi
     {
+        private readonly PluginInformation _pluginInformation;
+
+        public PluginApi(
+            PluginInformation pluginInformation)
+        {
+            _pluginInformation = pluginInformation;
+        }
+
         [HttpApi(HttpApiMethod.Get, "_plugin/ping")]
         public Task Ping(IHttpApiRequestContext httpApiRequestContext, CancellationToken cancellationToken)
         {
             return Task.FromResult(0);
+        }
+
+        [HttpApi(HttpApiMethod.Get, "_plugin/plugin-information")]
+        public Task<PluginInformation> PluginInformation()
+        {
+            return Task.FromResult(_pluginInformation);
         }
     }
 }
