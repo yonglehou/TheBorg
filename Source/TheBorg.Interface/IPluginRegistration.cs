@@ -30,7 +30,7 @@ namespace TheBorg.Interface
     {
         IPluginRegistration RegisterApi<T>(T instance)
             where T : IHttpApi;
-        IPluginRegistration RegisterApi<T>(Func<IHttpApiContext, T> factory)
+        IPluginRegistration RegisterApi<T>(Func<IHttpApiRequestContext, T> factory)
             where T : IHttpApi;
     }
 }

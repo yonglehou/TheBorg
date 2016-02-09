@@ -34,7 +34,7 @@ namespace TheBorg.Host
         public ApiEndpoint(
             HttpApiMethod httpApiMethod,
             string path,
-            Func<IHttpApiContext, CancellationToken, IHttpApi, Task<dynamic>> invoker)
+            Func<IHttpApiRequestContext, CancellationToken, IHttpApi, Task<dynamic>> invoker)
         {
             HttpApiMethod = httpApiMethod;
             Path = path;
@@ -43,6 +43,6 @@ namespace TheBorg.Host
 
         public HttpApiMethod HttpApiMethod { get; }
         public string Path { get; }
-        public Func<IHttpApiContext, CancellationToken, IHttpApi, Task<dynamic>> Invoker { get; }
+        public Func<IHttpApiRequestContext, CancellationToken, IHttpApi, Task<dynamic>> Invoker { get; }
     }
 }

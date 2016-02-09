@@ -22,9 +22,32 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using TheBorg.Interface;
+
+namespace TheBorg.Host
 {
-    public interface IHttpApiContext
+    public class HttpApiRequestContext : IHttpApiRequestContext
     {
+        private readonly IReadOnlyDictionary<string, object> _parameters;
+
+        public HttpApiRequestContext(
+            IEnumerable<KeyValuePair<string, object>> parameters)
+        {
+            _parameters = parameters.ToDictionary(kv => kv.Key, kv => kv.Value);
+        }
+
+        public T Get<T>(string key)
+        {
+            object value;
+            if (_parameters.TryGetValue(key, out value))
+            {
+                return (T) value;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(key), $"There's no parameter named '{key}'");
+        }
     }
 }

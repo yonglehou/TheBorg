@@ -82,6 +82,7 @@ namespace TheBorg.Core
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
             using (var httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
             {
+                httpResponseMessage.EnsureSuccessStatusCode();
                 var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                 return _jsonSerializer.Deserialize<T>(json, jsonFormat);
             }

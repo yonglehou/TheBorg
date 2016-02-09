@@ -22,11 +22,9 @@
 // SOFTWARE.
 //
 
-using TheBorg.Interface;
-
-namespace TheBorg.Host
+namespace TheBorg.Interface
 {
-    public class HttpApiContext : IHttpApiContext
+    public interface IHttpApiRequestContext
     {
     }
 }

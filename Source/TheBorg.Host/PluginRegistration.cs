@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Nancy;
 using TheBorg.Interface;
 
@@ -33,22 +34,22 @@ namespace TheBorg.Host
 {
     public class PluginRegistration : IPluginRegistration
     {
-        private readonly Dictionary<Type, Func<IHttpApiContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiContext, INancyModule>>(); 
+        private readonly Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>>(); 
 
         public IPluginRegistration RegisterApi<T>(T instance) where T : IHttpApi
         {
             return RegisterApi(_ => instance);
         }
 
-        public IPluginRegistration RegisterApi<T>(Func<IHttpApiContext, T> factory)
+        public IPluginRegistration RegisterApi<T>(Func<IHttpApiRequestContext, T> factory)
             where T : IHttpApi
         {
             var apiEndpoints = GatherEndpoints<T>();
-            _factories.Add(typeof(ApiModule<T>), c => new ApiModule<T>(hc => factory(hc), apiEndpoints)); // TODO: Check for false!
+            _factories.Add(typeof(ApiModule<T>), c => new ApiModule<T>(hc => factory(hc), apiEndpoints));
             return this;
         }
 
-        public IEnumerable<KeyValuePair<Type, Func<IHttpApiContext, INancyModule>>> GetModules()
+        public IEnumerable<KeyValuePair<Type, Func<IHttpApiRequestContext, INancyModule>>> GetModules()
         {
             return _factories;
         }
@@ -76,8 +77,31 @@ namespace TheBorg.Host
                 httpApiAttribute.Path,
                 async (context, token, api) =>
                     {
-                        dynamic task = methodInfo.Invoke(api, new object[] {});
+                        var parameters = BuildParameters(methodInfo, context, token).ToArray();
+                        dynamic task = methodInfo.Invoke(api, parameters);
                         return await task.ConfigureAwait(false);
+                    });
+        }
+
+        private static IEnumerable<object> BuildParameters(
+            MethodInfo methodInfo,
+            IHttpApiRequestContext httpApiRequestContext,
+            CancellationToken cancellationToken)
+        {
+            return methodInfo
+                .GetParameters()
+                .Select(pi =>
+                    {
+                        if (pi.ParameterType == typeof (CancellationToken))
+                        {
+                            return (object) cancellationToken;
+                        }
+                        if (pi.ParameterType == typeof (IHttpApiRequestContext))
+                        {
+                            return (object) httpApiRequestContext;
+                        }
+
+                        throw new InvalidOperationException($"Unknown type '{pi.ParameterType}'");
                     });
         }
     }

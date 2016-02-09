@@ -33,7 +33,7 @@ namespace TheBorg.Host
         where T : IHttpApi
     {
         public ApiModule(
-            Func<IHttpApiContext, IHttpApi> httpApiFactory,
+            Func<IHttpApiRequestContext, IHttpApi> httpApiFactory,
             IEnumerable<ApiEndpoint> apiEndpoints)
         {
             foreach (var apiEndpoint in apiEndpoints)
@@ -52,10 +52,11 @@ namespace TheBorg.Host
                         throw new ArgumentOutOfRangeException();
                 }
 
-                routeBuilder[apiEndpoint.Path, true] = (_, t) =>
+                routeBuilder[apiEndpoint.Path, true] = (parameters, t) =>
                     {
-                        var ss = new HttpApiContext();
-                        return apiEndpoint.Invoker(ss, t, httpApiFactory(ss));
+                        var dynamicDictionary = (DynamicDictionary) parameters;
+                        var httpApiRequestContext = new HttpApiRequestContext(dynamicDictionary.ToDictionary());
+                        return apiEndpoint.Invoker(httpApiRequestContext, t, httpApiFactory(httpApiRequestContext));
                     };
             }
         }

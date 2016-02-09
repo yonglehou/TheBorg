@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="ApiBootstrapper.cs" />
     <Compile Include="ApiEndpoint.cs" />
-    <Compile Include="HttpApiContext.cs" />
+    <Compile Include="HttpApiRequestContext.cs" />
     <Compile Include="ApiHost.cs" />
     <Compile Include="ApiModule.cs" />
     <Compile Include="AsyncHelper.cs" />

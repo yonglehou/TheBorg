@@ -44,7 +44,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="HttpMethodAttribute.cs" />
-    <Compile Include="IHttpApiContext.cs" />
+    <Compile Include="IHttpApiRequestContext.cs" />
     <Compile Include="IHttpApi.cs" />
     <Compile Include="IPluginBootstrapper.cs" />
     <Compile Include="IPluginRegistration.cs" />

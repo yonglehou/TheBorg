@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface;
 
@@ -30,7 +31,7 @@ namespace TheBorg.Host
     public class PluginApi : IHttpApi
     {
         [HttpApi(HttpApiMethod.Get, "_plugin/ping")]
-        public Task Ping()
+        public Task Ping(IHttpApiRequestContext httpApiRequestContext, CancellationToken cancellationToken)
         {
             return Task.FromResult(0);
         }

@@ -38,7 +38,7 @@ namespace TheBorg.Host
         private readonly ApiCatalog _apiCatalog;
 
         public ApiBootstrapper(
-            IEnumerable<KeyValuePair<Type, Func<IHttpApiContext, INancyModule>>> nancyModules)
+            IEnumerable<KeyValuePair<Type, Func<IHttpApiRequestContext, INancyModule>>> nancyModules)
         {
             _apiCatalog = new ApiCatalog(nancyModules);
         }
@@ -59,26 +59,26 @@ namespace TheBorg.Host
 
         private class ApiCatalog : INancyModuleCatalog
         {
-            private readonly IReadOnlyDictionary<Type, Func<IHttpApiContext, INancyModule>> _nancyModules;
+            private readonly IReadOnlyDictionary<Type, Func<IHttpApiRequestContext, INancyModule>> _nancyModules;
 
             public ApiCatalog(
-                IEnumerable<KeyValuePair<Type, Func<IHttpApiContext, INancyModule>>> nancyModules)
+                IEnumerable<KeyValuePair<Type, Func<IHttpApiRequestContext, INancyModule>>> nancyModules)
             {
                 _nancyModules = nancyModules.ToDictionary(kv => kv.Key, kv => kv.Value);
             }
 
             public IEnumerable<INancyModule> GetAllModules(NancyContext context)
             {
-                var apiContext = new HttpApiContext();
+                var apiContext = new HttpApiRequestContext(Enumerable.Empty<KeyValuePair<string, object>>());
                 return _nancyModules.Values.Select(f => f(apiContext));
             }
 
             public INancyModule GetModule(Type moduleType, NancyContext context)
             {
-                Func<IHttpApiContext, INancyModule> nancyModule;
+                Func<IHttpApiRequestContext, INancyModule> nancyModule;
                 if (_nancyModules.TryGetValue(moduleType, out nancyModule))
                 {
-                    var apiContext = new HttpApiContext();
+                    var apiContext = new HttpApiRequestContext(Enumerable.Empty<KeyValuePair<string, object>>());
                     return nancyModule(apiContext);
                 }
 
