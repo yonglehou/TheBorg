@@ -44,7 +44,7 @@ namespace TheBorg.Host
             where T : IHttpApi
         {
             var apiEndpoints = GatherEndpoints<T>();
-            _factories.Add(typeof(T), c => new ApiModule<T>(hc => factory(hc), apiEndpoints)); // TODO: Check for false!
+            _factories.Add(typeof(ApiModule<T>), c => new ApiModule<T>(hc => factory(hc), apiEndpoints)); // TODO: Check for false!
             return this;
         }
 

@@ -37,13 +37,16 @@ namespace TheBorg.Plugins
     public class PluginLoader : IPluginLoader
     {
         private readonly ILogger _logger;
+        private readonly IRestClient _restClient;
         private readonly AppDomainManager _appDomainManager = new AppDomainManager();
         private readonly int _tcpPort = TcpHelper.GetFreePort();
 
         public PluginLoader(
-            ILogger logger)
+            ILogger logger,
+            IRestClient restClient)
         {
             _logger = logger;
+            _restClient = restClient;
         }
 
         public Task<IPluginProxy> LoadPluginAsync(string dllPath)
@@ -80,8 +83,7 @@ namespace TheBorg.Plugins
                 AppDomain.Unload(appDomain);
                 throw;
             }
-
-
+            
             stopWatch.Stop();
             _logger.Debug($"Loaded plugin '{friendlyName}' in {stopWatch.Elapsed.TotalSeconds:0.00} seconds");
 

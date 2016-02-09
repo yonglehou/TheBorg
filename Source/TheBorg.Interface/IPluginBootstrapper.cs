@@ -28,6 +28,6 @@ namespace TheBorg.Interface
 {
     public interface IPluginBootstrapper
     {
-        void Start(Action<IPluginRegistration> pluginRegistra);
+        void Start(Action<Action<IPluginRegistration>> pluginRegistra);
     }
 }

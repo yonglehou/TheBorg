@@ -23,35 +23,29 @@
 //
 
 using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using TheBorg.Interface;
 
-namespace TheBorg.Host
+namespace TheBorg.Interface.ValueObjects
 {
-    public class PluginHostClient : MarshalByRefObject
+    public class PluginInformation : ValueObject
     {
-        private ApiHost _apiHost;
+        public string Title { get; }
+        public string Version { get; }
+        public string Description { get; }
 
-        public void Launch(string pluginPath, AppDomain appDomain, int serverPort, int clientPort)
+        public PluginInformation(
+            string title,
+            string version,
+            string description)
         {
-            var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
-            var pluginDirectory = Path.GetDirectoryName(pluginPath);
-            appDomain.AssemblyResolve += (sender, args) =>
-                {
-                    var ad = sender as AppDomain;
-                    var path = Path.Combine(pluginDirectory, args.Name.Split(',')[0] + ".dll");
-                    return ad.Load(path);
-                };
-            var pluginBootstrapperType = assembly.GetTypes().Single(t => typeof (IPluginBootstrapper).IsAssignableFrom(t));
-            var pluginBootstrapper = (IPluginBootstrapper) Activator.CreateInstance(pluginBootstrapperType);
+            Version v;
 
-            var pluginRegistration = new PluginRegistration();
-            pluginBootstrapper.Start(a => a(pluginRegistration));
-            
-            _apiHost = new ApiHost();
-            _apiHost.Start(clientPort, pluginRegistration);
+            if (string.IsNullOrEmpty(title)) throw new ArgumentNullException(nameof(title));
+            if (!System.Version.TryParse(version, out v)) throw new ArgumentException($"'{version}' is now a valid version string", nameof(version));
+            if (string.IsNullOrEmpty(description)) throw new ArgumentNullException(nameof(description));
+
+            Title = title;
+            Version = version;
+            Description = description;
         }
     }
 }

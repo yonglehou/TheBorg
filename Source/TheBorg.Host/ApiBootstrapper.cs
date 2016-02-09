@@ -26,6 +26,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nancy;
+using Nancy.Bootstrapper;
+using Nancy.Responses.Negotiation;
 using Nancy.TinyIoc;
 using TheBorg.Interface;
 
@@ -44,6 +46,15 @@ namespace TheBorg.Host
         protected override void ConfigureApplicationContainer(TinyIoCContainer container)
         {
             container.Register<INancyModuleCatalog>(_apiCatalog);
+        }
+
+        protected override NancyInternalConfiguration InternalConfiguration
+        {
+            get
+            {
+                var processors = new[] { typeof(JsonProcessor), };
+                return NancyInternalConfiguration.WithOverrides(x => x.ResponseProcessors = processors);
+            }
         }
 
         private class ApiCatalog : INancyModuleCatalog

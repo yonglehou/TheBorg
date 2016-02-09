@@ -29,8 +29,9 @@ namespace TheBorg.Plugins.Tester
 {
     public class TesterPluginBootstrapper : IPluginBootstrapper
     {
-        public void Start(Action<IPluginRegistration> pluginRegistra)
+        public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
         {
+            pluginRegistra(r => r.RegisterApi(new TesterApi()));
         }
     }
 }
