@@ -10,6 +10,9 @@ NUGET
     Microsoft.Net.Http (2.2.29)
       Microsoft.Bcl (>= 1.1.10)
       Microsoft.Bcl.Build (>= 1.0.14)
+    Nancy (1.4.3)
+    Nancy.Hosting.Self (1.4.1)
+      Nancy (>= 1.4.1)
     Newtonsoft.Json (8.0.2)
     Octokit (0.18.0)
       Microsoft.Net.Http
