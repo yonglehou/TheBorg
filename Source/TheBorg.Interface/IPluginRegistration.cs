@@ -24,28 +24,13 @@
 
 using System;
 
-namespace TheBorg.Plugins
+namespace TheBorg.Interface
 {
-    public class PluginProxy : IPluginProxy
+    public interface IPluginRegistration
     {
-        private readonly AppDomain _appDomain;
-
-        public PluginProxy(
-            AppDomain appDomain,
-            IPlugin plugin)
-        {
-            Plugin = plugin;
-            _appDomain = appDomain;
-        }
-
-        public IPlugin Plugin { get; }
-
-        public void Dispose()
-        {
-            if (!_appDomain.IsFinalizingForUnload())
-            {
-                AppDomain.Unload(_appDomain);
-            }
-        }
+        IPluginRegistration RegisterApi<T>(T instance)
+            where T : IHttpApi;
+        IPluginRegistration RegisterApi<T>(Func<IHttpApiContext, T> factory)
+            where T : IHttpApi;
     }
 }

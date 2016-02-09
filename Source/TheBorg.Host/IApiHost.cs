@@ -22,27 +22,11 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using TheBorg.Interface;
+using System;
 
 namespace TheBorg.Host
 {
-    public class PluginTransport : IPluginTransport
+    public interface IApiHost : IDisposable
     {
-        private readonly IPlugin _plugin;
-
-        public PluginTransport(
-            IPlugin plugin)
-        {
-            _plugin = plugin;
-        }
-
-        public void Ping()
-        {
-            using (var a = AsyncHelper.Wait)
-            {
-                a.Run(_plugin.PingAsync(CancellationToken.None));
-            }
-        }
     }
 }

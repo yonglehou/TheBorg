@@ -22,45 +22,28 @@
 // SOFTWARE.
 //
 
-using Serilog;
-using TheBorg.Host;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Services;
+using System;
 
-namespace TheBorg.Plugins
+namespace TheBorg.Interface
 {
-    public class PluginHostServer : IPluginHostTransport
+    public enum HttpApiMethod
     {
-        private readonly ILogger _logger;
-        private readonly IMessageService _messageService;
+        Get,
+        Post,
+    }
 
-        public PluginHostServer(
-            ILogger logger,
-            IMessageService messageService)
+    [AttributeUsage(AttributeTargets.Method)]
+    public class HttpApiAttribute : Attribute
+    {
+        public HttpApiAttribute(
+            HttpApiMethod httpApiMethod,
+            string path)
         {
-            _logger = logger;
-            _messageService = messageService;
+            HttpApiMethod = httpApiMethod;
+            Path = path;
         }
 
-        public void Log(LogMessage logMessage)
-        {
-            _logger.Debug(logMessage.Text);
-        }
-
-        public void Send(string text, Address address)
-        {
-            using (var a = AsyncHelper.Wait)
-            {
-                a.Run(_messageService.SendAsync(address, text));
-            }
-        }
-
-        public void Reply(string text, TenantMessage tenantMessage)
-        {
-            using (var a = AsyncHelper.Wait)
-            {
-                a.Run(_messageService.ReplyAsync(tenantMessage, text));
-            }
-        }
+        public HttpApiMethod HttpApiMethod { get; }
+        public string Path { get; }
     }
 }

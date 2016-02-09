@@ -23,35 +23,26 @@
 //
 
 using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using TheBorg.Interface;
 
 namespace TheBorg.Host
 {
-    public class PluginHostClient : MarshalByRefObject
+    public class ApiEndpoint
     {
-        private ApiHost _apiHost;
-
-        public void Launch(string pluginPath, AppDomain appDomain, int serverPort, int clientPort)
+        public ApiEndpoint(
+            HttpApiMethod httpApiMethod,
+            string path,
+            Func<IHttpApiContext, CancellationToken, IHttpApi, Task<dynamic>> invoker)
         {
-            var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
-            var pluginDirectory = Path.GetDirectoryName(pluginPath);
-            appDomain.AssemblyResolve += (sender, args) =>
-                {
-                    var ad = sender as AppDomain;
-                    var path = Path.Combine(pluginDirectory, args.Name.Split(',')[0] + ".dll");
-                    return ad.Load(path);
-                };
-            var pluginBootstrapperType = assembly.GetTypes().Single(t => typeof (IPluginBootstrapper).IsAssignableFrom(t));
-            var pluginBootstrapper = (IPluginBootstrapper) Activator.CreateInstance(pluginBootstrapperType);
-
-            var pluginRegistration = new PluginRegistration();
-            pluginBootstrapper.Start(a => a(pluginRegistration));
-            
-            _apiHost = new ApiHost();
-            _apiHost.Start(clientPort, pluginRegistration);
+            HttpApiMethod = httpApiMethod;
+            Path = path;
+            Invoker = invoker;
         }
+
+        public HttpApiMethod HttpApiMethod { get; }
+        public string Path { get; }
+        public Func<IHttpApiContext, CancellationToken, IHttpApi, Task<dynamic>> Invoker { get; }
     }
 }

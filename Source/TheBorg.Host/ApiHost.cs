@@ -23,35 +23,28 @@
 //
 
 using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using TheBorg.Interface;
+using Nancy.Hosting.Self;
 
 namespace TheBorg.Host
 {
-    public class PluginHostClient : MarshalByRefObject
+    public class ApiHost : IApiHost
     {
-        private ApiHost _apiHost;
+        private NancyHost _nancyHost;
+        private readonly PluginApi _pluginApi = new PluginApi();
 
-        public void Launch(string pluginPath, AppDomain appDomain, int serverPort, int clientPort)
+        public void Start(int port, PluginRegistration pluginRegistration)
         {
-            var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
-            var pluginDirectory = Path.GetDirectoryName(pluginPath);
-            appDomain.AssemblyResolve += (sender, args) =>
-                {
-                    var ad = sender as AppDomain;
-                    var path = Path.Combine(pluginDirectory, args.Name.Split(',')[0] + ".dll");
-                    return ad.Load(path);
-                };
-            var pluginBootstrapperType = assembly.GetTypes().Single(t => typeof (IPluginBootstrapper).IsAssignableFrom(t));
-            var pluginBootstrapper = (IPluginBootstrapper) Activator.CreateInstance(pluginBootstrapperType);
+            pluginRegistration.RegisterApi(_pluginApi);
 
-            var pluginRegistration = new PluginRegistration();
-            pluginBootstrapper.Start(a => a(pluginRegistration));
-            
-            _apiHost = new ApiHost();
-            _apiHost.Start(clientPort, pluginRegistration);
+            var apiBootstrapper = new ApiBootstrapper(pluginRegistration.GetModules());
+
+            _nancyHost = new NancyHost(new Uri($"http://127.0.0.1:{port}"), apiBootstrapper);
+            _nancyHost.Start();
+        }
+
+        public void Dispose()
+        {
+            _nancyHost.Dispose();
         }
     }
 }

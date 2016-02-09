@@ -61,7 +61,7 @@ namespace TheBorg.Commands.CommandSets
         {
             await tenantMessage.ReplyAsync($"Loading plugin '{pluginName}'", cancellationToken).ConfigureAwait(false);
             var stopwatch = Stopwatch.StartNew();
-            await _pluginService.LoadPluginAsync(pluginName).ConfigureAwait(false);
+            await _pluginService.LoadPluginAsync(pluginName, cancellationToken).ConfigureAwait(false);
             var time = stopwatch.Elapsed;
             await tenantMessage.ReplyAsync($"It took me {time.TotalSeconds:0.00} seconds to load '{pluginName}'", cancellationToken).ConfigureAwait(false);
         }
@@ -120,7 +120,8 @@ namespace TheBorg.Commands.CommandSets
                     .ConfigureAwait(false);
 
                 await _pluginService.LoadPluginAsync(
-                    dllLocation)
+                    dllLocation,
+                    cancellationToken)
                     .ConfigureAwait(false);
             }
 

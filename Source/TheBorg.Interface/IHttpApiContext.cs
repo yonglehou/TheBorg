@@ -22,28 +22,9 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface;
-using TheBorg.Interface.ValueObjects;
-
-namespace TheBorg.Plugins.Tester
+namespace TheBorg.Interface
 {
-    public class TesterPlugin : IPlugin
+    public interface IHttpApiContext
     {
-        private IPluginHost _pluginHost;
-
-        public Task LaunchAsync(IPluginHost pluginHost, CancellationToken cancellationToken)
-        {
-            _pluginHost = pluginHost;
-            _pluginHost.Log(LogLevel.Debug, "Hello from tester plugin");
-            return Task.FromResult(0);
-        }
-
-        public Task PingAsync(CancellationToken cancellationToken)
-        {
-            _pluginHost.Log(LogLevel.Debug, "Pong from tester plugin");
-            return Task.FromResult(0);
-        }
     }
 }

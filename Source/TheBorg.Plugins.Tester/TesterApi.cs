@@ -22,15 +22,21 @@
 // SOFTWARE.
 //
 
+using System.Threading.Tasks;
+using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Host
+namespace TheBorg.Plugins.Tester
 {
-    public interface IPluginHostTransport
+    public class TesterApi : IHttpApi
     {
-        void Log(LogMessage logMessage);
-
-        void Send(string text, Address address);
-        void Reply(string text, TenantMessage tenantMessage);
+        [HttpApi(HttpApiMethod.Post, "tester")]
+        public Task<PluginInformation> Tester()
+        {
+            return Task.FromResult(new PluginInformation(
+                "Tester plugin",
+                typeof(TesterApi).Assembly.GetName().Version.ToString(),
+                "Fanciful tester plugin"));
+        }
     }
 }

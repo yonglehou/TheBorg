@@ -26,13 +26,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Interface
+namespace TheBorg.Plugins
 {
-    public interface IPluginHost
+    public interface IPlugin
     {
-        void Log(LogLevel level, string message);
-
-        Task SendAsync(string text, Address address, CancellationToken cancellationToken);
-        Task ReplyAsync(string text, TenantMessage tenantMessage, CancellationToken cancellationToken);
+        Task PingAsync(CancellationToken cancellationToken);
+        Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken);
     }
 }

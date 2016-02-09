@@ -25,43 +25,31 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using Halibut;
-using Halibut.ServiceModel;
 using Serilog;
 using TheBorg.Core;
 using TheBorg.Host;
-using TheBorg.Interface;
 
 namespace TheBorg.Plugins
 {
     public class PluginLoader : IPluginLoader
     {
         private readonly ILogger _logger;
-        private readonly IPluginHostTransport _pluginHostTransport;
+        private readonly IRestClient _restClient;
         private readonly AppDomainManager _appDomainManager = new AppDomainManager();
-        private readonly X509Certificate2 _serverCertifiate = CertificateGenerator.CreateSelfSignCertificate();
-        private readonly DelegateServiceFactory _delegateServiceFactory = new DelegateServiceFactory();
-        private readonly HalibutRuntime _halibutRuntimeServer;
         private readonly int _tcpPort = TcpHelper.GetFreePort();
 
         public PluginLoader(
             ILogger logger,
-            IPluginHostTransport pluginHostTransport)
+            IRestClient restClient)
         {
             _logger = logger;
-            _pluginHostTransport = pluginHostTransport;
-
-            _delegateServiceFactory.Register(() => _pluginHostTransport);
-            _halibutRuntimeServer = new HalibutRuntime(_delegateServiceFactory, _serverCertifiate);
-            _halibutRuntimeServer.Listen(new IPEndPoint(IPAddress.Loopback, _tcpPort));
+            _restClient = restClient;
         }
 
-        public Task<IPluginProxy> LoadPluginAsync(string dllPath)
+        public async Task<IPluginProxy> LoadPluginAsync(string dllPath, CancellationToken cancellationToken)
         {
             if (!File.Exists(dllPath)) throw new ArgumentException($"Plugin '{dllPath}' does not exist");
 
@@ -79,9 +67,6 @@ namespace TheBorg.Plugins
 
             var friendlyName = Path.GetFileName(dllPath);
             var appDomain = _appDomainManager.CreateDomain(friendlyName, null, appDomainSetup);
-            var bytes = CertificateGenerator.CreateSelfSignCertificatePfx(DateTime.Now.AddYears(-1), DateTime.Now.AddYears(40));
-            var clientThumbprint = new X509Certificate2(bytes).Thumbprint;
-            _halibutRuntimeServer.Trust(clientThumbprint);
 
             var pluginHost = appDomain.CreateInstanceAndUnwrap(Assembly.GetAssembly(typeof(PluginHostClient)).FullName, typeof(PluginHostClient).ToString()) as PluginHostClient;
             var autoResetEvent = new AutoResetEvent(false);
@@ -89,7 +74,7 @@ namespace TheBorg.Plugins
 
             try
             {
-                pluginHost.Launch(dllPath, appDomain, bytes, _serverCertifiate.Thumbprint, _tcpPort, clientPort);
+                pluginHost.Launch(dllPath, appDomain, _tcpPort, clientPort);
                 autoResetEvent.Set();
             }
             catch (Exception e)
@@ -98,17 +83,15 @@ namespace TheBorg.Plugins
                 AppDomain.Unload(appDomain);
                 throw;
             }
-
-            var halibutRuntime = new HalibutRuntime(_serverCertifiate);
-            var pluginTransport = halibutRuntime.CreateClient<IPluginTransport>($"https://127.0.0.1:{clientPort}", clientThumbprint);
-
+            
             stopWatch.Stop();
             _logger.Debug($"Loaded plugin '{friendlyName}' in {stopWatch.Elapsed.TotalSeconds:0.00} seconds");
 
-            var pluginProxy = new PluginProxy(pluginTransport, halibutRuntime, appDomain);
-            pluginProxy.Plugin.PingAsync(CancellationToken.None);
+            var pluginProxy = new PluginProxy(appDomain, new Plugin(new Uri($"http://127.0.0.1:{clientPort}"), _restClient));
 
-            return Task.FromResult<IPluginProxy>(pluginProxy);
+            await pluginProxy.Plugin.PingAsync(cancellationToken).ConfigureAwait(false);
+
+            return pluginProxy;
         }
     }
 }

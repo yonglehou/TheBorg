@@ -24,28 +24,10 @@
 
 using System;
 
-namespace TheBorg.Plugins
+namespace TheBorg.Interface
 {
-    public class PluginProxy : IPluginProxy
+    public interface IPluginBootstrapper
     {
-        private readonly AppDomain _appDomain;
-
-        public PluginProxy(
-            AppDomain appDomain,
-            IPlugin plugin)
-        {
-            Plugin = plugin;
-            _appDomain = appDomain;
-        }
-
-        public IPlugin Plugin { get; }
-
-        public void Dispose()
-        {
-            if (!_appDomain.IsFinalizingForUnload())
-            {
-                AppDomain.Unload(_appDomain);
-            }
-        }
+        void Start(Action<Action<IPluginRegistration>> pluginRegistra);
     }
 }

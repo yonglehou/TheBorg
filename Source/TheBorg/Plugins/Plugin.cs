@@ -22,10 +22,40 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Host
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Core;
+using TheBorg.Interface.ValueObjects;
+
+namespace TheBorg.Plugins
 {
-    public interface IPluginTransport
+    public class Plugin : IPlugin
     {
-        void Ping();
+        private readonly Uri _baseUri;
+        private readonly IRestClient _restClient;
+
+        public Plugin(
+            Uri baseUri,
+            IRestClient restClient)
+        {
+            _baseUri = baseUri;
+            _restClient = restClient;
+        }
+
+        public Task PingAsync(CancellationToken cancellationToken)
+        {
+            return GetAsync<object>("_plugin/ping", cancellationToken);
+        }
+
+        public Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private Task<T> GetAsync<T>(string path, CancellationToken cancellationToken)
+        {
+            return _restClient.GetAsync<T>(new Uri(_baseUri, path), JsonFormat.CamelCase, cancellationToken);
+        }
     }
 }

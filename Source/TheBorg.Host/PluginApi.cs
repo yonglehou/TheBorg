@@ -22,36 +22,17 @@
 // SOFTWARE.
 //
 
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+using System.Threading.Tasks;
 using TheBorg.Interface;
 
 namespace TheBorg.Host
 {
-    public class PluginHostClient : MarshalByRefObject
+    public class PluginApi : IHttpApi
     {
-        private ApiHost _apiHost;
-
-        public void Launch(string pluginPath, AppDomain appDomain, int serverPort, int clientPort)
+        [HttpApi(HttpApiMethod.Get, "_plugin/ping")]
+        public Task Ping()
         {
-            var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
-            var pluginDirectory = Path.GetDirectoryName(pluginPath);
-            appDomain.AssemblyResolve += (sender, args) =>
-                {
-                    var ad = sender as AppDomain;
-                    var path = Path.Combine(pluginDirectory, args.Name.Split(',')[0] + ".dll");
-                    return ad.Load(path);
-                };
-            var pluginBootstrapperType = assembly.GetTypes().Single(t => typeof (IPluginBootstrapper).IsAssignableFrom(t));
-            var pluginBootstrapper = (IPluginBootstrapper) Activator.CreateInstance(pluginBootstrapperType);
-
-            var pluginRegistration = new PluginRegistration();
-            pluginBootstrapper.Start(a => a(pluginRegistration));
-            
-            _apiHost = new ApiHost();
-            _apiHost.Start(clientPort, pluginRegistration);
+            return Task.FromResult(0);
         }
     }
 }

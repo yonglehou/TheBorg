@@ -22,15 +22,16 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
+using System;
+using TheBorg.Interface;
 
-namespace TheBorg.Interface
+namespace TheBorg.Plugins.Tester
 {
-    public interface IPlugin
+    public class TesterPluginBootstrapper : IPluginBootstrapper
     {
-        Task LaunchAsync(IPluginHost pluginHost, CancellationToken cancellationToken);
-
-        Task PingAsync(CancellationToken cancellationToken);
+        public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
+        {
+            pluginRegistra(r => r.RegisterApi(new TesterApi()));
+        }
     }
 }

@@ -22,43 +22,30 @@
 // SOFTWARE.
 //
 
-using TheBorg.Interface.ValueObjects;
+using System;
 
-namespace TheBorg.Interface.Extensions
+namespace TheBorg.Interface.ValueObjects
 {
-    public static class PluginHostExtensions
+    public class PluginInformation : ValueObject
     {
-        public static void LogVerbose(
-            this IPluginHost pluginHost,
-            string message)
-        {
-            pluginHost.Log(LogLevel.Verbose, message);
-        }
-        public static void LogDebug(
-            this IPluginHost pluginHost,
-            string message)
-        {
-            pluginHost.Log(LogLevel.Debug, message);
-        }
-        public static void LogWarning(
-            this IPluginHost pluginHost,
-            string message)
-        {
-            pluginHost.Log(LogLevel.Warning, message);
-        }
+        public string Title { get; }
+        public string Version { get; }
+        public string Description { get; }
 
-        public static void LogError(
-            this IPluginHost pluginHost,
-            string message)
+        public PluginInformation(
+            string title,
+            string version,
+            string description)
         {
-            pluginHost.Log(LogLevel.Error, message);
-        }
+            Version v;
 
-        public static void LogFatal(
-            this IPluginHost pluginHost,
-            string message)
-        {
-            pluginHost.Log(LogLevel.Fatal, message);
+            if (string.IsNullOrEmpty(title)) throw new ArgumentNullException(nameof(title));
+            if (!System.Version.TryParse(version, out v)) throw new ArgumentException($"'{version}' is now a valid version string", nameof(version));
+            if (string.IsNullOrEmpty(description)) throw new ArgumentNullException(nameof(description));
+
+            Title = title;
+            Version = version;
+            Description = description;
         }
     }
 }
