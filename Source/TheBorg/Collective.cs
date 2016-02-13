@@ -35,6 +35,7 @@ using TheBorg.Conversations;
 using TheBorg.Core;
 using TheBorg.Extensions;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Plugins.Jokes;
 using TheBorg.Services;
 using TheBorg.Tenants;
 
@@ -47,6 +48,11 @@ namespace TheBorg
         private readonly ICommandManager _commandManager;
         private readonly IConversationManager _conversationManager;
         private readonly IReadOnlyCollection<ITenant> _tenants;
+
+        private readonly IReadOnlyCollection<string> BuiltInPlugins = new []
+            {
+                typeof(JokesPluginBootstrapper).Assembly.GetName().Name,
+            };
 
         public Collective(
             ILogger logger,
@@ -64,7 +70,7 @@ namespace TheBorg
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            LoadTest();
+            await LoadBuildInPluginsAsync(cancellationToken).ConfigureAwait(false);
 
             var disposables = await Task.WhenAll(_tenants.Select(async t =>
                 {
@@ -92,19 +98,24 @@ namespace TheBorg
             }
         }
 
-        [Conditional("DEBUG")]
-        private async void LoadTest()
+        private async Task LoadBuildInPluginsAsync(CancellationToken cancellationToken)
         {
-            try
+            var applicationRoot = Path.GetDirectoryName(typeof (Collective).Assembly.GetCodeBase());
+
+            foreach (var builtInPlugin in BuiltInPlugins)
             {
-                await _pluginService.LoadPluginAsync(Path.Combine(
-                    Path.GetDirectoryName(typeof (Collective).Assembly.GetCodeBase()),
-                    "TheBorg.Plugins.Tester.dll"), CancellationToken.None)
-                    .ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e, "Failed to load test");
+                try
+                {
+                    var pluginPath = Path.Combine(applicationRoot, $"{builtInPlugin}.dll");
+                    await _pluginService.LoadPluginAsync(
+                        pluginPath,
+                        cancellationToken)
+                        .ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, $"Failed to load '{builtInPlugin}'");
+                }
             }
         }
 

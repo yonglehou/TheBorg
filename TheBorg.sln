@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{510ED3
 		paket.dependencies = paket.dependencies
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Plugins.Tester", "Source\TheBorg.Plugins.Tester\TheBorg.Plugins.Tester.csproj", "{B23A319E-B602-49FF-A3C9-3D689C1BE846}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Plugins.Jokes", "Source\TheBorg.Plugins.Jokes\TheBorg.Plugins.Jokes.csproj", "{721CF637-01FE-4691-A6A1-EFF1EC4E9D25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,10 +40,10 @@ Global
 		{D2645D5A-CB41-4A08-AB0F-3EB297A62148}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2645D5A-CB41-4A08-AB0F-3EB297A62148}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2645D5A-CB41-4A08-AB0F-3EB297A62148}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B23A319E-B602-49FF-A3C9-3D689C1BE846}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B23A319E-B602-49FF-A3C9-3D689C1BE846}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B23A319E-B602-49FF-A3C9-3D689C1BE846}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B23A319E-B602-49FF-A3C9-3D689C1BE846}.Release|Any CPU.Build.0 = Release|Any CPU
+		{721CF637-01FE-4691-A6A1-EFF1EC4E9D25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{721CF637-01FE-4691-A6A1-EFF1EC4E9D25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{721CF637-01FE-4691-A6A1-EFF1EC4E9D25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{721CF637-01FE-4691-A6A1-EFF1EC4E9D25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

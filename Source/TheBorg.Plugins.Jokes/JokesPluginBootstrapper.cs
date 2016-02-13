@@ -22,21 +22,24 @@
 // SOFTWARE.
 //
 
-using System.Threading.Tasks;
+using System;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Plugins.Tester
+namespace TheBorg.Plugins.Jokes
 {
-    public class TesterApi : IHttpApi
+    public class JokesPluginBootstrapper : IPluginBootstrapper
     {
-        [HttpApi(HttpApiMethod.Post, "tester")]
-        public Task<PluginInformation> Tester()
+        public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
         {
-            return Task.FromResult(new PluginInformation(
-                "Tester plugin",
-                typeof(TesterApi).Assembly.GetName().Version.ToString(),
-                "Fanciful tester plugin"));
+            pluginRegistra(r =>
+                {
+                    r.SetPluginInformation(new PluginInformation(
+                        "Jokes",
+                        typeof(JokesPluginBootstrapper).Assembly.GetName().Version.ToString(),
+                        "Provides jokes"));
+                    r.RegisterApi(new JokesApi());
+                });
         }
     }
 }

@@ -22,24 +22,17 @@
 // SOFTWARE.
 //
 
-using System;
+using System.Threading.Tasks;
 using TheBorg.Interface;
-using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Plugins.Tester
+namespace TheBorg.Plugins.Jokes
 {
-    public class TesterPluginBootstrapper : IPluginBootstrapper
+    public class JokesApi : IHttpApi
     {
-        public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
+        [HttpApi(HttpApiMethod.Get, "api/joke")]
+        public Task<string> Joke()
         {
-            pluginRegistra(r =>
-                {
-                    r.SetPluginInformation(new PluginInformation(
-                        "Test plugin",
-                        typeof(TesterPluginBootstrapper).Assembly.GetName().Version.ToString(),
-                        "Used to test initialization of plugins"));
-                    r.RegisterApi(new TesterApi());
-                });
+            return Task.FromResult("Chuck Norris can catch you without a PokéBall");
         }
     }
 }
