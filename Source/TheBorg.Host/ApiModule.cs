@@ -33,7 +33,7 @@ namespace TheBorg.Host
         where T : IHttpApi
     {
         public ApiModule(
-            Func<IHttpApiRequestContext, IHttpApi> httpApiFactory,
+            Func<IHttpApiRequestContext, T> httpApiFactory,
             IEnumerable<ApiEndpoint> apiEndpoints)
         {
             foreach (var apiEndpoint in apiEndpoints)
