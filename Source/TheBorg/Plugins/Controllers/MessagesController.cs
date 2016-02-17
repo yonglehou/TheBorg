@@ -22,15 +22,19 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
+using System.Web.Http;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Services
+namespace TheBorg.Plugins.Controllers
 {
-    public interface IPluginService
+    [RoutePrefix("api/messages")]
+    public class MessagesController : ApiController
     {
-        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
-        Task UnloadPluginAsync(string name);
-        Task InitializeAsync(CancellationToken cancellationToken);
+        [HttpPost]
+        [Route("")]
+        public IHttpActionResult Messages([FromBody] TenantMessage tenantMessage)
+        {
+            return Ok();
+        }
     }
 }

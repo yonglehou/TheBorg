@@ -26,6 +26,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using TheBorg.Host.Apis;
 using TheBorg.Interface;
 
 namespace TheBorg.Host
@@ -34,7 +36,7 @@ namespace TheBorg.Host
     {
         private ApiHost _apiHost;
 
-        public void Launch(string pluginPath, AppDomain appDomain, int serverPort, int clientPort)
+        public void Launch(string pluginPath, AppDomain appDomain, Uri pluginApiUri, int clientPort)
         {
             var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
             var pluginDirectory = Path.GetDirectoryName(pluginPath);
@@ -47,13 +49,22 @@ namespace TheBorg.Host
             var pluginBootstrapperType = assembly.GetTypes().Single(t => typeof (IPluginBootstrapper).IsAssignableFrom(t));
             var pluginBootstrapper = (IPluginBootstrapper) Activator.CreateInstance(pluginBootstrapperType);
 
-            var pluginRegistration = new PluginRegistration();
-            pluginBootstrapper.Start(a =>
+            var pluginRegistration = new PluginRegistration(
+                new CommandDescriptionApi(pluginApiUri));
+
+            pluginBootstrapper.Start(r =>
                 {
-                    a(pluginRegistration);
+                    r(pluginRegistration);
                     if (pluginRegistration.PluginInformation == null)
                     {
                         throw new InvalidOperationException("You must call SetPluginInformation(...)");
+                    }
+
+                    using (var a = AsyncHelper.Wait)
+                    {
+                        a.Run(pluginRegistration.CommandDescriptionApi.RegisterAsync(
+                            pluginRegistration.CommandDescriptions,
+                            CancellationToken.None));
                     }
                 });
             

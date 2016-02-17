@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,6 +30,6 @@ namespace TheBorg.Plugins
 {
     public interface IPluginLoader
     {
-        Task<IPluginProxy> LoadPluginAsync(string dllPath, CancellationToken cancellationToken);
+        Task<IPluginProxy> LoadPluginAsync(string dllPath, Uri pluginApiUri, CancellationToken cancellationToken);
     }
 }

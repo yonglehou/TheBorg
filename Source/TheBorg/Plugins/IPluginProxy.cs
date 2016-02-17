@@ -23,11 +23,13 @@
 //
 
 using System;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Plugins
 {
     public interface IPluginProxy : IDisposable
     {
+        PluginId Id { get; }
         IPlugin Plugin { get; }
     }
 }

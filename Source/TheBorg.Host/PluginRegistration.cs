@@ -29,19 +29,41 @@ using System.Reflection;
 using System.Threading;
 using Nancy;
 using TheBorg.Interface;
+using TheBorg.Interface.Apis;
+using TheBorg.Interface.Attributes;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Host
 {
     public class PluginRegistration : IPluginRegistration
     {
+        public ICommandDescriptionApi CommandDescriptionApi { get; }
+        private readonly List<CommandDescription> _commandDescriptions = new List<CommandDescription>();
         private readonly Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>>();
 
         public PluginInformation PluginInformation { get; private set; }
+        public IReadOnlyCollection<CommandDescription> CommandDescriptions => _commandDescriptions;
+
+        public PluginRegistration(
+            ICommandDescriptionApi commandDescriptionApi)
+        {
+            CommandDescriptionApi = commandDescriptionApi;
+        }
 
         public IPluginRegistration SetPluginInformation(PluginInformation pluginInformation)
         {
             PluginInformation = pluginInformation;
+            return this;
+        }
+
+        public IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions)
+        {
+            return RegisterCommands((IEnumerable<CommandDescription>) commandDescriptions);
+        }
+
+        public IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions)
+        {
+            _commandDescriptions.AddRange(commandDescriptions);
             return this;
         }
 

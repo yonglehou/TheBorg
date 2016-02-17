@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -70,6 +69,7 @@ namespace TheBorg
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            await _pluginService.InitializeAsync(cancellationToken).ConfigureAwait(false);
             await LoadBuildInPluginsAsync(cancellationToken).ConfigureAwait(false);
 
             var disposables = await Task.WhenAll(_tenants.Select(async t =>

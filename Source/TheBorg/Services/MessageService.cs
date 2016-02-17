@@ -40,7 +40,7 @@ namespace TheBorg.Services
 
         public Task ReplyAsync(TenantMessage tenantMessage, string text)
         {
-            return SendAsync(tenantMessage.Sender, text);
+            return SendAsync(tenantMessage.Address, text);
         }
 
         public Task SendAsync(Address address, string text)

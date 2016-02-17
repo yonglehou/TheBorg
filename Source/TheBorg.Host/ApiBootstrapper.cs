@@ -33,7 +33,7 @@ using TheBorg.Interface;
 
 namespace TheBorg.Host
 {
-    public class ApiBootstrapper : DefaultNancyBootstrapper
+    internal class ApiBootstrapper : DefaultNancyBootstrapper
     {
         private readonly ApiCatalog _apiCatalog;
 

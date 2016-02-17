@@ -24,6 +24,8 @@
 
 using System.Threading.Tasks;
 using TheBorg.Interface;
+using TheBorg.Interface.Attributes;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Plugins.Jokes
 {
@@ -33,6 +35,12 @@ namespace TheBorg.Plugins.Jokes
         public Task<string> Joke()
         {
             return Task.FromResult("Chuck Norris can catch you without a PokéBall");
+        }
+
+        [HttpApi(HttpApiMethod.Post, "api/messages/tell-joke")]
+        public Task TellJoke(TenantMessage tenantMessage)
+        {
+            return Task.FromResult(0);
         }
     }
 }

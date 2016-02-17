@@ -22,15 +22,15 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Services
+namespace TheBorg.Interface.Apis
 {
-    public interface IPluginService
+    public interface ICommandDescriptionApi
     {
-        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
-        Task UnloadPluginAsync(string name);
-        Task InitializeAsync(CancellationToken cancellationToken);
+        Task RegisterAsync(IEnumerable<CommandDescription> commandDescriptions, CancellationToken cancellationToken);
     }
 }

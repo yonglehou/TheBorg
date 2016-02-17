@@ -28,24 +28,23 @@ using System.Threading.Tasks;
 
 namespace TheBorg.Interface.ValueObjects
 {
-    [Serializable]
     public class TenantMessage
     {
         private readonly Func<string, CancellationToken, Task> _reply;
 
         public TenantMessage(
             string text,
-            Address sender,
+            Address address,
             Func<string, CancellationToken, Task> reply)
         {
             Text = text;
-            Sender = sender;
+            Address = address;
 
             _reply = reply;
         }
 
         public string Text { get; }
-        public Address Sender { get; }
+        public Address Address { get; }
 
         public Task ReplyAsync(string text, CancellationToken cancellationToken)
         {

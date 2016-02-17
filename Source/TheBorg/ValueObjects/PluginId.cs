@@ -22,15 +22,19 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
+using System;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Services
+namespace TheBorg.ValueObjects
 {
-    public interface IPluginService
+    public class PluginId : SingleValueObject<string>
     {
-        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
-        Task UnloadPluginAsync(string name);
-        Task InitializeAsync(CancellationToken cancellationToken);
+        public PluginId(string value)
+            : base(value)
+        {
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
+            if (value.Trim() != value) throw new ArgumentException($"'{value.Trim()}' != '{value}'");
+            if (value.ToLowerInvariant() != value) throw new ArgumentException($"'{value.ToLowerInvariant()}' != '{value}'");
+        }
     }
 }

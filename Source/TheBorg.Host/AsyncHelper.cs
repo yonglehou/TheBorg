@@ -43,6 +43,7 @@ namespace TheBorg.Host
             private readonly ExclusiveSynchronizationContext _currentContext;
             private readonly SynchronizationContext _oldContext;
             private int _taskCount;
+            private bool _tasksAdded;
 
             /// <summary>
             /// Constructs the AsyncBridge by capturing the current
@@ -64,6 +65,7 @@ namespace TheBorg.Host
             /// <param name="callback">Optional callback</param>
             public void Run(Task task, Action<Task> callback = null)
             {
+                _tasksAdded = true;
                 _currentContext.Post(
                     async _ =>
                     {
@@ -139,7 +141,10 @@ namespace TheBorg.Host
             {
                 try
                 {
-                    _currentContext.BeginMessageLoop();
+                    if (_tasksAdded)
+                    {
+                        _currentContext.BeginMessageLoop();
+                    }
                 }
                 finally
                 {

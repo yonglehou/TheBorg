@@ -43,13 +43,16 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="HttpMethodAttribute.cs" />
+    <Compile Include="Apis\ICommandDescriptionApi.cs" />
+    <Compile Include="Attributes\FromBodyAttribute.cs" />
+    <Compile Include="Attributes\HttpMethodAttribute.cs" />
     <Compile Include="IHttpApiRequestContext.cs" />
     <Compile Include="IHttpApi.cs" />
     <Compile Include="IPluginBootstrapper.cs" />
     <Compile Include="IPluginRegistration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueObjects\Address.cs" />
+    <Compile Include="ValueObjects\CommandDescription.cs" />
     <Compile Include="ValueObjects\LogLevel.cs" />
     <Compile Include="ValueObjects\LogMessage.cs" />
     <Compile Include="ValueObjects\PluginInformation.cs" />
@@ -60,6 +63,7 @@
     <Compile Include="ValueObjects\TenantUser.cs" />
     <Compile Include="ValueObjects\ValueObject.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

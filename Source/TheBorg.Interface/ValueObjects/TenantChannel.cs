@@ -22,11 +22,8 @@
 // SOFTWARE.
 //
 
-using System;
-
 namespace TheBorg.Interface.ValueObjects
 {
-    [Serializable]
     public class TenantChannel : SingleValueObject<string>
     {
         public TenantChannel(string value) : base(value)

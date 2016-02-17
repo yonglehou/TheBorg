@@ -26,6 +26,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface;
+using TheBorg.Interface.Attributes;
 
 namespace TheBorg.Host
 {

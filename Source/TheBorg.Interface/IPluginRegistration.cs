@@ -23,16 +23,24 @@
 //
 
 using System;
+using System.Collections.Generic;
+using TheBorg.Interface.Apis;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Interface
 {
     public interface IPluginRegistration
     {
+        ICommandDescriptionApi CommandDescriptionApi { get; }
+
         IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
+
         IPluginRegistration RegisterApi<T>(T instance)
             where T : IHttpApi;
         IPluginRegistration RegisterApi<T>(Func<IHttpApiRequestContext, T> factory)
             where T : IHttpApi;
+
+        IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
+        IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);
     }
 }

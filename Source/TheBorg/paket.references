@@ -1,4 +1,7 @@
 ﻿Autofac
+Autofac.Owin
+Autofac.WebApi2.Owin
+Microsoft.AspNet.WebApi.OwinSelfHost
 Nancy.Hosting.Self
 Newtonsoft.Json
 Octokit

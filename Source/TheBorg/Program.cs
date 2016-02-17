@@ -24,11 +24,12 @@
 
 using System.Threading;
 using Autofac;
+using TheBorg.Host;
 using Topshelf;
 
 namespace TheBorg
 {
-    class Program
+    internal class Program
     {
         private static readonly IContainer Container;
 
@@ -46,10 +47,19 @@ namespace TheBorg
                 hc.Service<ICollective>(s =>
                 {
                     s.ConstructUsing(() => Container.Resolve<ICollective>());
-                    s.WhenStarted(c => c.StartAsync(CancellationToken.None).Wait());
+                    s.WhenStarted(c =>
+                    {
+                        using (var a = AsyncHelper.Wait)
+                        {
+                            a.Run(c.StartAsync(CancellationToken.None));
+                        }
+                    });
                     s.WhenStopped(c =>
                     {
-                        c.StopAsync(CancellationToken.None).Wait();
+                        using (var a = AsyncHelper.Wait)
+                        {
+                            a.Run(c.StopAsync(CancellationToken.None));
+                        }
                         Container.Dispose();
                     });
                 });

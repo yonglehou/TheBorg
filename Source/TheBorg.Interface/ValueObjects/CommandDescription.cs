@@ -22,15 +22,28 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
+using System;
 
-namespace TheBorg.Services
+namespace TheBorg.Interface.ValueObjects
 {
-    public interface IPluginService
+    public class CommandDescription : ValueObject
     {
-        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
-        Task UnloadPluginAsync(string name);
-        Task InitializeAsync(CancellationToken cancellationToken);
+        public CommandDescription(
+            string regex,
+            string help,
+            string endpoint)
+        {
+            if (string.IsNullOrEmpty(regex)) throw new ArgumentNullException(nameof(regex));
+            if (string.IsNullOrEmpty(help)) throw new ArgumentNullException(nameof(help));
+            if (string.IsNullOrEmpty(endpoint)) throw new ArgumentNullException(nameof(endpoint));
+
+            Regex = regex;
+            Help = help;
+            Endpoint = endpoint;
+        }
+
+        public string Regex { get; }
+        public string Help { get; }
+        public string Endpoint { get; }
     }
 }

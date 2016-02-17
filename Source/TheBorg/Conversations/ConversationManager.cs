@@ -70,11 +70,11 @@ namespace TheBorg.Conversations
         {
             var processMessageResult = ProcessMessageResult.Skipped;
             ActiveConversation activeConversation;
-            if (_activeConversations.TryGetValue(tenantMessage.Sender, out activeConversation))
+            if (_activeConversations.TryGetValue(tenantMessage.Address, out activeConversation))
             {
                 if (ConversationEnders.Any(e => e.IsMatch(tenantMessage.Text)))
                 {
-                    _activeConversations.TryRemove(tenantMessage.Sender, out activeConversation);
+                    _activeConversations.TryRemove(tenantMessage.Address, out activeConversation);
                     await activeConversation.EndAsync(cancellationToken).ConfigureAwait(false);
                     await tenantMessage.ReplyAsync("Ok, lets talk about some else...", cancellationToken).ConfigureAwait(false);
                     return ProcessMessageResult.Handled;
@@ -92,7 +92,7 @@ namespace TheBorg.Conversations
                 if (kv.Key.IsMatch(tenantMessage.Text))
                 {
                     activeConversation = new ActiveConversation(
-                        tenantMessage.Sender,
+                        tenantMessage.Address,
                         _time,
                         _jsonSerializer,
                         kv.Value,

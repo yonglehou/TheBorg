@@ -23,6 +23,7 @@
 //
 
 using System;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Plugins
 {
@@ -31,13 +32,16 @@ namespace TheBorg.Plugins
         private readonly AppDomain _appDomain;
 
         public PluginProxy(
+            PluginId id,
             AppDomain appDomain,
             IPlugin plugin)
         {
+            Id = id;
             Plugin = plugin;
             _appDomain = appDomain;
         }
 
+        public PluginId Id { get; }
         public IPlugin Plugin { get; }
 
         public void Dispose()

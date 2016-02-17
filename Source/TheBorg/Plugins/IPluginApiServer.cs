@@ -23,27 +23,13 @@
 //
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Interface
+namespace TheBorg.Plugins
 {
-    public enum HttpApiMethod
+    public interface IPluginApiServer : IDisposable
     {
-        Get,
-        Post,
-    }
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public class HttpApiAttribute : Attribute
-    {
-        public HttpApiAttribute(
-            HttpApiMethod httpApiMethod,
-            string path)
-        {
-            HttpApiMethod = httpApiMethod;
-            Path = path;
-        }
-
-        public HttpApiMethod HttpApiMethod { get; }
-        public string Path { get; }
+        Task StartAsync(int port, CancellationToken cancellationToken);
     }
 }

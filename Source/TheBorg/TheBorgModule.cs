@@ -24,17 +24,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Web.Http;
+using System.Web.Http.Controllers;
 using Autofac;
+using Autofac.Integration.WebApi;
+using Microsoft.Owin;
 using Serilog;
 using TheBorg.Commands;
 using TheBorg.Conversations;
 using TheBorg.Plugins;
 using TheBorg.Services;
+using Module = Autofac.Module;
 
 namespace TheBorg
 {
     public class TheBorgModule : Module
     {
+        public static Assembly Assembly { get; } = typeof (TheBorgModule).Assembly;
+
         private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
             {
                 typeof(Command),
@@ -57,10 +65,12 @@ namespace TheBorg
                 .WriteTo.ColoredConsole()
                 .CreateLogger();
 
+            builder.RegisterApiControllers(Assembly);
             builder.RegisterInstance(logger);
             builder
-                .RegisterAssemblyTypes(typeof (TheBorgModule).Assembly)
+                .RegisterAssemblyTypes(Assembly)
                 .Where(t => !TypesNotRegisteredByConvention.Contains(t))
+                .Where(t => !typeof(IHttpController).IsAssignableFrom(t))
                 .AsImplementedInterfaces();
 
             foreach (var singleton in Singletons)

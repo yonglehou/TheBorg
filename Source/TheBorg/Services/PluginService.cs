@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Core;
 using TheBorg.Extensions;
 using TheBorg.Plugins;
 
@@ -35,12 +36,25 @@ namespace TheBorg.Services
     public class PluginService : IPluginService
     {
         private readonly IPluginLoader _pluginLoader;
-        private readonly Dictionary<string, IPluginProxy> _plugins = new Dictionary<string, IPluginProxy>(); 
+        private readonly IPluginApiServer _pluginApiServer;
+        private readonly Dictionary<string, IPluginProxy> _plugins = new Dictionary<string, IPluginProxy>();
+        private readonly int _serverPort;
+        private readonly Uri _pluginApiUri;
 
         public PluginService(
-            IPluginLoader pluginLoader)
+            IPluginLoader pluginLoader,
+            IPluginApiServer pluginApiServer)
         {
             _pluginLoader = pluginLoader;
+            _pluginApiServer = pluginApiServer;
+
+            _serverPort = TcpHelper.GetFreePort();
+            _pluginApiUri = new Uri($"http://127.0.0.1:{_serverPort}/");
+        }
+
+        public Task InitializeAsync(CancellationToken cancellationToken)
+        {
+            return _pluginApiServer.StartAsync(_serverPort, cancellationToken);
         }
 
         public async Task LoadPluginAsync(string name, CancellationToken cancellationToken)
@@ -61,7 +75,7 @@ namespace TheBorg.Services
                     name);
             }
 
-            var plugin = await _pluginLoader.LoadPluginAsync(pluginPath, cancellationToken).ConfigureAwait(false);
+            var plugin = await _pluginLoader.LoadPluginAsync(pluginPath, _pluginApiUri, cancellationToken).ConfigureAwait(false);
 
             _plugins.Add(name, plugin);
         }

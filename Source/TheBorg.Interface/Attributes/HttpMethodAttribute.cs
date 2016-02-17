@@ -22,15 +22,28 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
+using System;
 
-namespace TheBorg.Services
+namespace TheBorg.Interface.Attributes
 {
-    public interface IPluginService
+    public enum HttpApiMethod
     {
-        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
-        Task UnloadPluginAsync(string name);
-        Task InitializeAsync(CancellationToken cancellationToken);
+        Get,
+        Post,
+    }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public class HttpApiAttribute : Attribute
+    {
+        public HttpApiAttribute(
+            HttpApiMethod httpApiMethod,
+            string path)
+        {
+            HttpApiMethod = httpApiMethod;
+            Path = path;
+        }
+
+        public HttpApiMethod HttpApiMethod { get; }
+        public string Path { get; }
     }
 }

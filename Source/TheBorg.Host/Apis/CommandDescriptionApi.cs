@@ -22,15 +22,28 @@
 // SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Interface.Apis;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Services
+namespace TheBorg.Host.Apis
 {
-    public interface IPluginService
+    public class CommandDescriptionApi : Api, ICommandDescriptionApi
     {
-        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
-        Task UnloadPluginAsync(string name);
-        Task InitializeAsync(CancellationToken cancellationToken);
+        public CommandDescriptionApi(
+            Uri baseUri)
+            : base(baseUri)
+        {
+        }
+
+        public Task RegisterAsync(
+            IEnumerable<CommandDescription> commandDescriptions,
+            CancellationToken cancellationToken)
+        {
+            return PostAsync("api/command-descriptions", commandDescriptions, cancellationToken);
+        }
     }
 }

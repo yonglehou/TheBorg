@@ -22,44 +22,25 @@
 // SOFTWARE.
 //
 
-using System;
 using System.Collections.Generic;
-using Nancy;
-using TheBorg.Interface;
-using TheBorg.Interface.Attributes;
+using System.Web.Http;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Host
+namespace TheBorg.Plugins.Controllers
 {
-    public class ApiModule<T> : NancyModule
-        where T : IHttpApi
+    [RoutePrefix("api/command-descriptions")]
+    public class CommandDescriptionsController : ApiController
     {
-        public ApiModule(
-            Func<IHttpApiRequestContext, T> httpApiFactory,
-            IEnumerable<ApiEndpoint> apiEndpoints)
+        [HttpPost]
+        [Route("")]
+        public IHttpActionResult Post([FromBody] List<CommandDescription> commandDescriptions)
         {
-            foreach (var apiEndpoint in apiEndpoints)
+            if (!ModelState.IsValid)
             {
-                RouteBuilder routeBuilder;
-
-                switch (apiEndpoint.HttpApiMethod)
-                {
-                    case HttpApiMethod.Get:
-                        routeBuilder = Get;
-                        break;
-                    case HttpApiMethod.Post:
-                        routeBuilder = Post;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                routeBuilder[apiEndpoint.Path, true] = (parameters, t) =>
-                    {
-                        var dynamicDictionary = (DynamicDictionary) parameters;
-                        var httpApiRequestContext = new HttpApiRequestContext(dynamicDictionary.ToDictionary());
-                        return apiEndpoint.Invoker(httpApiRequestContext, t, httpApiFactory(httpApiRequestContext));
-                    };
+                return BadRequest();
             }
+
+            return Ok();
         }
     }
 }

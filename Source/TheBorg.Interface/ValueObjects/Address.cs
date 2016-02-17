@@ -22,11 +22,8 @@
 // SOFTWARE.
 //
 
-using System;
-
 namespace TheBorg.Interface.ValueObjects
 {
-    [Serializable]
     public class Address : ValueObject
     {
         public Address(

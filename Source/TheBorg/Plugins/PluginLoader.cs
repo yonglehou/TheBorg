@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Core;
 using TheBorg.Host;
+using TheBorg.ValueObjects;
 
 namespace TheBorg.Plugins
 {
@@ -39,7 +40,6 @@ namespace TheBorg.Plugins
         private readonly ILogger _logger;
         private readonly IRestClient _restClient;
         private readonly AppDomainManager _appDomainManager = new AppDomainManager();
-        private readonly int _tcpPort = TcpHelper.GetFreePort();
 
         public PluginLoader(
             ILogger logger,
@@ -49,7 +49,7 @@ namespace TheBorg.Plugins
             _restClient = restClient;
         }
 
-        public async Task<IPluginProxy> LoadPluginAsync(string dllPath, CancellationToken cancellationToken)
+        public async Task<IPluginProxy> LoadPluginAsync(string dllPath, Uri pluginApiUri, CancellationToken cancellationToken)
         {
             if (!File.Exists(dllPath)) throw new ArgumentException($"Plugin '{dllPath}' does not exist");
 
@@ -65,8 +65,8 @@ namespace TheBorg.Plugins
                 appDomainSetup.ConfigurationFile = configFilePath;
             }
 
-            var friendlyName = Path.GetFileName(dllPath);
-            var appDomain = _appDomainManager.CreateDomain(friendlyName, null, appDomainSetup);
+            var pluginId = new PluginId(Path.GetFileName(dllPath).ToLowerInvariant());
+            var appDomain = _appDomainManager.CreateDomain(pluginId.Value, null, appDomainSetup);
 
             var pluginHost = appDomain.CreateInstanceAndUnwrap(Assembly.GetAssembly(typeof(PluginHostClient)).FullName, typeof(PluginHostClient).ToString()) as PluginHostClient;
             var autoResetEvent = new AutoResetEvent(false);
@@ -74,20 +74,24 @@ namespace TheBorg.Plugins
 
             try
             {
-                pluginHost.Launch(dllPath, appDomain, _tcpPort, clientPort);
+                pluginHost.Launch(dllPath, appDomain, pluginApiUri, clientPort);
                 autoResetEvent.Set();
             }
             catch (Exception e)
             {
-                _logger.Error(e, $"Plugin '{friendlyName}' failed");
+                _logger.Error(e, $"Plugin '{pluginId}' failed");
                 AppDomain.Unload(appDomain);
                 throw;
             }
             
             stopWatch.Stop();
-            _logger.Debug($"Loaded plugin '{friendlyName}' in {stopWatch.Elapsed.TotalSeconds:0.00} seconds");
+            _logger.Debug($"Loaded plugin '{pluginId}' in {stopWatch.Elapsed.TotalSeconds:0.00} seconds");
 
-            var pluginProxy = new PluginProxy(appDomain, new Plugin(_logger, new Uri($"http://127.0.0.1:{clientPort}"), _restClient));
+            var pluginProxy = new PluginProxy(
+                pluginId,
+                appDomain,
+                new Plugin(_logger, new Uri($"http://127.0.0.1:{clientPort}"),
+                _restClient));
 
             await pluginProxy.Plugin.PingAsync(cancellationToken).ConfigureAwait(false);
 

@@ -22,15 +22,12 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
+using System;
 
-namespace TheBorg.Services
+namespace TheBorg.Interface.Attributes
 {
-    public interface IPluginService
+    [AttributeUsage(AttributeTargets.Parameter)]
+    public class FromBodyAttribute : Attribute
     {
-        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
-        Task UnloadPluginAsync(string name);
-        Task InitializeAsync(CancellationToken cancellationToken);
     }
 }
