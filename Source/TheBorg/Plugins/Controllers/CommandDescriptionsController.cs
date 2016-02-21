@@ -23,18 +23,28 @@
 //
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
 using TheBorg.Extensions;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.PluginManagement;
 
 namespace TheBorg.Plugins.Controllers
 {
     [RoutePrefix("api/command-descriptions")]
     public class CommandDescriptionsController : ApiController
     {
+        private readonly IPluginManagementService _pluginManagementService;
+
+        public CommandDescriptionsController(
+            IPluginManagementService pluginManagementService)
+        {
+            _pluginManagementService = pluginManagementService;
+        }
+
         [HttpPost]
         [Route("")]
-        public IHttpActionResult Post([FromBody] List<CommandDescription> commandDescriptions)
+        public async Task<IHttpActionResult> Post([FromBody] List<CommandDescription> commandDescriptions)
         {
             if (!ModelState.IsValid)
             {
@@ -42,6 +52,8 @@ namespace TheBorg.Plugins.Controllers
             }
 
             var pluginId = User.GetPluginId();
+
+            await _pluginManagementService.RegisterAsync(pluginId, commandDescriptions).ConfigureAwait(false);
 
             return Ok();
         }

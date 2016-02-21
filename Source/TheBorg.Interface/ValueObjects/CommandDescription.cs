@@ -23,11 +23,14 @@
 //
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace TheBorg.Interface.ValueObjects
 {
     public class CommandDescription : ValueObject
     {
+        private readonly Lazy<Regex> _lazyRegex; 
+
         public CommandDescription(
             string regex,
             string help,
@@ -40,10 +43,17 @@ namespace TheBorg.Interface.ValueObjects
             Regex = regex;
             Help = help;
             Endpoint = endpoint;
+
+            _lazyRegex = new Lazy<Regex>(() => new Regex(Regex, RegexOptions.Compiled | RegexOptions.IgnoreCase));
         }
 
         public string Regex { get; }
         public string Help { get; }
         public string Endpoint { get; }
+
+        public bool IsMatch(string text)
+        {
+            return _lazyRegex.Value.IsMatch(text);
+        }
     }
 }

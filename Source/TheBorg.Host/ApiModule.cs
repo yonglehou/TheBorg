@@ -56,7 +56,7 @@ namespace TheBorg.Host
                 routeBuilder[apiEndpoint.Path, true] = (parameters, t) =>
                     {
                         var dynamicDictionary = (DynamicDictionary) parameters;
-                        var httpApiRequestContext = new HttpApiRequestContext(dynamicDictionary.ToDictionary());
+                        var httpApiRequestContext = new HttpApiRequestContext(this.Request.Body, dynamicDictionary.ToDictionary());
                         return apiEndpoint.Invoker(httpApiRequestContext, t, httpApiFactory(httpApiRequestContext));
                     };
             }

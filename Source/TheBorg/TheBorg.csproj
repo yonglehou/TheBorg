@@ -85,9 +85,7 @@
     <Compile Include="Conversations\ActiveConversation.cs" />
     <Compile Include="Conversations\ConversationManager.cs" />
     <Compile Include="Conversations\IConversationManager.cs" />
-    <Compile Include="Core\IMessageProcessors.cs" />
     <Compile Include="Conversations\Topics\OctopusCreateReleaseTopic.cs" />
-    <Compile Include="Core\ProcessMessageResult.cs" />
     <Compile Include="Tenants\ITenant.cs" />
     <Compile Include="Tenants\SlackTenant.cs" />
     <Compile Include="Services\Slack\ApiResponses\ApiResponse.cs" />

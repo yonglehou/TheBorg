@@ -31,7 +31,6 @@ using TheBorg.Core.Clients;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 using TheBorg.PluginManagement;
-using TheBorg.PluginManagement.ValueObjects;
 using TheBorg.Services;
 
 namespace TheBorg.Commands.CommandSets

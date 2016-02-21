@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
@@ -33,5 +34,6 @@ namespace TheBorg.PluginManagement
     {
         Task PingAsync(CancellationToken cancellationToken);
         Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken);
+        Uri BaseUri { get; }
     }
 }

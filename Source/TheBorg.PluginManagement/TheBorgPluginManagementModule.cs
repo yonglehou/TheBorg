@@ -43,6 +43,11 @@ namespace TheBorg.PluginManagement
                 typeof(PluginManagementService)
             };
 
+        private static readonly IReadOnlyCollection<Type> Singletons = new[]
+            {
+                typeof(PluginManagementService),
+            };
+
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterApiControllers(Assembly);
@@ -52,6 +57,11 @@ namespace TheBorg.PluginManagement
                 .Where(t => !typeof(IHttpController).IsAssignableFrom(t))
                 .Where(t => !typeof(OwinMiddleware).IsAssignableFrom(t))
                 .AsImplementedInterfaces();
+
+            foreach (var singleton in Singletons)
+            {
+                builder.RegisterType(singleton).AsImplementedInterfaces().SingleInstance();
+            }
         }
     }
 }

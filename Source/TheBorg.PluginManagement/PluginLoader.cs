@@ -32,7 +32,7 @@ using Serilog;
 using TheBorg.Core;
 using TheBorg.Core.Clients;
 using TheBorg.Host;
-using TheBorg.PluginManagement.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.PluginManagement
 {

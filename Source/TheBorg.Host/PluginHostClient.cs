@@ -29,7 +29,7 @@ using System.Reflection;
 using System.Threading;
 using TheBorg.Host.Apis;
 using TheBorg.Interface;
-using TheBorg.PluginManagement.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Host
 {

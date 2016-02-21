@@ -46,9 +46,8 @@ namespace TheBorg
                 typeof(ActiveConversation),
             };
 
-        private static readonly IReadOnlyCollection<Type> Singletons = new[]
+        private static readonly IReadOnlyCollection<Type> Singletons = new Type[]
             {
-                typeof(PluginManagementService),
             }; 
 
         protected override void Load(ContainerBuilder builder)

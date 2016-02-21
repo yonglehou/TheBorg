@@ -22,18 +22,20 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Core;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
-using TheBorg.PluginManagement.ValueObjects;
 
 namespace TheBorg.PluginManagement
 {
-    public interface IPluginManagementService
+    public interface IPluginManagementService : IMessageProcessor
     {
         Task LoadPluginAsync(PluginPath pluginPath, CancellationToken cancellationToken);
         Task UnloadPluginAsync(PluginId pluginId);
         Task InitializeAsync(CancellationToken cancellationToken);
+        Task RegisterAsync(PluginId pluginId, IEnumerable<CommandDescription> commandDescriptions);
     }
 }

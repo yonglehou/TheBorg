@@ -28,7 +28,6 @@ using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Core.Clients;
 using TheBorg.Core.Serialization;
-using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.PluginManagement
@@ -36,7 +35,6 @@ namespace TheBorg.PluginManagement
     public class Plugin : IPlugin
     {
         private readonly ILogger _logger;
-        private readonly Uri _baseUri;
         private readonly IRestClient _restClient;
 
         public Plugin(
@@ -45,9 +43,12 @@ namespace TheBorg.PluginManagement
             IRestClient restClient)
         {
             _logger = logger;
-            _baseUri = baseUri;
             _restClient = restClient;
+
+            BaseUri = baseUri;
         }
+
+        public Uri BaseUri { get; }
 
         public Task PingAsync(CancellationToken cancellationToken)
         {
@@ -61,7 +62,7 @@ namespace TheBorg.PluginManagement
 
         private Task<T> GetAsync<T>(string path, CancellationToken cancellationToken)
         {
-            return _restClient.GetAsync<T>(new Uri(_baseUri, path), JsonFormat.CamelCase, cancellationToken);
+            return _restClient.GetAsync<T>(new Uri(BaseUri, path), JsonFormat.CamelCase, cancellationToken);
         }
     }
 }

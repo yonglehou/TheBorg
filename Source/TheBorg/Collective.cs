@@ -34,8 +34,8 @@ using TheBorg.Conversations;
 using TheBorg.Core;
 using TheBorg.Core.Extensions;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 using TheBorg.PluginManagement;
-using TheBorg.PluginManagement.ValueObjects;
 using TheBorg.Plugins.Jokes;
 using TheBorg.Tenants;
 
@@ -123,6 +123,7 @@ namespace TheBorg
         private IEnumerable<IMessageProcessor> MessageProcessors()
         {
             yield return _conversationManager;
+            yield return _pluginManagementService;
             yield return _commandManager;
         } 
     }

@@ -24,28 +24,35 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Core;
+using TheBorg.Core.Clients;
+using TheBorg.Core.Serialization;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 using TheBorg.PluginManagement.HttpApi;
-using TheBorg.PluginManagement.ValueObjects;
 
 namespace TheBorg.PluginManagement
 {
     public class PluginManagementService : IPluginManagementService
     {
+        private readonly IRestClient _restClient;
         private readonly IPluginLoader _pluginLoader;
         private readonly IPluginHttpApi _pluginHttpApi;
         private readonly ConcurrentDictionary<PluginId, IPluginProxy> _plugins = new ConcurrentDictionary<PluginId, IPluginProxy>();
+        private readonly Dictionary<PluginId, IReadOnlyCollection<CommandDescription>> _pluginCommandDescriptions = new Dictionary<PluginId, IReadOnlyCollection<CommandDescription>>();
         private readonly int _serverPort;
         private readonly Uri _pluginApiUri;
 
         public PluginManagementService(
+            IRestClient restClient,
             IPluginLoader pluginLoader,
             IPluginHttpApi pluginHttpApi)
         {
+            _restClient = restClient;
             _pluginLoader = pluginLoader;
             _pluginHttpApi = pluginHttpApi;
 
@@ -77,6 +84,36 @@ namespace TheBorg.PluginManagement
             pluginProxy.Dispose();
 
             return Task.FromResult(0);
+        }
+
+        public Task RegisterAsync(PluginId pluginId, IEnumerable<CommandDescription> commandDescriptions)
+        {
+            _pluginCommandDescriptions[pluginId] = commandDescriptions.ToList();
+            return Task.FromResult(0);
+        }
+
+        public async Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
+        {
+            foreach (var pluginCommandDescription in _pluginCommandDescriptions)
+            {
+                foreach (var commandDescription in pluginCommandDescription.Value)
+                {
+                    if (!commandDescription.IsMatch(tenantMessage.Text))
+                    {
+                        continue;
+                    }
+
+                    var plugin = _plugins[pluginCommandDescription.Key];
+                    await _restClient.PostAsync<object, TenantMessage>(new Uri(plugin.Plugin.BaseUri, commandDescription.Endpoint),
+                        tenantMessage,
+                        JsonFormat.PascalCase,
+                        cancellationToken)
+                        .ConfigureAwait(false);
+                    return ProcessMessageResult.Handled;
+                }
+            }
+
+            return ProcessMessageResult.Skipped;
         }
     }
 }

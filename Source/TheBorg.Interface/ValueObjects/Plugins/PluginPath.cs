@@ -24,10 +24,8 @@
 
 using System;
 using System.IO;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.PluginManagement.ValueObjects
+namespace TheBorg.Interface.ValueObjects.Plugins
 {
     public class PluginPath : SingleValueObject<string>
     {

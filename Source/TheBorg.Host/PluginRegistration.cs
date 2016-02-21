@@ -135,6 +135,10 @@ namespace TheBorg.Host
                         {
                             return (object) httpApiRequestContext;
                         }
+                        if (pi.GetCustomAttribute<FromBodyAttribute>() != null)
+                        {
+                            return httpApiRequestContext.BodyAs(pi.ParameterType);
+                        }
 
                         throw new InvalidOperationException($"Unknown type '{pi.ParameterType}'");
                     });

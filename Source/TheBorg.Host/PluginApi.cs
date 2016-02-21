@@ -42,9 +42,9 @@ namespace TheBorg.Host
         }
 
         [HttpApi(HttpApiMethod.Get, "_plugin/ping")]
-        public Task Ping(IHttpApiRequestContext httpApiRequestContext, CancellationToken cancellationToken)
+        public Task<string> Ping(IHttpApiRequestContext httpApiRequestContext, CancellationToken cancellationToken)
         {
-            return Task.FromResult(0);
+            return Task.FromResult("");
         }
 
         [HttpApi(HttpApiMethod.Get, "_plugin/plugin-information")]

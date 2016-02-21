@@ -23,7 +23,6 @@
 //
 
 using System;
-using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.PluginManagement

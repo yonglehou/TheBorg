@@ -24,18 +24,26 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Nancy.IO;
+using Newtonsoft.Json;
 using TheBorg.Interface;
 
 namespace TheBorg.Host
 {
     public class HttpApiRequestContext : IHttpApiRequestContext
     {
+        private readonly RequestStream _body;
         private readonly IReadOnlyDictionary<string, object> _parameters;
 
         public HttpApiRequestContext(
+            RequestStream body,
             IEnumerable<KeyValuePair<string, object>> parameters)
         {
+            _body = body;
             _parameters = parameters.ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
@@ -48,6 +56,17 @@ namespace TheBorg.Host
             }
 
             throw new ArgumentOutOfRangeException(nameof(key), $"There's no parameter named '{key}'");
+        }
+
+        public object BodyAs(Type type)
+        {
+            using (var streamReader = new StreamReader(_body))
+            {
+                // TODO: Make async
+
+                var content = streamReader.ReadToEnd();
+                return JsonConvert.DeserializeObject(content, type);
+            }
         }
     }
 }

@@ -22,9 +22,12 @@
 // SOFTWARE.
 //
 
+using System;
+
 namespace TheBorg.Interface
 {
     public interface IHttpApiRequestContext
     {
+        object BodyAs(Type type);
     }
 }

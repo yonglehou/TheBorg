@@ -69,7 +69,7 @@ namespace TheBorg.Host
 
             public IEnumerable<INancyModule> GetAllModules(NancyContext context)
             {
-                var apiContext = new HttpApiRequestContext(Enumerable.Empty<KeyValuePair<string, object>>());
+                var apiContext = new HttpApiRequestContext(context?.Request?.Body, Enumerable.Empty<KeyValuePair<string, object>>());
                 return _nancyModules.Values.Select(f => f(apiContext));
             }
 
@@ -78,7 +78,7 @@ namespace TheBorg.Host
                 Func<IHttpApiRequestContext, INancyModule> nancyModule;
                 if (_nancyModules.TryGetValue(moduleType, out nancyModule))
                 {
-                    var apiContext = new HttpApiRequestContext(Enumerable.Empty<KeyValuePair<string, object>>());
+                    var apiContext = new HttpApiRequestContext(context?.Request?.Body, Enumerable.Empty<KeyValuePair<string, object>>());
                     return nancyModule(apiContext);
                 }
 

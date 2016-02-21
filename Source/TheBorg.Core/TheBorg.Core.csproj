@@ -47,6 +47,8 @@
     <Compile Include="Clients\WebSocketClient.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Extensions\UriExtensions.cs" />
+    <Compile Include="IMessageProcessors.cs" />
+    <Compile Include="ProcessMessageResult.cs" />
     <Compile Include="Serialization\IJsonSerializer.cs" />
     <Compile Include="Clients\IRestClient.cs" />
     <Compile Include="ITime.cs" />
@@ -61,6 +63,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TheBorg.Interface\TheBorg.Interface.csproj">
+      <Project>{e1dcf0b9-ccf4-42e1-b39c-2191cc7c378b}</Project>
+      <Name>TheBorg.Interface</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
