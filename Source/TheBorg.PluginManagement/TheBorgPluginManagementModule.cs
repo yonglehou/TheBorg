@@ -28,6 +28,7 @@ using System.Reflection;
 using System.Web.Http.Controllers;
 using Autofac;
 using Autofac.Integration.WebApi;
+using Microsoft.Owin;
 using Module = Autofac.Module;
 
 namespace TheBorg.PluginManagement
@@ -49,6 +50,7 @@ namespace TheBorg.PluginManagement
                 .RegisterAssemblyTypes(Assembly)
                 .Where(t => !TypesNotRegisteredByConvention.Contains(t))
                 .Where(t => !typeof(IHttpController).IsAssignableFrom(t))
+                .Where(t => !typeof(OwinMiddleware).IsAssignableFrom(t))
                 .AsImplementedInterfaces();
         }
     }

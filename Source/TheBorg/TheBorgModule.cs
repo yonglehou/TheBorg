@@ -28,6 +28,7 @@ using System.Reflection;
 using System.Web.Http.Controllers;
 using Autofac;
 using Autofac.Integration.WebApi;
+using Microsoft.Owin;
 using TheBorg.Commands;
 using TheBorg.Conversations;
 using TheBorg.PluginManagement;
@@ -57,6 +58,7 @@ namespace TheBorg
                 .RegisterAssemblyTypes(Assembly)
                 .Where(t => !TypesNotRegisteredByConvention.Contains(t))
                 .Where(t => !typeof(IHttpController).IsAssignableFrom(t))
+                .Where(t => !typeof(OwinMiddleware).IsAssignableFrom(t))
                 .AsImplementedInterfaces();
 
             foreach (var singleton in Singletons)
