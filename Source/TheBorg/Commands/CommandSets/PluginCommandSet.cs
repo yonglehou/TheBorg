@@ -29,7 +29,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Core;
+using TheBorg.Core.Clients;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.PluginManagement;
 using TheBorg.Plugins;
 using TheBorg.Services;
 
@@ -39,18 +41,18 @@ namespace TheBorg.Commands.CommandSets
     {
         private readonly IRestClient _restClient;
         private readonly IGitHubService _gitHubService;
-        private readonly IPluginService _pluginService;
+        private readonly IPluginManagementService _pluginManagementService;
         private readonly IPluginInstaller _pluginInstaller;
 
         public PluginCommandSet(
             IRestClient restClient,
             IGitHubService gitHubService,
-            IPluginService pluginService,
+            IPluginManagementService pluginManagementService,
             IPluginInstaller pluginInstaller)
         {
             _restClient = restClient;
             _gitHubService = gitHubService;
-            _pluginService = pluginService;
+            _pluginManagementService = pluginManagementService;
             _pluginInstaller = pluginInstaller;
         }
 
@@ -61,7 +63,7 @@ namespace TheBorg.Commands.CommandSets
         {
             await tenantMessage.ReplyAsync($"Loading plugin '{pluginName}'", cancellationToken).ConfigureAwait(false);
             var stopwatch = Stopwatch.StartNew();
-            await _pluginService.LoadPluginAsync(pluginName, cancellationToken).ConfigureAwait(false);
+            await _pluginManagementService.LoadPluginAsync(pluginName, cancellationToken).ConfigureAwait(false);
             var time = stopwatch.Elapsed;
             await tenantMessage.ReplyAsync($"It took me {time.TotalSeconds:0.00} seconds to load '{pluginName}'", cancellationToken).ConfigureAwait(false);
         }
@@ -73,7 +75,7 @@ namespace TheBorg.Commands.CommandSets
         {
             await tenantMessage.ReplyAsync($"Unloading plugin '{pluginName}'", cancellationToken).ConfigureAwait(false);
             var stopwatch = Stopwatch.StartNew();
-            await _pluginService.UnloadPluginAsync(pluginName).ConfigureAwait(false);
+            await _pluginManagementService.UnloadPluginAsync(pluginName).ConfigureAwait(false);
             var time = stopwatch.Elapsed;
             await tenantMessage.ReplyAsync($"It took me {time.TotalSeconds:0.00} seconds to unload '{pluginName}'", cancellationToken).ConfigureAwait(false);
         }
@@ -119,7 +121,7 @@ namespace TheBorg.Commands.CommandSets
                     cancellationToken)
                     .ConfigureAwait(false);
 
-                await _pluginService.LoadPluginAsync(
+                await _pluginManagementService.LoadPluginAsync(
                     dllLocation,
                     cancellationToken)
                     .ConfigureAwait(false);

@@ -22,15 +22,29 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using TheBorg.Core.Serialization.Resolvers;
 
-namespace TheBorg.Services
+namespace TheBorg.Core.Serialization
 {
-    public interface IPluginService
+    public class JsonSerializer : IJsonSerializer
     {
-        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
-        Task UnloadPluginAsync(string name);
-        Task InitializeAsync(CancellationToken cancellationToken);
+        private static readonly IReadOnlyDictionary<JsonFormat, JsonSerializerSettings> JsonFormats = new Dictionary<JsonFormat, JsonSerializerSettings>
+            {
+                {JsonFormat.LowerSnakeCase, new JsonSerializerSettings { ContractResolver = new UnderscoreMappingResolver(), } },
+                {JsonFormat.CamelCase, new JsonSerializerSettings() },
+                {JsonFormat.PascalCase, new JsonSerializerSettings() },
+            };
+
+        public T Deserialize<T>(string json, JsonFormat jsonFormat = JsonFormat.CamelCase)
+        {
+            return JsonConvert.DeserializeObject<T>(json, JsonFormats[jsonFormat]);
+        }
+
+        public string Serialize<T>(T obj, JsonFormat jsonFormat = JsonFormat.CamelCase)
+        {
+            return JsonConvert.SerializeObject(obj, JsonFormats[jsonFormat]);
+        }
     }
 }

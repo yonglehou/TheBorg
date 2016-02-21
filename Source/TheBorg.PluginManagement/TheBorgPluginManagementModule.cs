@@ -28,28 +28,19 @@ using System.Reflection;
 using System.Web.Http.Controllers;
 using Autofac;
 using Autofac.Integration.WebApi;
-using TheBorg.Commands;
-using TheBorg.Conversations;
-using TheBorg.PluginManagement;
-using TheBorg.Services;
 using Module = Autofac.Module;
 
-namespace TheBorg
+namespace TheBorg.PluginManagement
 {
-    public class TheBorgModule : Module
+    public class TheBorgPluginManagementModule : Module
     {
-        public static Assembly Assembly { get; } = typeof (TheBorgModule).Assembly;
+        public static Assembly Assembly { get; } = typeof(TheBorgPluginManagementModule).Assembly;
 
         private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
             {
-                typeof(Command),
-                typeof(ActiveConversation),
+                typeof(PluginProxy),
+                typeof(PluginManagementService)
             };
-
-        private static readonly IReadOnlyCollection<Type> Singletons = new[]
-            {
-                typeof(PluginManagementService),
-            }; 
 
         protected override void Load(ContainerBuilder builder)
         {
@@ -59,11 +50,6 @@ namespace TheBorg
                 .Where(t => !TypesNotRegisteredByConvention.Contains(t))
                 .Where(t => !typeof(IHttpController).IsAssignableFrom(t))
                 .AsImplementedInterfaces();
-
-            foreach (var singleton in Singletons)
-            {
-                builder.RegisterType(singleton).AsImplementedInterfaces().SingleInstance();
-            }
         }
     }
 }

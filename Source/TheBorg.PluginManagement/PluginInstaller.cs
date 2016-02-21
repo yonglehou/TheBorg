@@ -28,9 +28,9 @@ using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using TheBorg.Extensions;
+using TheBorg.Core.Extensions;
 
-namespace TheBorg.Plugins
+namespace TheBorg.PluginManagement
 {
     public class PluginInstaller : IPluginInstaller
     {

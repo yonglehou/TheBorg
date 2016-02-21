@@ -34,9 +34,9 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using Serilog;
-using TheBorg.ValueObjects;
+using TheBorg.Core.Serialization;
 
-namespace TheBorg.Core
+namespace TheBorg.Core.Clients
 {
     public class RestClient : IRestClient
     {

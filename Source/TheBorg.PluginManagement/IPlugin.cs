@@ -22,30 +22,15 @@
 // SOFTWARE.
 //
 
-using System;
-using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.ValueObjects
+namespace TheBorg.PluginManagement
 {
-    public class TempFile : ValueObject, IDisposable
+    public interface IPlugin
     {
-        public static TempFile New => new TempFile(System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString("N")));
-
-        private TempFile(
-            string path)
-        {
-            Path = path;
-        }
-
-        public string Path { get; }
-
-        public void Dispose()
-        {
-            if (File.Exists(Path))
-            {
-                File.Delete(Path);
-            }
-        }
+        Task PingAsync(CancellationToken cancellationToken);
+        Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken);
     }
 }

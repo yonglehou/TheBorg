@@ -23,16 +23,37 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Reflection;
+using Autofac;
+using Serilog;
+using Module = Autofac.Module;
 
 namespace TheBorg.Core
 {
-    public interface IWebSocketClient
+    public class TheBorgCoreModule : Module
     {
-        IObservable<string> Messages { get; }
+        public static Assembly Assembly { get; } = typeof(TheBorgCoreModule).Assembly;
 
-        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
-        Task SendAsync(string message, CancellationToken cancellationToken);
+        private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
+            {
+            };
+
+        protected override void Load(ContainerBuilder builder)
+        {
+            Serilog.Debugging.SelfLog.Out = Console.Out;
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.ColoredConsole()
+                .CreateLogger();
+
+            builder.RegisterInstance(logger);
+
+            builder
+                .RegisterAssemblyTypes(Assembly)
+                .Where(t => !TypesNotRegisteredByConvention.Contains(t))
+                .AsImplementedInterfaces();
+        }
     }
 }

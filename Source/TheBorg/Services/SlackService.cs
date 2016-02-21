@@ -30,6 +30,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Core;
+using TheBorg.Core.Clients;
+using TheBorg.Core.Serialization;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Services.Slack.ApiResponses;
 

@@ -30,7 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 
-namespace TheBorg.Core
+namespace TheBorg.Core.Clients
 {
     public class WebSocketClient : IWebSocketClient, IDisposable
     {

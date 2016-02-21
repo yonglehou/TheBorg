@@ -22,15 +22,50 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
+using System.Web.Http;
+using Autofac;
+using Autofac.Integration.WebApi;
+using Microsoft.Owin.Hosting;
+using Owin;
 
-namespace TheBorg.Plugins
+namespace TheBorg.PluginManagement
 {
-    public interface IPlugin
+    public class PluginApiServer : IPluginApiServer
     {
-        Task PingAsync(CancellationToken cancellationToken);
-        Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken);
+        private readonly ILifetimeScope _lifetimeScope;
+        private IDisposable _webApp;
+
+        public PluginApiServer(
+            ILifetimeScope lifetimeScope)
+        {
+            _lifetimeScope = lifetimeScope;
+        }
+
+        public Task StartAsync(int port, CancellationToken cancellationToken)
+        {
+            _webApp = WebApp.Start($"http://127.0.0.1:{port}", Configuration);
+            return Task.FromResult(0);
+        }
+
+        public void Configuration(IAppBuilder app)
+        {
+            var httpConfiguration = new HttpConfiguration
+                {
+                    DependencyResolver = new AutofacWebApiDependencyResolver(_lifetimeScope)
+                };
+            httpConfiguration.MapHttpAttributeRoutes();
+
+            app.UseAutofacMiddleware(_lifetimeScope);
+            app.UseAutofacWebApi(httpConfiguration);
+            app.UseWebApi(httpConfiguration);
+        }
+
+        public void Dispose()
+        {
+            _webApp.Dispose();
+        }
     }
 }

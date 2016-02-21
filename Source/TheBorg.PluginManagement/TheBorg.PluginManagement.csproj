@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E1E9ED6D-4DAE-46C8-92CB-538FD02762EE}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{A418717D-E36D-43CB-8A46-AE50A2D38CC7}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TheBorg</RootNamespace>
-    <AssemblyName>TheBorg</AssemblyName>
+    <RootNamespace>TheBorg.PluginManagement</RootNamespace>
+    <AssemblyName>TheBorg.PluginManagement</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,7 +23,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -36,12 +33,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,69 +44,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="Commands\CommandAttribute.cs" />
-    <Compile Include="Commands\CommandSets\GitHubCommandSet.cs" />
-    <Compile Include="Commands\CommandSets\PluginCommandSet.cs" />
-    <Compile Include="Commands\ICommandSet.cs" />
-    <Compile Include="Conversations\ConversationTopicAttribute.cs" />
-    <Compile Include="Conversations\IActiveConversation.cs" />
-    <Compile Include="Conversations\IConversationTopic.cs" />
-    <Compile Include="Core\CertificateGenerator.cs" />
-    <Compile Include="Plugins\Controllers\CommandDescriptionsController.cs" />
-    <Compile Include="Plugins\Controllers\MessagesController.cs" />
-    <Compile Include="Services\ConfigurationService.cs" />
-    <Compile Include="Services\GitHubService.cs" />
-    <Compile Include="Services\IConfigurationService.cs" />
-    <Compile Include="Services\IGitHubService.cs" />
-    <Compile Include="Services\IMessageService.cs" />
-    <Compile Include="Services\ISlackService.cs" />
-    <Compile Include="Services\MessageService.cs" />
-    <Compile Include="Services\SlackService.cs" />
-    <Compile Include="Services\Slack\ApiResponses\UserInfoApiResponse.cs" />
-    <Compile Include="Services\Slack\DTOs\ChannelDto.cs" />
-    <Compile Include="Commands\Command.cs" />
-    <Compile Include="Commands\CommandBuilder.cs" />
-    <Compile Include="Commands\CommandDescription.cs" />
-    <Compile Include="Commands\CommandDescriptions.cs" />
-    <Compile Include="Commands\CommandSets\ChuckNorrisCommandSet.cs" />
-    <Compile Include="Commands\CommandSets\HelpCommandSet.cs" />
-    <Compile Include="Commands\CommandSets\StatusCommandSet.cs" />
-    <Compile Include="Commands\ICommandBuilder.cs" />
-    <Compile Include="Conversations\ActiveConversation.cs" />
-    <Compile Include="Conversations\ConversationManager.cs" />
-    <Compile Include="Conversations\IConversationManager.cs" />
-    <Compile Include="Core\IMessageProcessors.cs" />
-    <Compile Include="Conversations\Topics\OctopusCreateReleaseTopic.cs" />
-    <Compile Include="Core\ProcessMessageResult.cs" />
-    <Compile Include="Tenants\ITenant.cs" />
-    <Compile Include="Tenants\SlackTenant.cs" />
-    <Compile Include="Services\Slack\ApiResponses\ApiResponse.cs" />
-    <Compile Include="Services\Slack\ApiResponses\RtmStartApiResponse.cs" />
-    <Compile Include="Services\Slack\DTOs\UserDto.cs" />
-    <Compile Include="Tenants\Slack\RtmRequests\PingRtmRequest.cs" />
-    <Compile Include="Tenants\Slack\RtmRequests\RtmRequest.cs" />
-    <Compile Include="Tenants\Slack\RtmResponses\PongRtmResponse.cs" />
-    <Compile Include="Tenants\Slack\RtmResponses\HelloRtmResponse.cs" />
-    <Compile Include="Tenants\Slack\RtmResponses\MessageRtmResponse.cs" />
-    <Compile Include="Tenants\Slack\RtmResponses\RtmResponse.cs" />
-    <Compile Include="Commands\CommandManager.cs" />
-    <Compile Include="Commands\ICommand.cs" />
-    <Compile Include="Commands\ICommandManager.cs" />
-    <Compile Include="ICollective.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="IPlugin.cs" />
+    <Compile Include="IPluginApiServer.cs" />
+    <Compile Include="IPluginInstaller.cs" />
+    <Compile Include="IPluginLoader.cs" />
+    <Compile Include="IPluginProxy.cs" />
+    <Compile Include="IPluginManagementService.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="PluginApiServer.cs" />
+    <Compile Include="PluginInstaller.cs" />
+    <Compile Include="PluginLoader.cs" />
+    <Compile Include="PluginProxy.cs" />
+    <Compile Include="PluginManagementService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Collective.cs" />
-    <Compile Include="TheBorgModule.cs" />
-    <Compile Include="ValueObjects\GitHubRelease.cs" />
-    <Compile Include="ValueObjects\GitHubReleaseAsset.cs" />
+    <Compile Include="TheBorgPluginManagementModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
@@ -127,14 +74,6 @@
     <ProjectReference Include="..\TheBorg.Interface\TheBorg.Interface.csproj">
       <Project>{e1dcf0b9-ccf4-42e1-b39c-2191cc7c378b}</Project>
       <Name>TheBorg.Interface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.PluginManagement\TheBorg.PluginManagement.csproj">
-      <Project>{a418717d-e36d-43cb-8a46-ae50a2d38cc7}</Project>
-      <Name>TheBorg.PluginManagement</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Plugins.Jokes\TheBorg.Plugins.Jokes.csproj">
-      <Project>{721cf637-01fe-4691-a6a1-eff1ec4e9d25}</Project>
-      <Name>TheBorg.Plugins.Jokes</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -630,28 +569,6 @@
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
-      <ItemGroup>
-        <Reference Include="Nancy">
-          <HintPath>..\..\packages\Nancy\lib\net40\Nancy.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
-      <ItemGroup>
-        <Reference Include="Nancy.Hosting.Self">
-          <HintPath>..\..\packages\Nancy.Hosting.Self\lib\net40\Nancy.Hosting.Self.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v3.5'">
       <ItemGroup>
         <Reference Include="Newtonsoft.Json">
@@ -701,26 +618,6 @@
       <ItemGroup>
         <Reference Include="Newtonsoft.Json">
           <HintPath>..\..\packages\Newtonsoft.Json\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
-      <ItemGroup>
-        <Reference Include="Octokit">
-          <HintPath>..\..\packages\Octokit\lib\net45\Octokit.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="($(TargetFrameworkIdentifier) == 'WindowsPhoneApp') Or ($(TargetFrameworkIdentifier) == '.NETCore') Or ($(TargetFrameworkIdentifier) == 'WindowsPhone' And ($(TargetFrameworkVersion) == 'v8.0' Or $(TargetFrameworkVersion) == 'v8.1')) Or ($(TargetFrameworkIdentifier) == 'MonoAndroid') Or ($(TargetFrameworkIdentifier) == 'MonoTouch') Or ($(TargetFrameworkIdentifier) == 'Xamarin.iOS') Or ($(TargetFrameworkIdentifier) == 'Xamarin.Mac') Or ($(TargetFrameworkProfile) == 'Profile7') Or ($(TargetFrameworkProfile) == 'Profile31') Or ($(TargetFrameworkProfile) == 'Profile32') Or ($(TargetFrameworkProfile) == 'Profile44') Or ($(TargetFrameworkProfile) == 'Profile49') Or ($(TargetFrameworkProfile) == 'Profile78') Or ($(TargetFrameworkProfile) == 'Profile84') Or ($(TargetFrameworkProfile) == 'Profile111') Or ($(TargetFrameworkProfile) == 'Profile151') Or ($(TargetFrameworkProfile) == 'Profile157') Or ($(TargetFrameworkProfile) == 'Profile259')">
-      <ItemGroup>
-        <Reference Include="Octokit">
-          <HintPath>..\..\packages\Octokit\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -1139,26 +1036,6 @@
       <ItemGroup>
         <Reference Include="Serilog">
           <HintPath>..\..\packages\Serilog\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10\Serilog.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v3.5' Or $(TargetFrameworkVersion) == 'v4.0')">
-      <ItemGroup>
-        <Reference Include="Topshelf">
-          <HintPath>..\..\packages\Topshelf\lib\net35\Topshelf.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
-      <ItemGroup>
-        <Reference Include="Topshelf">
-          <HintPath>..\..\packages\Topshelf\lib\net40-full\Topshelf.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

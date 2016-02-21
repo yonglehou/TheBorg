@@ -23,13 +23,17 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace TheBorg.Plugins
+namespace TheBorg.Interface.ValueObjects
 {
-    public interface IPluginLoader
+    public class PluginId : SingleValueObject<string>
     {
-        Task<IPluginProxy> LoadPluginAsync(string dllPath, Uri pluginApiUri, CancellationToken cancellationToken);
+        public PluginId(string value)
+            : base(value)
+        {
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
+            if (value.Trim() != value) throw new ArgumentException($"'{value.Trim()}' != '{value}'");
+            if (value.ToLowerInvariant() != value) throw new ArgumentException($"'{value.ToLowerInvariant()}' != '{value}'");
+        }
     }
 }

@@ -30,10 +30,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Core;
+using TheBorg.Core.Clients;
 using TheBorg.Host;
-using TheBorg.ValueObjects;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Plugins
+namespace TheBorg.PluginManagement
 {
     public class PluginLoader : IPluginLoader
     {

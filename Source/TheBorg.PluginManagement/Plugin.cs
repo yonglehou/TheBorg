@@ -23,45 +23,45 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.ValueObjects;
+using Serilog;
+using TheBorg.Core;
+using TheBorg.Core.Clients;
+using TheBorg.Core.Serialization;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Core
+namespace TheBorg.PluginManagement
 {
-    public interface IRestClient
+    public class Plugin : IPlugin
     {
-        Task<TResult> PostAsync<TResult, T>(
-            Uri uri,
-            T obj,
-            JsonFormat jsonFormat,
-            CancellationToken cancellationToken);
+        private readonly ILogger _logger;
+        private readonly Uri _baseUri;
+        private readonly IRestClient _restClient;
 
-        Task<T> GetAsync<T>(
-            Uri uri,
-            JsonFormat jsonFormat,
-            CancellationToken cancellationToken);
+        public Plugin(
+            ILogger logger,
+            Uri baseUri,
+            IRestClient restClient)
+        {
+            _logger = logger;
+            _baseUri = baseUri;
+            _restClient = restClient;
+        }
 
-        Task<T> GetAsync<T>(
-            Uri uri,
-            IEnumerable<KeyValuePair<string, string>> queryString,
-            JsonFormat jsonFormat,
-            CancellationToken cancellationToken);
+        public Task PingAsync(CancellationToken cancellationToken)
+        {
+            return GetAsync<object>("_plugin/ping", cancellationToken);
+        }
 
-        Task<T> PostFormAsync<T>(
-            Uri uri,
-            IEnumerable<KeyValuePair<string, string>> keyValuePairs,
-            JsonFormat jsonFormat,
-            CancellationToken cancellationToken);
+        public Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken)
+        {
+            return GetAsync<PluginInformation>("_plugin/plugin-information", cancellationToken);
+        }
 
-        Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage httpRequestMessage,
-            CancellationToken cancellationToken);
-
-        Task<TempFile> DownloadAsync(
-            Uri uri,
-            CancellationToken cancellationToken);
+        private Task<T> GetAsync<T>(string path, CancellationToken cancellationToken)
+        {
+            return _restClient.GetAsync<T>(new Uri(_baseUri, path), JsonFormat.CamelCase, cancellationToken);
+        }
     }
 }

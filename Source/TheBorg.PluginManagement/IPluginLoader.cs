@@ -23,13 +23,13 @@
 //
 
 using System;
-using TheBorg.ValueObjects;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Plugins
+namespace TheBorg.PluginManagement
 {
-    public interface IPluginProxy : IDisposable
+    public interface IPluginLoader
     {
-        PluginId Id { get; }
-        IPlugin Plugin { get; }
+        Task<IPluginProxy> LoadPluginAsync(string dllPath, Uri pluginApiUri, CancellationToken cancellationToken);
     }
 }

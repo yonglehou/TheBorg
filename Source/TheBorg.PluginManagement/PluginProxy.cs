@@ -23,49 +23,33 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web.Http;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin.Hosting;
-using Owin;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Plugins
+namespace TheBorg.PluginManagement
 {
-    public class PluginApiServer : IPluginApiServer
+    public class PluginProxy : IPluginProxy
     {
-        private readonly ILifetimeScope _lifetimeScope;
-        private IDisposable _webApp;
+        private readonly AppDomain _appDomain;
 
-        public PluginApiServer(
-            ILifetimeScope lifetimeScope)
+        public PluginProxy(
+            PluginId id,
+            AppDomain appDomain,
+            IPlugin plugin)
         {
-            _lifetimeScope = lifetimeScope;
+            Id = id;
+            Plugin = plugin;
+            _appDomain = appDomain;
         }
 
-        public Task StartAsync(int port, CancellationToken cancellationToken)
-        {
-            _webApp = WebApp.Start($"http://127.0.0.1:{port}", Configuration);
-            return Task.FromResult(0);
-        }
-
-        public void Configuration(IAppBuilder app)
-        {
-            var httpConfiguration = new HttpConfiguration
-                {
-                    DependencyResolver = new AutofacWebApiDependencyResolver(_lifetimeScope)
-                };
-            httpConfiguration.MapHttpAttributeRoutes();
-
-            app.UseAutofacMiddleware(_lifetimeScope);
-            app.UseAutofacWebApi(httpConfiguration);
-            app.UseWebApi(httpConfiguration);
-        }
+        public PluginId Id { get; }
+        public IPlugin Plugin { get; }
 
         public void Dispose()
         {
-            _webApp.Dispose();
+            if (!_appDomain.IsFinalizingForUnload())
+            {
+                AppDomain.Unload(_appDomain);
+            }
         }
     }
 }

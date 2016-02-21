@@ -24,17 +24,27 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 
-namespace TheBorg.Extensions
+namespace TheBorg.Core
 {
-    public static class AssemblyExtensions
+    public class TempFile : IDisposable
     {
-        public static string GetCodeBase(this Assembly assembly)
+        public static TempFile New => new TempFile(System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString("N")));
+
+        private TempFile(
+            string path)
         {
-            var codebase = assembly.GetName().CodeBase;
-            var uri = new UriBuilder(codebase);
-            return Path.GetFullPath(Uri.UnescapeDataString(uri.Path));
+            Path = path;
+        }
+
+        public string Path { get; }
+
+        public void Dispose()
+        {
+            if (File.Exists(Path))
+            {
+                File.Delete(Path);
+            }
         }
     }
 }

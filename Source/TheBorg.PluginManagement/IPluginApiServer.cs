@@ -25,41 +25,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Serilog;
-using TheBorg.Core;
-using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Plugins
+namespace TheBorg.PluginManagement
 {
-    public class Plugin : IPlugin
+    public interface IPluginApiServer : IDisposable
     {
-        private readonly ILogger _logger;
-        private readonly Uri _baseUri;
-        private readonly IRestClient _restClient;
-
-        public Plugin(
-            ILogger logger,
-            Uri baseUri,
-            IRestClient restClient)
-        {
-            _logger = logger;
-            _baseUri = baseUri;
-            _restClient = restClient;
-        }
-
-        public Task PingAsync(CancellationToken cancellationToken)
-        {
-            return GetAsync<object>("_plugin/ping", cancellationToken);
-        }
-
-        public Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken)
-        {
-            return GetAsync<PluginInformation>("_plugin/plugin-information", cancellationToken);
-        }
-
-        private Task<T> GetAsync<T>(string path, CancellationToken cancellationToken)
-        {
-            return _restClient.GetAsync<T>(new Uri(_baseUri, path), JsonFormat.CamelCase, cancellationToken);
-        }
+        Task StartAsync(int port, CancellationToken cancellationToken);
     }
 }

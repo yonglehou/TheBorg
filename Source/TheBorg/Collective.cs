@@ -32,8 +32,9 @@ using Serilog;
 using TheBorg.Commands;
 using TheBorg.Conversations;
 using TheBorg.Core;
-using TheBorg.Extensions;
+using TheBorg.Core.Extensions;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.PluginManagement;
 using TheBorg.Plugins.Jokes;
 using TheBorg.Services;
 using TheBorg.Tenants;
@@ -43,7 +44,7 @@ namespace TheBorg
     public class Collective : ICollective
     {
         private readonly ILogger _logger;
-        private readonly IPluginService _pluginService;
+        private readonly IPluginManagementService _pluginManagementService;
         private readonly ICommandManager _commandManager;
         private readonly IConversationManager _conversationManager;
         private readonly IReadOnlyCollection<ITenant> _tenants;
@@ -55,13 +56,13 @@ namespace TheBorg
 
         public Collective(
             ILogger logger,
-            IPluginService pluginService,
+            IPluginManagementService pluginManagementService,
             ICommandManager commandManager,
             IConversationManager conversationManager,
             IEnumerable<ITenant> tenants)
         {
             _logger = logger;
-            _pluginService = pluginService;
+            _pluginManagementService = pluginManagementService;
             _commandManager = commandManager;
             _conversationManager = conversationManager;
             _tenants = tenants.ToList();
@@ -69,7 +70,7 @@ namespace TheBorg
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _pluginService.InitializeAsync(cancellationToken).ConfigureAwait(false);
+            await _pluginManagementService.InitializeAsync(cancellationToken).ConfigureAwait(false);
             await LoadBuildInPluginsAsync(cancellationToken).ConfigureAwait(false);
 
             var disposables = await Task.WhenAll(_tenants.Select(async t =>
@@ -107,7 +108,7 @@ namespace TheBorg
                 try
                 {
                     var pluginPath = Path.Combine(applicationRoot, $"{builtInPlugin}.dll");
-                    await _pluginService.LoadPluginAsync(
+                    await _pluginManagementService.LoadPluginAsync(
                         pluginPath,
                         cancellationToken)
                         .ConfigureAwait(false);

@@ -24,7 +24,9 @@
 
 using System.Threading;
 using Autofac;
+using TheBorg.Core;
 using TheBorg.Host;
+using TheBorg.PluginManagement;
 using Topshelf;
 
 namespace TheBorg
@@ -36,6 +38,8 @@ namespace TheBorg
         static Program()
         {
             var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterModule<TheBorgCoreModule>();
+            containerBuilder.RegisterModule<TheBorgPluginManagementModule>();
             containerBuilder.RegisterModule<TheBorgModule>();
             Container = containerBuilder.Build();
         }

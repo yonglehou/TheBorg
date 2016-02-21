@@ -23,33 +23,18 @@
 //
 
 using System;
-using TheBorg.ValueObjects;
+using System.IO;
+using System.Reflection;
 
-namespace TheBorg.Plugins
+namespace TheBorg.Core.Extensions
 {
-    public class PluginProxy : IPluginProxy
+    public static class AssemblyExtensions
     {
-        private readonly AppDomain _appDomain;
-
-        public PluginProxy(
-            PluginId id,
-            AppDomain appDomain,
-            IPlugin plugin)
+        public static string GetCodeBase(this Assembly assembly)
         {
-            Id = id;
-            Plugin = plugin;
-            _appDomain = appDomain;
-        }
-
-        public PluginId Id { get; }
-        public IPlugin Plugin { get; }
-
-        public void Dispose()
-        {
-            if (!_appDomain.IsFinalizingForUnload())
-            {
-                AppDomain.Unload(_appDomain);
-            }
+            var codebase = assembly.GetName().CodeBase;
+            var uri = new UriBuilder(codebase);
+            return Path.GetFullPath(Uri.UnescapeDataString(uri.Path));
         }
     }
 }

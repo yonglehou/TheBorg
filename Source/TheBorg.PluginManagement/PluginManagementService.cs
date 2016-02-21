@@ -28,12 +28,11 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Core;
-using TheBorg.Extensions;
-using TheBorg.Plugins;
+using TheBorg.Core.Extensions;
 
-namespace TheBorg.Services
+namespace TheBorg.PluginManagement
 {
-    public class PluginService : IPluginService
+    public class PluginManagementService : IPluginManagementService
     {
         private readonly IPluginLoader _pluginLoader;
         private readonly IPluginApiServer _pluginApiServer;
@@ -41,7 +40,7 @@ namespace TheBorg.Services
         private readonly int _serverPort;
         private readonly Uri _pluginApiUri;
 
-        public PluginService(
+        public PluginManagementService(
             IPluginLoader pluginLoader,
             IPluginApiServer pluginApiServer)
         {
@@ -71,7 +70,7 @@ namespace TheBorg.Services
                 }
 
                 pluginPath = Path.Combine(
-                    Path.GetDirectoryName(typeof(PluginService).Assembly.GetCodeBase()),
+                    Path.GetDirectoryName(typeof(PluginManagementService).Assembly.GetCodeBase()),
                     name);
             }
 

@@ -1,0 +1,7 @@
+﻿Autofac
+Autofac.Owin
+Autofac.WebApi2.Owin
+Microsoft.AspNet.WebApi.OwinSelfHost
+Newtonsoft.Json
+Rx-Main
+Serilog

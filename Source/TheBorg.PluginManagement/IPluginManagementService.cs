@@ -22,18 +22,15 @@
 // SOFTWARE.
 //
 
-using System.Text.RegularExpressions;
-using Newtonsoft.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Core
+namespace TheBorg.PluginManagement
 {
-    public class UnderscoreMappingResolver : DefaultContractResolver
+    public interface IPluginManagementService
     {
-        private static readonly Regex Regex = new Regex(@"([A-Z])([A-Z][a-z])|([a-z0-9])([A-Z])", RegexOptions.Compiled);
-
-        protected override string ResolvePropertyName(string propertyName)
-        {
-            return Regex.Replace(propertyName,"$1$3_$2$4").ToLower();
-        }
+        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
+        Task UnloadPluginAsync(string name);
+        Task InitializeAsync(CancellationToken cancellationToken);
     }
 }

@@ -22,28 +22,17 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
-using Newtonsoft.Json;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Core
+namespace TheBorg.Core.Clients
 {
-    public class JsonSerializer : IJsonSerializer
+    public interface IWebSocketClient
     {
-        private static readonly IReadOnlyDictionary<JsonFormat, JsonSerializerSettings> JsonFormats = new Dictionary<JsonFormat, JsonSerializerSettings>
-            {
-                {JsonFormat.LowerSnakeCase, new JsonSerializerSettings { ContractResolver = new UnderscoreMappingResolver(), } },
-                {JsonFormat.CamelCase, new JsonSerializerSettings() },
-                {JsonFormat.PascalCase, new JsonSerializerSettings() },
-            };
+        IObservable<string> Messages { get; }
 
-        public T Deserialize<T>(string json, JsonFormat jsonFormat = JsonFormat.CamelCase)
-        {
-            return JsonConvert.DeserializeObject<T>(json, JsonFormats[jsonFormat]);
-        }
-
-        public string Serialize<T>(T obj, JsonFormat jsonFormat = JsonFormat.CamelCase)
-        {
-            return JsonConvert.SerializeObject(obj, JsonFormats[jsonFormat]);
-        }
+        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
+        Task SendAsync(string message, CancellationToken cancellationToken);
     }
 }

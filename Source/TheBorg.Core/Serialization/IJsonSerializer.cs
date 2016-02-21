@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Core
+namespace TheBorg.Core.Serialization
 {
     public enum JsonFormat
     {

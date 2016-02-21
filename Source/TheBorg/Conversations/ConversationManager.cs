@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Commands;
 using TheBorg.Core;
+using TheBorg.Core.Serialization;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Conversations

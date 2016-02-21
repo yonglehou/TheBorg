@@ -23,18 +23,45 @@
 //
 
 using System;
-using TheBorg.Interface.ValueObjects;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Core.Serialization;
 
-namespace TheBorg.ValueObjects
+namespace TheBorg.Core.Clients
 {
-    public class PluginId : SingleValueObject<string>
+    public interface IRestClient
     {
-        public PluginId(string value)
-            : base(value)
-        {
-            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
-            if (value.Trim() != value) throw new ArgumentException($"'{value.Trim()}' != '{value}'");
-            if (value.ToLowerInvariant() != value) throw new ArgumentException($"'{value.ToLowerInvariant()}' != '{value}'");
-        }
+        Task<TResult> PostAsync<TResult, T>(
+            Uri uri,
+            T obj,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<T> GetAsync<T>(
+            Uri uri,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<T> GetAsync<T>(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> queryString,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<T> PostFormAsync<T>(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> keyValuePairs,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage httpRequestMessage,
+            CancellationToken cancellationToken);
+
+        Task<TempFile> DownloadAsync(
+            Uri uri,
+            CancellationToken cancellationToken);
     }
 }
