@@ -30,6 +30,7 @@ using Autofac;
 using Autofac.Integration.WebApi;
 using Microsoft.Owin.Hosting;
 using Owin;
+using TheBorg.PluginManagement.HttpApi.Middlewares;
 
 namespace TheBorg.PluginManagement.HttpApi
 {
@@ -58,6 +59,7 @@ namespace TheBorg.PluginManagement.HttpApi
                 };
             httpConfiguration.MapHttpAttributeRoutes();
 
+            app.Use<PluginAuthMiddleware>();
             app.UseAutofacMiddleware(_lifetimeScope);
             app.UseAutofacWebApi(httpConfiguration);
             app.UseWebApi(httpConfiguration);

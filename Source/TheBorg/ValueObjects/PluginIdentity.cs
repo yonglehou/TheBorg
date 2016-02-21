@@ -22,35 +22,19 @@
 // SOFTWARE.
 //
 
-using System;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.ValueObjects
 {
-    public class PluginProxy : IPluginProxy
+    public class PluginIdentity : ValueObject
     {
-        private readonly AppDomain _appDomain;
-
-        public PluginProxy(
-            PluginId id,
-            AppDomain appDomain,
-            IPlugin plugin)
+        public PluginIdentity(
+            PluginId id)
         {
             Id = id;
-            Plugin = plugin;
-            _appDomain = appDomain;
         }
 
         public PluginId Id { get; }
-        public IPlugin Plugin { get; }
-
-        public void Dispose()
-        {
-            if (!_appDomain.IsFinalizingForUnload())
-            {
-                AppDomain.Unload(_appDomain);
-            }
-        }
     }
 }

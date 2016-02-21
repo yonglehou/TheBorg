@@ -22,15 +22,22 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
+using System;
+using System.Reflection;
 
-namespace TheBorg.Interface.Apis
+namespace TheBorg.Interface.ValueObjects.Plugins
 {
-    public interface ICommandDescriptionApi
+    public class PluginVersion : SingleValueObject<string>
     {
-        Task RegisterAsync(IEnumerable<CommandDescription> commandDescriptions, CancellationToken cancellationToken);
+        public static PluginVersion From(Assembly assembly)
+        {
+            return new PluginVersion(assembly.GetName().Version.ToString());
+        }
+
+        public PluginVersion(string value) : base(value)
+        {
+            Version version;
+            if (!Version.TryParse(value, out version)) throw new ArgumentException($"Plugin version '{value}' is not a valid version string");
+        }
     }
 }

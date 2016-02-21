@@ -45,7 +45,8 @@
     <Compile Include="Apis\Api.cs" />
     <Compile Include="ApiBootstrapper.cs" />
     <Compile Include="ApiEndpoint.cs" />
-    <Compile Include="Apis\CommandDescriptionApi.cs" />
+    <Compile Include="Apis\CommandApi.cs" />
+    <Compile Include="Apis\MessageApi.cs" />
     <Compile Include="HttpApiRequestContext.cs" />
     <Compile Include="ApiHost.cs" />
     <Compile Include="ApiModule.cs" />

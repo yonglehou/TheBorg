@@ -24,12 +24,11 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Core;
-using TheBorg.Core.Extensions;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 using TheBorg.PluginManagement.HttpApi;
 using TheBorg.PluginManagement.ValueObjects;
 

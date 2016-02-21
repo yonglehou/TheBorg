@@ -29,6 +29,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Core.Clients;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 using TheBorg.PluginManagement;
 using TheBorg.PluginManagement.ValueObjects;
 using TheBorg.Services;

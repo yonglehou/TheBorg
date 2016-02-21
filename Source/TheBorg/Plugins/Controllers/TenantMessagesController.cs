@@ -22,18 +22,36 @@
 // SOFTWARE.
 //
 
-using System;
+using System.Threading.Tasks;
+using System.Web.Http;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.Services;
 
-namespace TheBorg.Interface.ValueObjects
+namespace TheBorg.Plugins.Controllers
 {
-    public class PluginId : SingleValueObject<string>
+    [RoutePrefix("api/tenant-messages")]
+    public class TenantMessagesController : ApiController
     {
-        public PluginId(string value)
-            : base(value)
+        private readonly IMessageService _messageService;
+
+        public TenantMessagesController(
+            IMessageService messageService)
         {
-            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
-            if (value.Trim() != value) throw new ArgumentException($"'{value.Trim()}' != '{value}'");
-            if (value.ToLowerInvariant() != value) throw new ArgumentException($"'{value.ToLowerInvariant()}' != '{value}'");
+            _messageService = messageService;
+        }
+
+        [HttpPost]
+        [Route("")]
+        public async Task<IHttpActionResult> Messages([FromBody] TenantMessage tenantMessage)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            await _messageService.SendAsync(tenantMessage.Address, tenantMessage.Text).ConfigureAwait(false);
+
+            return Ok();
         }
     }
 }

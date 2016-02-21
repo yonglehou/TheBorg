@@ -23,34 +23,26 @@
 //
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface.Apis;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Host.Apis
 {
-    public class PluginProxy : IPluginProxy
+    public class MessageApi : Api, IMessageApi
     {
-        private readonly AppDomain _appDomain;
-
-        public PluginProxy(
-            PluginId id,
-            AppDomain appDomain,
-            IPlugin plugin)
+        public MessageApi(
+            PluginId pluginId,
+            Uri baseUri)
+            : base(pluginId, baseUri)
         {
-            Id = id;
-            Plugin = plugin;
-            _appDomain = appDomain;
         }
 
-        public PluginId Id { get; }
-        public IPlugin Plugin { get; }
-
-        public void Dispose()
+        public Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
-            if (!_appDomain.IsFinalizingForUnload())
-            {
-                AppDomain.Unload(_appDomain);
-            }
+            return PostAsync("api/tenant-messages", tenantMessage, cancellationToken);
         }
     }
 }

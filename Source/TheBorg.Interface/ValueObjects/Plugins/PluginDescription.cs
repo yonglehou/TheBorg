@@ -24,28 +24,18 @@
 
 using System;
 
-namespace TheBorg.Interface.ValueObjects
+namespace TheBorg.Interface.ValueObjects.Plugins
 {
-    public class PluginInformation : ValueObject
+    public class PluginDescription : SingleValueObject<string>
     {
-        public string Title { get; }
-        public string Version { get; }
-        public string Description { get; }
-
-        public PluginInformation(
-            string title,
-            string version,
-            string description)
+        public static PluginDescription With(string description)
         {
-            Version v;
+            return new PluginDescription(description);
+        }
 
-            if (string.IsNullOrEmpty(title)) throw new ArgumentNullException(nameof(title));
-            if (!System.Version.TryParse(version, out v)) throw new ArgumentException($"'{version}' is now a valid version string", nameof(version));
-            if (string.IsNullOrEmpty(description)) throw new ArgumentNullException(nameof(description));
-
-            Title = title;
-            Version = version;
-            Description = description;
+        public PluginDescription(string value) : base(value)
+        {
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
         }
     }
 }

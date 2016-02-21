@@ -23,34 +23,19 @@
 //
 
 using System;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Interface.ValueObjects.Plugins
 {
-    public class PluginProxy : IPluginProxy
+    public class PluginTitle : SingleValueObject<string>
     {
-        private readonly AppDomain _appDomain;
-
-        public PluginProxy(
-            PluginId id,
-            AppDomain appDomain,
-            IPlugin plugin)
+        public static PluginTitle With(string title)
         {
-            Id = id;
-            Plugin = plugin;
-            _appDomain = appDomain;
+            return new PluginTitle(title);
         }
 
-        public PluginId Id { get; }
-        public IPlugin Plugin { get; }
-
-        public void Dispose()
+        public PluginTitle(string value) : base(value)
         {
-            if (!_appDomain.IsFinalizingForUnload())
-            {
-                AppDomain.Unload(_appDomain);
-            }
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
         }
     }
 }

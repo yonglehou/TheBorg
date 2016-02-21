@@ -22,19 +22,18 @@
 // SOFTWARE.
 //
 
-using System.Web.Http;
-using TheBorg.Interface.ValueObjects;
+using System;
 
-namespace TheBorg.Plugins.Controllers
+namespace TheBorg.Interface.ValueObjects.Plugins
 {
-    [RoutePrefix("api/messages")]
-    public class MessagesController : ApiController
+    public class PluginId : SingleValueObject<string>
     {
-        [HttpPost]
-        [Route("")]
-        public IHttpActionResult Messages([FromBody] TenantMessage tenantMessage)
+        public PluginId(string value)
+            : base(value)
         {
-            return Ok();
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
+            if (value.Trim() != value) throw new ArgumentException($"'{value.Trim()}' != '{value}'");
+            if (value.ToLowerInvariant() != value) throw new ArgumentException($"'{value.ToLowerInvariant()}' != '{value}'");
         }
     }
 }

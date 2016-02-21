@@ -23,34 +23,24 @@
 //
 
 using System;
+using System.IO;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.PluginManagement.ValueObjects
 {
-    public class PluginProxy : IPluginProxy
+    public class PluginPath : SingleValueObject<string>
     {
-        private readonly AppDomain _appDomain;
-
-        public PluginProxy(
-            PluginId id,
-            AppDomain appDomain,
-            IPlugin plugin)
+        public PluginPath(
+            string value)
+            : base(value)
         {
-            Id = id;
-            Plugin = plugin;
-            _appDomain = appDomain;
+            if (!File.Exists(value)) throw new ArgumentException($"Plugin '{value}' does not exist");
         }
 
-        public PluginId Id { get; }
-        public IPlugin Plugin { get; }
-
-        public void Dispose()
+        public PluginId GetPluginId()
         {
-            if (!_appDomain.IsFinalizingForUnload())
-            {
-                AppDomain.Unload(_appDomain);
-            }
+            return new PluginId(Path.GetFileNameWithoutExtension(Value).ToLowerInvariant());
         }
     }
 }

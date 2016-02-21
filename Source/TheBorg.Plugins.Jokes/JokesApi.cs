@@ -22,8 +22,10 @@
 // SOFTWARE.
 //
 
+using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface;
+using TheBorg.Interface.Apis;
 using TheBorg.Interface.Attributes;
 using TheBorg.Interface.ValueObjects;
 
@@ -31,6 +33,14 @@ namespace TheBorg.Plugins.Jokes
 {
     public class JokesApi : IHttpApi
     {
+        private readonly IMessageApi _messageApi;
+
+        public JokesApi(
+            IMessageApi messageApi)
+        {
+            _messageApi = messageApi;
+        }
+
         [HttpApi(HttpApiMethod.Get, "api/joke")]
         public Task<string> Joke()
         {
@@ -38,9 +48,10 @@ namespace TheBorg.Plugins.Jokes
         }
 
         [HttpApi(HttpApiMethod.Post, "api/messages/tell-joke")]
-        public Task TellJoke(TenantMessage tenantMessage)
+        public async Task TellJoke(TenantMessage tenantMessage)
         {
-            return Task.FromResult(0);
+            var joke = await Joke().ConfigureAwait(false);
+            await _messageApi.SendAsync(tenantMessage.CreateReply(joke), CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

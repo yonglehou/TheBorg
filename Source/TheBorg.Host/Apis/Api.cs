@@ -24,20 +24,26 @@
 
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Host.Apis
 {
     public abstract class Api
     {
+        private readonly PluginId _pluginId;
         private readonly Uri _baseUri;
         private static readonly HttpClient HttpClient = new HttpClient();
 
-        protected Api(Uri baseUri)
+        protected Api(
+            PluginId pluginId,
+            Uri baseUri)
         {
+            _pluginId = pluginId;
             _baseUri = baseUri;
         }
 
@@ -87,6 +93,7 @@ namespace TheBorg.Host.Apis
             HttpRequestMessage httpRequestMessage,
             CancellationToken cancellationToken)
         {
+            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("plugin.id", _pluginId.Value);
             return HttpClient.SendAsync(httpRequestMessage, cancellationToken);
         }
     }

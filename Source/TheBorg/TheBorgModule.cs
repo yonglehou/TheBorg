@@ -31,7 +31,6 @@ using Autofac.Integration.WebApi;
 using TheBorg.Commands;
 using TheBorg.Conversations;
 using TheBorg.PluginManagement;
-using TheBorg.Services;
 using Module = Autofac.Module;
 
 namespace TheBorg

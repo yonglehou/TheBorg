@@ -32,12 +32,14 @@ using TheBorg.Interface;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.Attributes;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Host
 {
     public class PluginRegistration : IPluginRegistration
     {
-        public ICommandDescriptionApi CommandDescriptionApi { get; }
+        public ICommandApi CommandApi { get; }
+        public IMessageApi MessageApi { get; }
         private readonly List<CommandDescription> _commandDescriptions = new List<CommandDescription>();
         private readonly Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>>();
 
@@ -45,9 +47,11 @@ namespace TheBorg.Host
         public IReadOnlyCollection<CommandDescription> CommandDescriptions => _commandDescriptions;
 
         public PluginRegistration(
-            ICommandDescriptionApi commandDescriptionApi)
+            ICommandApi commandApi,
+            IMessageApi messageApi)
         {
-            CommandDescriptionApi = commandDescriptionApi;
+            CommandApi = commandApi;
+            MessageApi = messageApi;
         }
 
         public IPluginRegistration SetPluginInformation(PluginInformation pluginInformation)

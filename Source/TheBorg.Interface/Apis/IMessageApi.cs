@@ -22,35 +22,14 @@
 // SOFTWARE.
 //
 
-using System;
+using System.Threading;
+using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Interface.Apis
 {
-    public class PluginProxy : IPluginProxy
+    public interface IMessageApi
     {
-        private readonly AppDomain _appDomain;
-
-        public PluginProxy(
-            PluginId id,
-            AppDomain appDomain,
-            IPlugin plugin)
-        {
-            Id = id;
-            Plugin = plugin;
-            _appDomain = appDomain;
-        }
-
-        public PluginId Id { get; }
-        public IPlugin Plugin { get; }
-
-        public void Dispose()
-        {
-            if (!_appDomain.IsFinalizingForUnload())
-            {
-                AppDomain.Unload(_appDomain);
-            }
-        }
+        Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
     }
 }

@@ -37,6 +37,7 @@ namespace TheBorg.Core
 
         private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
             {
+                typeof(TcpHelper)
             };
 
         protected override void Load(ContainerBuilder builder)

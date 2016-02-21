@@ -26,12 +26,14 @@ using System;
 using System.Collections.Generic;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Interface
 {
     public interface IPluginRegistration
     {
-        ICommandDescriptionApi CommandDescriptionApi { get; }
+        ICommandApi CommandApi { get; }
+        IMessageApi MessageApi { get; }
 
         IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
 

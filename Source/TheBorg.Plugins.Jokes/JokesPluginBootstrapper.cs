@@ -25,6 +25,7 @@
 using System;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Plugins.Jokes
 {
@@ -35,10 +36,10 @@ namespace TheBorg.Plugins.Jokes
             pluginRegistra(r =>
                 {
                     r.SetPluginInformation(new PluginInformation(
-                        "Jokes",
-                        typeof(JokesPluginBootstrapper).Assembly.GetName().Version.ToString(),
-                        "Provides jokes"));
-                    r.RegisterApi(new JokesApi());
+                        PluginTitle.With("Jokes"),
+                        PluginVersion.From(typeof(JokesPluginBootstrapper).Assembly),
+                        PluginDescription.With("Provides jokes")));
+                    r.RegisterApi(new JokesApi(r.MessageApi));
                     r.RegisterCommands(
                         new CommandDescription("^joke$", "tells a joke", "api/messages/tell-joke"));
                 });

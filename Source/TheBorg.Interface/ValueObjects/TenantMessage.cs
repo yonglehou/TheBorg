@@ -46,6 +46,11 @@ namespace TheBorg.Interface.ValueObjects
         public string Text { get; }
         public Address Address { get; }
 
+        public TenantMessage CreateReply(string text)
+        {
+            return new TenantMessage(text, Address, null);
+        }
+
         public Task ReplyAsync(string text, CancellationToken cancellationToken)
         {
             return _reply(text, cancellationToken);

@@ -24,6 +24,7 @@
 
 using System.Collections.Generic;
 using System.Web.Http;
+using TheBorg.Extensions;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Plugins.Controllers
@@ -39,6 +40,8 @@ namespace TheBorg.Plugins.Controllers
             {
                 return BadRequest();
             }
+
+            var pluginId = User.GetPluginId();
 
             return Ok();
         }

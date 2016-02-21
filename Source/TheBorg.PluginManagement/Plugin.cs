@@ -29,6 +29,7 @@ using Serilog;
 using TheBorg.Core.Clients;
 using TheBorg.Core.Serialization;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.PluginManagement
 {

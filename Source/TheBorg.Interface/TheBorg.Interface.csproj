@@ -45,7 +45,8 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Apis\ICommandDescriptionApi.cs" />
+    <Compile Include="Apis\ICommandApi.cs" />
+    <Compile Include="Apis\IMessageApi.cs" />
     <Compile Include="Attributes\FromBodyAttribute.cs" />
     <Compile Include="Attributes\HttpMethodAttribute.cs" />
     <Compile Include="IHttpApiRequestContext.cs" />
@@ -57,8 +58,12 @@
     <Compile Include="ValueObjects\CommandDescription.cs" />
     <Compile Include="ValueObjects\LogLevel.cs" />
     <Compile Include="ValueObjects\LogMessage.cs" />
-    <Compile Include="ValueObjects\PluginId.cs" />
-    <Compile Include="ValueObjects\PluginInformation.cs" />
+    <Compile Include="ValueObjects\Plugins\PluginDescription.cs" />
+    <Compile Include="ValueObjects\Plugins\PluginId.cs" />
+    <Compile Include="ValueObjects\Plugins\PluginInformation.cs" />
+    <Compile Include="ValueObjects\Plugins\PluginPath.cs" />
+    <Compile Include="ValueObjects\Plugins\PluginTitle.cs" />
+    <Compile Include="ValueObjects\Plugins\PluginVersion.cs" />
     <Compile Include="ValueObjects\TenantChannel.cs" />
     <Compile Include="ValueObjects\SingleValueObject.cs" />
     <Compile Include="ValueObjects\Tenant.cs" />

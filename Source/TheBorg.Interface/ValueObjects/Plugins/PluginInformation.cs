@@ -23,23 +23,27 @@
 //
 
 using System;
-using System.IO;
-using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.PluginManagement.ValueObjects
+namespace TheBorg.Interface.ValueObjects.Plugins
 {
-    public class PluginPath : SingleValueObject<string>
+    public class PluginInformation : ValueObject
     {
-        public PluginPath(
-            string value)
-            : base(value)
-        {
-            if (!File.Exists(value)) throw new ArgumentException($"Plugin '{value}' does not exist");
-        }
+        public PluginTitle Title { get; }
+        public PluginVersion Version { get; }
+        public PluginDescription Description { get; }
 
-        public PluginId GetPluginId()
+        public PluginInformation(
+            PluginTitle title,
+            PluginVersion version,
+            PluginDescription description)
         {
-            return new PluginId(Path.GetFileNameWithoutExtension(Value).ToLowerInvariant());
+            if (title == null) throw new ArgumentNullException(nameof(title));
+            if (version == null) throw new ArgumentNullException(nameof(version));
+            if (description == null) throw new ArgumentNullException(nameof(description));
+
+            Title = title;
+            Version = version;
+            Description = description;
         }
     }
 }
