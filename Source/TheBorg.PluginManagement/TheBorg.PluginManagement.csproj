@@ -45,19 +45,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPlugin.cs" />
-    <Compile Include="IPluginApiServer.cs" />
+    <Compile Include="HttpApi\IPluginHttpApi.cs" />
     <Compile Include="IPluginInstaller.cs" />
     <Compile Include="IPluginLoader.cs" />
     <Compile Include="IPluginProxy.cs" />
     <Compile Include="IPluginManagementService.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="PluginApiServer.cs" />
+    <Compile Include="HttpApi\PluginHttpApi.cs" />
     <Compile Include="PluginInstaller.cs" />
     <Compile Include="PluginLoader.cs" />
     <Compile Include="PluginProxy.cs" />
     <Compile Include="PluginManagementService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TheBorgPluginManagementModule.cs" />
+    <Compile Include="ValueObjects\PluginPath.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

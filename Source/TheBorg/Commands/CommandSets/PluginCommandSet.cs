@@ -22,17 +22,15 @@
 // SOFTWARE.
 //
 
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Core;
 using TheBorg.Core.Clients;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.PluginManagement;
-using TheBorg.Plugins;
+using TheBorg.PluginManagement.ValueObjects;
 using TheBorg.Services;
 
 namespace TheBorg.Commands.CommandSets
@@ -57,25 +55,13 @@ namespace TheBorg.Commands.CommandSets
         }
 
         [Command(
-            "load plugin <plugin name> - loads a plugin",
-            @"^load plugin (?<pluginName>[\.a-z0-9]+)$")]
-        public async Task LoadPluginAsync(string pluginName, TenantMessage tenantMessage, CancellationToken cancellationToken)
-        {
-            await tenantMessage.ReplyAsync($"Loading plugin '{pluginName}'", cancellationToken).ConfigureAwait(false);
-            var stopwatch = Stopwatch.StartNew();
-            await _pluginManagementService.LoadPluginAsync(pluginName, cancellationToken).ConfigureAwait(false);
-            var time = stopwatch.Elapsed;
-            await tenantMessage.ReplyAsync($"It took me {time.TotalSeconds:0.00} seconds to load '{pluginName}'", cancellationToken).ConfigureAwait(false);
-        }
-
-        [Command(
             "unload plugin <plugin name> - loads a plugin",
             @"^unload plugin (?<pluginName>[\.a-z0-9]+)$")]
         public async Task UnloadPluginAsync(string pluginName, TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             await tenantMessage.ReplyAsync($"Unloading plugin '{pluginName}'", cancellationToken).ConfigureAwait(false);
             var stopwatch = Stopwatch.StartNew();
-            await _pluginManagementService.UnloadPluginAsync(pluginName).ConfigureAwait(false);
+            await _pluginManagementService.UnloadPluginAsync(new PluginId(pluginName)).ConfigureAwait(false);
             var time = stopwatch.Elapsed;
             await tenantMessage.ReplyAsync($"It took me {time.TotalSeconds:0.00} seconds to unload '{pluginName}'", cancellationToken).ConfigureAwait(false);
         }
@@ -121,8 +107,10 @@ namespace TheBorg.Commands.CommandSets
                     cancellationToken)
                     .ConfigureAwait(false);
 
+                var pluginPath = new PluginPath(dllLocation);
+
                 await _pluginManagementService.LoadPluginAsync(
-                    dllLocation,
+                    pluginPath,
                     cancellationToken)
                     .ConfigureAwait(false);
             }

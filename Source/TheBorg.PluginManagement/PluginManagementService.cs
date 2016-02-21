@@ -23,29 +23,32 @@
 //
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Core;
 using TheBorg.Core.Extensions;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.PluginManagement.HttpApi;
+using TheBorg.PluginManagement.ValueObjects;
 
 namespace TheBorg.PluginManagement
 {
     public class PluginManagementService : IPluginManagementService
     {
         private readonly IPluginLoader _pluginLoader;
-        private readonly IPluginApiServer _pluginApiServer;
-        private readonly Dictionary<string, IPluginProxy> _plugins = new Dictionary<string, IPluginProxy>();
+        private readonly IPluginHttpApi _pluginHttpApi;
+        private readonly ConcurrentDictionary<PluginId, IPluginProxy> _plugins = new ConcurrentDictionary<PluginId, IPluginProxy>();
         private readonly int _serverPort;
         private readonly Uri _pluginApiUri;
 
         public PluginManagementService(
             IPluginLoader pluginLoader,
-            IPluginApiServer pluginApiServer)
+            IPluginHttpApi pluginHttpApi)
         {
             _pluginLoader = pluginLoader;
-            _pluginApiServer = pluginApiServer;
+            _pluginHttpApi = pluginHttpApi;
 
             _serverPort = TcpHelper.GetFreePort();
             _pluginApiUri = new Uri($"http://127.0.0.1:{_serverPort}/");
@@ -53,43 +56,25 @@ namespace TheBorg.PluginManagement
 
         public Task InitializeAsync(CancellationToken cancellationToken)
         {
-            return _pluginApiServer.StartAsync(_serverPort, cancellationToken);
+            return _pluginHttpApi.StartAsync(_serverPort, cancellationToken);
         }
 
-        public async Task LoadPluginAsync(string name, CancellationToken cancellationToken)
+        public async Task LoadPluginAsync(PluginPath pluginPath, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
-
-            var pluginPath = name;
-            if (!Path.IsPathRooted(name))
-            {
-                name = name.ToLowerInvariant().Trim();
-                if (!name.EndsWith(".dll"))
-                {
-                    name += ".dll";
-                }
-
-                pluginPath = Path.Combine(
-                    Path.GetDirectoryName(typeof(PluginManagementService).Assembly.GetCodeBase()),
-                    name);
-            }
-
             var plugin = await _pluginLoader.LoadPluginAsync(pluginPath, _pluginApiUri, cancellationToken).ConfigureAwait(false);
 
-            _plugins.Add(name, plugin);
+            _plugins.TryAdd(plugin.Id, plugin);
         }
 
-        public Task UnloadPluginAsync(string name)
+        public Task UnloadPluginAsync(PluginId pluginId)
         {
-            name = name.ToLowerInvariant().Trim();
-
-            if (!_plugins.ContainsKey(name))
+            if (!_plugins.ContainsKey(pluginId))
             {
                 return Task.FromResult(0);
             }
 
-            _plugins.Remove(name);
-            var pluginProxy = _plugins[name];
+            IPluginProxy pluginProxy;
+            _plugins.TryRemove(pluginId, out pluginProxy);
             pluginProxy.Dispose();
 
             return Task.FromResult(0);

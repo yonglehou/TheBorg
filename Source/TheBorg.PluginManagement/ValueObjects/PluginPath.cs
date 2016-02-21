@@ -23,13 +23,23 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.IO;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.PluginManagement.ValueObjects
 {
-    public interface IPluginApiServer : IDisposable
+    public class PluginPath : SingleValueObject<string>
     {
-        Task StartAsync(int port, CancellationToken cancellationToken);
+        public PluginPath(
+            string value)
+            : base(value)
+        {
+            if (!File.Exists(value)) throw new ArgumentException($"Plugin '{value}' does not exist");
+        }
+
+        public PluginId GetPluginId()
+        {
+            return new PluginId(Path.GetFileNameWithoutExtension(Value).ToLowerInvariant());
+        }
     }
 }

@@ -143,7 +143,8 @@ namespace TheBorg.Core.Clients
             HttpRequestMessage httpRequestMessage,
             CancellationToken cancellationToken)
         {
-            _logger.Verbose($"HTTP: {httpRequestMessage.Method} {httpRequestMessage.RequestUri.Scheme}://{httpRequestMessage.RequestUri.DnsSafeHost}/{httpRequestMessage.RequestUri.AbsolutePath}");
+            _logger.Verbose($"HTTP: {httpRequestMessage.Method} {httpRequestMessage.RequestUri.GetLeftPart(UriPartial.Path)}");
+
             httpRequestMessage.Headers.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("TheBorg", typeof(RestClient).Assembly.GetName().Version.ToString())));
             return HttpClient.SendAsync(httpRequestMessage, cancellationToken);
         }

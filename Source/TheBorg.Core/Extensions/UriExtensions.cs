@@ -22,15 +22,9 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.PluginManagement.ValueObjects;
-
-namespace TheBorg.PluginManagement
+namespace TheBorg.Core.Extensions
 {
-    public interface IPluginLoader
+    class UriExtensions
     {
-        Task<IPluginProxy> LoadPluginAsync(PluginPath pluginPath, Uri pluginApiUri, CancellationToken cancellationToken);
     }
 }

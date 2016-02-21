@@ -24,13 +24,15 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.PluginManagement.ValueObjects;
 
 namespace TheBorg.PluginManagement
 {
     public interface IPluginManagementService
     {
-        Task LoadPluginAsync(string name, CancellationToken cancellationToken);
-        Task UnloadPluginAsync(string name);
+        Task LoadPluginAsync(PluginPath pluginPath, CancellationToken cancellationToken);
+        Task UnloadPluginAsync(PluginId pluginId);
         Task InitializeAsync(CancellationToken cancellationToken);
     }
 }

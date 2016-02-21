@@ -46,6 +46,7 @@
     <Compile Include="Clients\IWebSocketClient.cs" />
     <Compile Include="Clients\WebSocketClient.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
+    <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="Serialization\IJsonSerializer.cs" />
     <Compile Include="Clients\IRestClient.cs" />
     <Compile Include="ITime.cs" />

@@ -35,8 +35,8 @@ using TheBorg.Core;
 using TheBorg.Core.Extensions;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.PluginManagement;
+using TheBorg.PluginManagement.ValueObjects;
 using TheBorg.Plugins.Jokes;
-using TheBorg.Services;
 using TheBorg.Tenants;
 
 namespace TheBorg
@@ -107,7 +107,7 @@ namespace TheBorg
             {
                 try
                 {
-                    var pluginPath = Path.Combine(applicationRoot, $"{builtInPlugin}.dll");
+                    var pluginPath = new PluginPath(Path.Combine(applicationRoot, $"{builtInPlugin}.dll"));
                     await _pluginManagementService.LoadPluginAsync(
                         pluginPath,
                         cancellationToken)

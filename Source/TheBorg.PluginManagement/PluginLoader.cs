@@ -32,7 +32,7 @@ using Serilog;
 using TheBorg.Core;
 using TheBorg.Core.Clients;
 using TheBorg.Host;
-using TheBorg.Interface.ValueObjects;
+using TheBorg.PluginManagement.ValueObjects;
 
 namespace TheBorg.PluginManagement
 {
@@ -50,23 +50,21 @@ namespace TheBorg.PluginManagement
             _restClient = restClient;
         }
 
-        public async Task<IPluginProxy> LoadPluginAsync(string dllPath, Uri pluginApiUri, CancellationToken cancellationToken)
+        public async Task<IPluginProxy> LoadPluginAsync(PluginPath pluginPath, Uri pluginApiUri, CancellationToken cancellationToken)
         {
-            if (!File.Exists(dllPath)) throw new ArgumentException($"Plugin '{dllPath}' does not exist");
-
             var stopWatch = Stopwatch.StartNew();
             var appDomainSetup = new AppDomainSetup
                 {
                     ShadowCopyFiles = "true",
                     LoaderOptimization = LoaderOptimization.MultiDomain,
                 };
-            var configFilePath = $"{dllPath}.config";
+            var configFilePath = $"{pluginPath.Value}.config";
             if (File.Exists(configFilePath))
             {
                 appDomainSetup.ConfigurationFile = configFilePath;
             }
 
-            var pluginId = new PluginId(Path.GetFileName(dllPath).ToLowerInvariant());
+            var pluginId = pluginPath.GetPluginId();
             var appDomain = _appDomainManager.CreateDomain(pluginId.Value, null, appDomainSetup);
 
             var pluginHost = appDomain.CreateInstanceAndUnwrap(Assembly.GetAssembly(typeof(PluginHostClient)).FullName, typeof(PluginHostClient).ToString()) as PluginHostClient;
@@ -75,7 +73,7 @@ namespace TheBorg.PluginManagement
 
             try
             {
-                pluginHost.Launch(dllPath, appDomain, pluginApiUri, clientPort);
+                pluginHost.Launch(pluginPath.Value, appDomain, pluginApiUri, clientPort);
                 autoResetEvent.Set();
             }
             catch (Exception e)
