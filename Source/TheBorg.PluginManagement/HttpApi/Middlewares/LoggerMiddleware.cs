@@ -23,52 +23,43 @@
 //
 
 using System;
-using System.Threading;
+using System.Net;
 using System.Threading.Tasks;
-using System.Web.Http;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin.Hosting;
-using Owin;
-using TheBorg.PluginManagement.HttpApi.Middlewares;
+using Microsoft.Owin;
+using Serilog;
 
-namespace TheBorg.PluginManagement.HttpApi
+namespace TheBorg.PluginManagement.HttpApi.Middlewares
 {
-    public class PluginHttpApi : IPluginHttpApi
+    public class LoggerMiddleware : OwinMiddleware
     {
-        private readonly ILifetimeScope _lifetimeScope;
-        private IDisposable _webApp;
-
-        public PluginHttpApi(
-            ILifetimeScope lifetimeScope)
+        public LoggerMiddleware(OwinMiddleware next) : base(next)
         {
-            _lifetimeScope = lifetimeScope;
         }
 
-        public Task StartAsync(int port, CancellationToken cancellationToken)
+        public override async Task Invoke(IOwinContext context)
         {
-            _webApp = WebApp.Start($"http://127.0.0.1:{port}", Configuration);
-            return Task.FromResult(0);
-        }
+            Exception exception = null;
 
-        public void Configuration(IAppBuilder app)
-        {
-            var httpConfiguration = new HttpConfiguration
+            try
+            {
+                await Next.Invoke(context).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                throw;
+            }
+            finally
+            {
+                if (exception == null)
                 {
-                    DependencyResolver = new AutofacWebApiDependencyResolver(_lifetimeScope)
-                };
-            httpConfiguration.MapHttpAttributeRoutes();
-
-            app.Use<LoggerMiddleware>();
-            app.Use<PluginAuthMiddleware>();
-            app.UseAutofacMiddleware(_lifetimeScope);
-            app.UseAutofacWebApi(httpConfiguration);
-            app.UseWebApi(httpConfiguration);
-        }
-
-        public void Dispose()
-        {
-            _webApp.Dispose();
+                    Log.Verbose($"API {context.Request.Method} {(HttpStatusCode)context.Response.StatusCode} {context.Request.Uri.GetLeftPart(UriPartial.Path)}");
+                }
+                else
+                {
+                    Log.Error(exception, $"API {context.Request.Method} {(HttpStatusCode) context.Response.StatusCode} {context.Request.Uri.GetLeftPart(UriPartial.Path)}");
+                }
+            }
         }
     }
 }

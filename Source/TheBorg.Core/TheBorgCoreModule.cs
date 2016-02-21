@@ -48,6 +48,7 @@ namespace TheBorg.Core
                 .MinimumLevel.Verbose()
                 .WriteTo.ColoredConsole()
                 .CreateLogger();
+            Log.Logger = logger;
 
             builder.RegisterInstance(logger);
 
