@@ -49,24 +49,21 @@ namespace TheBorg.Plugins.Administration
         }
 
         [HttpApi(HttpApiMethod.Post, "api/commands/list-plugins")]
-        public async Task<string> ListPlugins([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
+        public async Task ListPlugins([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var pluginInformations = await _pluginApi.GetPluginsAsync(cancellationToken).ConfigureAwait(false);
             var stringBuilder = pluginInformations.Aggregate(new StringBuilder(), (s, i) => s.AppendLine($"{i.Id} - {i.Description}"));
             await _messageApi.ReplyToAsync(tenantMessage, stringBuilder.ToString(), cancellationToken).ConfigureAwait(false);
-            return string.Empty;
         }
-
 
         private static readonly Regex Regex = new Regex(@"^unload plugin (?<pluginId>[a-z0-9\.]+)$", RegexOptions.Compiled);
         [HttpApi(HttpApiMethod.Post, "api/commands/unload-plugin")]
-        public async Task<string> UnloadPlugin([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
+        public async Task UnloadPlugin([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var pId = Regex.Match(tenantMessage.Text).Groups["pluginId"].Value;
             var pluginId = PluginId.With(pId);
             await _pluginApi.UnloadPluginAsync(pluginId, cancellationToken).ConfigureAwait(false);
             await _messageApi.ReplyToAsync(tenantMessage, $"Unloaded plugin {pluginId}", cancellationToken).ConfigureAwait(false);
-            return string.Empty;
         }
     }
 }

@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CSharp.RuntimeBinder;
 using Nancy;
 using TheBorg.Interface;
 using TheBorg.Interface.Apis;
@@ -121,7 +123,16 @@ namespace TheBorg.Host
                     {
                         var parameters = BuildParameters(methodInfo, context, token).ToArray();
                         dynamic task = methodInfo.Invoke(api, parameters);
-                        return await task.ConfigureAwait(false);
+
+                        try
+                        {
+                            return await task.ConfigureAwait(false);
+                        }
+                        catch (RuntimeBinderException e) when (e.Message.Contains("'void'"))
+                        {
+                            // TODO: Fix this as its ugly as hell!
+                            return null as dynamic;
+                        }
                     });
         }
 

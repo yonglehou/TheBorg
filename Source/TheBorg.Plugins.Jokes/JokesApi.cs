@@ -54,11 +54,10 @@ namespace TheBorg.Plugins.Jokes
         }
 
         [HttpApi(HttpApiMethod.Post, "api/commands/joke")]
-        public async Task<string> TellJoke([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
+        public async Task TellJoke([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var joke = await Joke(cancellationToken).ConfigureAwait(false);
             await _messageApi.SendAsync(tenantMessage.CreateReply(joke), CancellationToken.None).ConfigureAwait(false);
-            return string.Empty;
         }
 
         public class JokeValue

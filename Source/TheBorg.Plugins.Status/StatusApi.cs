@@ -42,10 +42,9 @@ namespace TheBorg.Plugins.Status
         }
 
         [HttpApi(HttpApiMethod.Post, "api/commands/ping")]
-        public async Task<string> Ping([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
+        public async Task Ping([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             await _messageApi.ReplyToAsync(tenantMessage, "pong", cancellationToken).ConfigureAwait(false);
-            return string.Empty;
         }
     }
 }
