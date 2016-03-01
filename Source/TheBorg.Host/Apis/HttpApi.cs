@@ -22,19 +22,27 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Commands
-{
-    public class CommandDescription
-    {
-        public CommandDescription(
-            string help,
-            string regex)
-        {
-            Help = help;
-            Regex = regex;
-        }
+using System;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using TheBorg.Interface.Apis;
 
-        public string Help { get; }
-        public string Regex { get; }
+namespace TheBorg.Host.Apis
+{
+    public class HttpApi : IHttpApi
+    {
+        private static readonly HttpClient HttpClient = new HttpClient();
+
+        public async Task<T> GetAsyncAs<T>(Uri uri, CancellationToken cancellationToken)
+        {
+            using (var httpResponseMessage = await HttpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
+            {
+                httpResponseMessage.EnsureSuccessStatusCode();
+                var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+        }
     }
 }

@@ -22,9 +22,22 @@
 // SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+using System.Web;
+
 namespace TheBorg.Core.Extensions
 {
-    class UriExtensions
+    public static class UriExtensions
     {
+        public static Uri WithQueryString(this Uri uri, IEnumerable<KeyValuePair<string, string>> queryStringArguments)
+        {
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            foreach (var kv in queryStringArguments)
+            {
+                queryString.Add(kv.Key, kv.Value);
+            }
+            return new UriBuilder(uri) { Query = queryString.ToString(), }.Uri;
+        }
     }
 }

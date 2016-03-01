@@ -49,7 +49,7 @@ namespace TheBorg
         private readonly IConversationManager _conversationManager;
         private readonly IReadOnlyCollection<ITenant> _tenants;
 
-        private readonly IReadOnlyCollection<string> BuiltInPlugins = new []
+        private static readonly IReadOnlyCollection<string> BuiltInPlugins = new []
             {
                 typeof(JokesPluginBootstrapper).Assembly.GetName().Name,
             };

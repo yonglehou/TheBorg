@@ -31,7 +31,7 @@ using TheBorg.Interface.Attributes;
 namespace TheBorg.Host
 {
     public class ApiModule<T> : NancyModule
-        where T : IHttpApi
+        where T : IPluginHttpApi
     {
         public ApiModule(
             Func<IHttpApiRequestContext, T> httpApiFactory,

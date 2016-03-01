@@ -34,13 +34,14 @@ namespace TheBorg.Interface
     {
         ICommandApi CommandApi { get; }
         IMessageApi MessageApi { get; }
+        IHttpApi HttpApi { get; }
 
         IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
 
-        IPluginRegistration RegisterApi<T>(T instance)
-            where T : IHttpApi;
-        IPluginRegistration RegisterApi<T>(Func<IHttpApiRequestContext, T> factory)
-            where T : IHttpApi;
+        IPluginRegistration RegisterHttpApi<T>(T instance)
+            where T : IPluginHttpApi;
+        IPluginRegistration RegisterHttpApi<T>(Func<IHttpApiRequestContext, T> factory)
+            where T : IPluginHttpApi;
 
         IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
         IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);

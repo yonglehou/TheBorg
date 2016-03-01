@@ -22,19 +22,9 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Linq;
-
-namespace TheBorg.Commands
+namespace TheBorg.Interface
 {
-    public class CommandDescriptions
+    public interface IPluginHttpApi
     {
-        public CommandDescriptions(
-            IEnumerable<CommandDescription> descriptions)
-        {
-            Descriptions = descriptions.ToList();
-        }
-
-        public IReadOnlyCollection<CommandDescription> Descriptions { get; }
     }
 }

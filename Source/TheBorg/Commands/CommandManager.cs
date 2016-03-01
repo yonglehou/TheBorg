@@ -38,7 +38,6 @@ namespace TheBorg.Commands
     {
         private readonly ILogger _logger;
         private readonly IReadOnlyCollection<ICommand> _commands;
-        private readonly CommandDescriptions _commandDescriptions;
 
         public CommandManager(
             ILogger logger,
@@ -47,7 +46,6 @@ namespace TheBorg.Commands
         {
             _logger = logger;
             _commands = commandBuilder.BuildCommands(commandSets.Where(s => !(s is IConversationTopic)));
-            _commandDescriptions = new CommandDescriptions(_commands.Select(c => new CommandDescription(c.Help, c.Regex)));
         }
 
         public async Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
@@ -70,7 +68,7 @@ namespace TheBorg.Commands
 
             try
             {
-                await command.ExecuteAsync(tenantMessage, cancellationToken, _commandDescriptions).ConfigureAwait(false);
+                await command.ExecuteAsync(tenantMessage, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e)
             {

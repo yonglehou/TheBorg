@@ -31,7 +31,7 @@ using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Host
 {
-    public class PluginApi : IHttpApi
+    public class PluginApi : IPluginHttpApi
     {
         private readonly PluginInformation _pluginInformation;
 

@@ -53,7 +53,8 @@ namespace TheBorg.Host
 
             var pluginRegistration = new PluginRegistration(
                 new CommandApi(pluginId, pluginApiUri),
-                new MessageApi(pluginId, pluginApiUri));
+                new MessageApi(pluginId, pluginApiUri),
+                new HttpApi());
 
             pluginBootstrapper.Start(r =>
                 {

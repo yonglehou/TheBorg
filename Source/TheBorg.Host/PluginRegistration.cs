@@ -40,6 +40,8 @@ namespace TheBorg.Host
     {
         public ICommandApi CommandApi { get; }
         public IMessageApi MessageApi { get; }
+        public IHttpApi HttpApi { get; }
+
         private readonly List<CommandDescription> _commandDescriptions = new List<CommandDescription>();
         private readonly Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>>();
 
@@ -48,10 +50,12 @@ namespace TheBorg.Host
 
         public PluginRegistration(
             ICommandApi commandApi,
-            IMessageApi messageApi)
+            IMessageApi messageApi,
+            IHttpApi httpApi)
         {
             CommandApi = commandApi;
             MessageApi = messageApi;
+            HttpApi = httpApi;
         }
 
         public IPluginRegistration SetPluginInformation(PluginInformation pluginInformation)
@@ -71,13 +75,13 @@ namespace TheBorg.Host
             return this;
         }
 
-        public IPluginRegistration RegisterApi<T>(T instance) where T : IHttpApi
+        public IPluginRegistration RegisterHttpApi<T>(T instance) where T : IPluginHttpApi
         {
-            return RegisterApi(_ => instance);
+            return RegisterHttpApi(_ => instance);
         }
 
-        public IPluginRegistration RegisterApi<T>(Func<IHttpApiRequestContext, T> factory)
-            where T : IHttpApi
+        public IPluginRegistration RegisterHttpApi<T>(Func<IHttpApiRequestContext, T> factory)
+            where T : IPluginHttpApi
         {
             var apiEndpoints = GatherEndpoints<T>();
             _factories.Add(typeof(ApiModule<T>), c => new ApiModule<T>(factory, apiEndpoints));
@@ -90,7 +94,7 @@ namespace TheBorg.Host
         }
 
         private static IEnumerable<ApiEndpoint> GatherEndpoints<T>()
-            where T : IHttpApi
+            where T : IPluginHttpApi
         {
             return typeof(T)
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public)

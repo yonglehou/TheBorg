@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface;
@@ -31,28 +32,61 @@ using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Plugins.Jokes
 {
-    public class JokesApi : IHttpApi
+    public class JokesApi : IPluginHttpApi
     {
+        private readonly IHttpApi _httpApi;
         private readonly IMessageApi _messageApi;
+        private static readonly Uri IcndbUri = new Uri("http://api.icndb.com/jokes/random");
 
         public JokesApi(
+            IHttpApi httpApi,
             IMessageApi messageApi)
         {
+            _httpApi = httpApi;
             _messageApi = messageApi;
         }
 
         [HttpApi(HttpApiMethod.Get, "api/joke")]
-        public Task<string> Joke()
+        public async Task<string> Joke(CancellationToken cancellationToken)
         {
-            return Task.FromResult("Chuck Norris can catch you without a PokéBall");
+            var jokeContainer = await _httpApi.GetAsyncAs<JokeContainer>(IcndbUri, cancellationToken).ConfigureAwait(false);
+            return jokeContainer.Value.Joke;
         }
 
         [HttpApi(HttpApiMethod.Post, "api/messages/tell-joke")]
-        public async Task<string> TellJoke([FromBody]TenantMessage tenantMessage)
+        public async Task<string> TellJoke([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
-            var joke = await Joke().ConfigureAwait(false);
+            var joke = await Joke(cancellationToken).ConfigureAwait(false);
             await _messageApi.SendAsync(tenantMessage.CreateReply(joke), CancellationToken.None).ConfigureAwait(false);
             return string.Empty;
+        }
+
+        public class JokeValue
+        {
+            public JokeValue(
+                int id,
+                string joke)
+            {
+                Id = id;
+                Joke = joke;
+            }
+
+            public int Id { get; }
+            public string Joke { get; }
+        }
+
+        public class JokeContainer
+        {
+            public JokeContainer(
+                string type,
+                JokeValue value)
+            {
+                Type = type;
+                Value = value;
+            }
+
+            public string Type { get; }
+            public JokeValue Value { get; }
         }
     }
 }

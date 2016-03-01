@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using Serilog;
+using TheBorg.Core.Extensions;
 using TheBorg.Core.Serialization;
 
 namespace TheBorg.Core.Clients
@@ -70,16 +71,7 @@ namespace TheBorg.Core.Clients
             JsonFormat jsonFormat,
             CancellationToken cancellationToken)
         {
-            var queryStringValues = HttpUtility.ParseQueryString(string.Empty);
-            foreach (var kv in queryString)
-            {
-                queryStringValues.Add(kv.Key, kv.Value);
-            }
-            uri = new UriBuilder(uri)
-                {
-                    Query = queryStringValues.ToString(),
-                }.Uri;
-            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri.WithQueryString(queryString)))
             using (var httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
             {
                 httpResponseMessage.EnsureSuccessStatusCode();

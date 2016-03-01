@@ -39,7 +39,7 @@ namespace TheBorg.Plugins.Jokes
                         PluginTitle.With("Jokes"),
                         PluginVersion.From(typeof(JokesPluginBootstrapper).Assembly),
                         PluginDescription.With("Provides jokes")));
-                    r.RegisterApi(new JokesApi(r.MessageApi));
+                    r.RegisterHttpApi(new JokesApi(r.HttpApi, r.MessageApi));
                     r.RegisterCommands(
                         new CommandDescription("^joke$", "tells a joke", "api/messages/tell-joke"));
                 });

@@ -22,9 +22,14 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace TheBorg.Interface.Apis
 {
     public interface IHttpApi
     {
+        Task<T> GetAsyncAs<T>(Uri uri, CancellationToken cancellationToken);
     }
 }

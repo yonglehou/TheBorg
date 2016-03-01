@@ -36,7 +36,7 @@ namespace TheBorg.Host
         {
             _pluginApi = new PluginApi(pluginRegistration.PluginInformation);
 
-            pluginRegistration.RegisterApi(_pluginApi);
+            pluginRegistration.RegisterHttpApi(_pluginApi);
 
             var apiBootstrapper = new ApiBootstrapper(pluginRegistration.GetModules());
 
