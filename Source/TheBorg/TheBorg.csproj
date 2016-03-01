@@ -62,9 +62,10 @@
     <Compile Include="Conversations\IConversationTopic.cs" />
     <Compile Include="Core\CertificateGenerator.cs" />
     <Compile Include="Extensions\PrincipalExtensions.cs" />
-    <Compile Include="Plugins\Controllers\CommandDescriptionsController.cs" />
-    <Compile Include="Plugins\Controllers\PluginsController.cs" />
-    <Compile Include="Plugins\Controllers\TenantMessagesController.cs" />
+    <Compile Include="Controllers\CommandDescriptionsController.cs" />
+    <Compile Include="Controllers\PluginInstallsController.cs" />
+    <Compile Include="Controllers\PluginsController.cs" />
+    <Compile Include="Controllers\TenantMessagesController.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\GitHubService.cs" />
     <Compile Include="Services\IConfigurationService.cs" />

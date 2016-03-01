@@ -29,7 +29,7 @@ using TheBorg.Extensions;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.PluginManagement;
 
-namespace TheBorg.Plugins.Controllers
+namespace TheBorg.Controllers
 {
     [RoutePrefix("api/command-descriptions")]
     public class CommandDescriptionsController : ApiController

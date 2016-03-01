@@ -25,11 +25,13 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Core;
 using TheBorg.Core.Clients;
+using TheBorg.Core.Extensions;
 using TheBorg.Core.Serialization;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
@@ -40,6 +42,7 @@ namespace TheBorg.PluginManagement
     public class PluginManagementService : IPluginManagementService
     {
         private readonly IRestClient _restClient;
+        private readonly IPluginInstaller _pluginInstaller;
         private readonly IPluginLoader _pluginLoader;
         private readonly IPluginHttpApi _pluginHttpApi;
         private readonly ConcurrentDictionary<PluginId, IPluginProxy> _plugins = new ConcurrentDictionary<PluginId, IPluginProxy>();
@@ -49,10 +52,12 @@ namespace TheBorg.PluginManagement
 
         public PluginManagementService(
             IRestClient restClient,
+            IPluginInstaller pluginInstaller,
             IPluginLoader pluginLoader,
             IPluginHttpApi pluginHttpApi)
         {
             _restClient = restClient;
+            _pluginInstaller = pluginInstaller;
             _pluginLoader = pluginLoader;
             _pluginHttpApi = pluginHttpApi;
 
@@ -95,6 +100,30 @@ namespace TheBorg.PluginManagement
         public async Task<IReadOnlyCollection<PluginInformation>> GetPluginsAsync(CancellationToken cancellationToken)
         {
             return await Task.WhenAll(_plugins.Values.Select(p => p.Plugin.GetPluginInformationAsync(cancellationToken))).ConfigureAwait(false);
+        }
+
+        public async Task InstallPluginAsync(Uri uri, CancellationToken cancellationToken)
+        {
+            var filename = uri.GetFilename();
+            if (!uri.ToString().ToLowerInvariant().EndsWith(".zip")) throw new ArgumentException($"Only understands ZIP files: {uri} ({filename})");
+
+            using (var tempFile = await _restClient.DownloadAsync(uri, cancellationToken).ConfigureAwait(false))
+            {
+                var dllLocation = await _pluginInstaller.InstallPluginAsync(
+                    Path.GetFileNameWithoutExtension(filename),
+                    "1.0", // TODO: Fix
+                    tempFile.Path,
+                    PluginPackageType.Zip,
+                    cancellationToken)
+                    .ConfigureAwait(false);
+
+                var pluginPath = new PluginPath(dllLocation);
+
+                await LoadPluginAsync(
+                    pluginPath,
+                    cancellationToken)
+                    .ConfigureAwait(false);
+            }
         }
 
         public async Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)

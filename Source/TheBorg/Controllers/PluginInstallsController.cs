@@ -23,26 +23,29 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Web;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
+using TheBorg.PluginManagement;
 
-namespace TheBorg.Core.Extensions
+namespace TheBorg.Controllers
 {
-    public static class UriExtensions
+    [RoutePrefix("api/plugin-installs")]
+    public class PluginInstallsController
     {
-        public static Uri WithQueryString(this Uri uri, IEnumerable<KeyValuePair<string, string>> queryStringArguments)
+        private readonly IPluginManagementService _pluginManagementService;
+
+        public PluginInstallsController(
+            IPluginManagementService pluginManagementService)
         {
-            var queryString = HttpUtility.ParseQueryString(string.Empty);
-            foreach (var kv in queryStringArguments)
-            {
-                queryString.Add(kv.Key, kv.Value);
-            }
-            return new UriBuilder(uri) { Query = queryString.ToString(), }.Uri;
+            _pluginManagementService = pluginManagementService;
         }
 
-        public static string GetFilename(this Uri uri)
+        [HttpPost]
+        [Route("by-uri")]
+        public Task ByUri([FromBody] Uri uri, CancellationToken cancellationToken)
         {
-            return System.IO.Path.GetFileName(uri.LocalPath);
+            return _pluginManagementService.InstallPluginAsync(uri, cancellationToken);
         }
     }
 }

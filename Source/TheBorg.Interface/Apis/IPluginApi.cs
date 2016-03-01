@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,5 +34,6 @@ namespace TheBorg.Interface.Apis
     {
         Task<IReadOnlyCollection<PluginInformation>> GetPluginsAsync(CancellationToken cancellationToken);
         Task UnloadPluginAsync(PluginId pluginId, CancellationToken cancellationToken);
+        Task InstallPluginAsync(Uri uri, CancellationToken cancellationToken);
     }
 }

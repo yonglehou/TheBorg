@@ -43,8 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTests\Core\Extensions\UriExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TheBorg.Core\TheBorg.Core.csproj">
+      <Project>{82560bc4-8a1a-4300-a84c-9c617a392612}</Project>
+      <Name>TheBorg.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TheBorg\TheBorg.csproj">
       <Project>{e1e9ed6d-4dae-46c8-92cb-538fd02762ee}</Project>
       <Name>TheBorg</Name>
@@ -717,4 +722,5 @@
       <Paket>True</Paket>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
 </Project>

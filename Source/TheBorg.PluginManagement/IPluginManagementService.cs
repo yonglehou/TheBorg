@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,5 +39,6 @@ namespace TheBorg.PluginManagement
         Task InitializeAsync(CancellationToken cancellationToken);
         Task RegisterAsync(PluginId pluginId, IEnumerable<CommandDescription> commandDescriptions);
         Task<IReadOnlyCollection<PluginInformation>> GetPluginsAsync(CancellationToken cancellationToken);
+        Task InstallPluginAsync(Uri uri, CancellationToken cancellationToken);
     }
 }

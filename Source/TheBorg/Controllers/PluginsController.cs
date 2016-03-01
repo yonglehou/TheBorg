@@ -22,36 +22,39 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Services;
+using TheBorg.Interface.ValueObjects.Plugins;
+using TheBorg.PluginManagement;
 
-namespace TheBorg.Plugins.Controllers
+namespace TheBorg.Controllers
 {
-    [RoutePrefix("api/tenant-messages")]
-    public class TenantMessagesController : ApiController
+    [RoutePrefix("api/plugins")]
+    public class PluginsController : ApiController
     {
-        private readonly IMessageService _messageService;
+        private readonly IPluginManagementService _pluginManagementService;
 
-        public TenantMessagesController(
-            IMessageService messageService)
+        public PluginsController(
+            IPluginManagementService pluginManagementService)
         {
-            _messageService = messageService;
+            _pluginManagementService = pluginManagementService;
+        }
+
+        [HttpGet]
+        [Route("")]
+        public Task<IReadOnlyCollection<PluginInformation>> AllPlugins(CancellationToken cancellationToken)
+        {
+            return _pluginManagementService.GetPluginsAsync(cancellationToken);
         }
 
         [HttpPost]
-        [Route("")]
-        public async Task<IHttpActionResult> Messages([FromBody] TenantMessage tenantMessage)
+        [Route("{pId}/unload")]
+        public Task Unload(string pId, CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            await _messageService.SendAsync(tenantMessage.Address, tenantMessage.Text).ConfigureAwait(false);
-
-            return Ok();
+            var pluginId = PluginId.With(pId);
+            return _pluginManagementService.UnloadPluginAsync(pluginId);
         }
     }
 }
