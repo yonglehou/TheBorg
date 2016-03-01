@@ -22,16 +22,39 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
+using System.Web.Http;
+using TheBorg.Interface.ValueObjects.Plugins;
+using TheBorg.PluginManagement;
 
-namespace TheBorg.Interface.Apis
+namespace TheBorg.Plugins.Controllers
 {
-    public interface IMessageApi
+    [RoutePrefix("api/plugins")]
+    public class PluginsController : ApiController
     {
-        Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
-        Task SendAsync(Address address, string text, CancellationToken cancellationToken);
-        Task ReplyToAsync(TenantMessage tenantMessage, string text, CancellationToken cancellationToken);
+        private readonly IPluginManagementService _pluginManagementService;
+
+        public PluginsController(
+            IPluginManagementService pluginManagementService)
+        {
+            _pluginManagementService = pluginManagementService;
+        }
+
+        [HttpGet]
+        [Route("")]
+        public Task<IReadOnlyCollection<PluginInformation>> AllPlugins(CancellationToken cancellationToken)
+        {
+            return _pluginManagementService.GetPluginsAsync(cancellationToken);
+        }
+
+        [HttpPost]
+        [Route("{pId}/unload")]
+        public Task Unload(string pId, CancellationToken cancellationToken)
+        {
+            var pluginId = PluginId.With(pId);
+            return _pluginManagementService.UnloadPluginAsync(pluginId);
+        }
     }
 }

@@ -24,27 +24,35 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Interface.Apis;
+using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Interface
+namespace TheBorg.Plugins.Administration
 {
-    public interface IPluginRegistration
+    public class PluginsPluginBootstrapper : IPluginBootstrapper
     {
-        ICommandApi CommandApi { get; }
-        IMessageApi MessageApi { get; }
-        IHttpApi HttpApi { get; }
-        IPluginApi PluginApi { get; }
+        public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
+        {
+            pluginRegistra(r =>
+                {
+                    var assembly = typeof(PluginsPluginBootstrapper).Assembly;
 
-        IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
+                    r.SetPluginInformation(new PluginInformation(
+                        PluginId.From(assembly),
+                        PluginTitle.With("Admin"),
+                        PluginVersion.From(assembly),
+                        PluginDescription.With("Provides administration")));
+                    r.RegisterHttpApi(new PluginsApi(r.PluginApi, r.MessageApi));
+                    r.RegisterCommands(
+                        CommandDescriptions());
+                });
+        }
 
-        IPluginRegistration RegisterHttpApi<T>(T instance)
-            where T : IPluginHttpApi;
-        IPluginRegistration RegisterHttpApi<T>(Func<IHttpApiRequestContext, T> factory)
-            where T : IPluginHttpApi;
-
-        IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
-        IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);
+        private static IEnumerable<CommandDescription> CommandDescriptions()
+        {
+            yield return new CommandDescription("^plugins$", "list all plugins", "api/commands/list-plugins");
+            yield return new CommandDescription(@"^unload plugin (?<pluginId>[a-z0-9\.]+)$", "unload specific plugin", "api/commands/unload-plugin");
+        }
     }
 }

@@ -36,7 +36,9 @@ using TheBorg.Core.Extensions;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 using TheBorg.PluginManagement;
+using TheBorg.Plugins.Administration;
 using TheBorg.Plugins.Jokes;
+using TheBorg.Plugins.Status;
 using TheBorg.Tenants;
 
 namespace TheBorg
@@ -52,6 +54,8 @@ namespace TheBorg
         private static readonly IReadOnlyCollection<string> BuiltInPlugins = new []
             {
                 typeof(JokesPluginBootstrapper).Assembly.GetName().Name,
+                typeof(StatusPluginBootstrapper).Assembly.GetName().Name,
+                typeof(PluginsPluginBootstrapper).Assembly.GetName().Name,
             };
 
         public Collective(

@@ -22,33 +22,16 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Commands.CommandSets
+namespace TheBorg.Interface.Apis
 {
-    public class StatusCommandSet : ICommandSet
+    public interface IPluginApi
     {
-        [Command(
-            "Ping the borg",
-            "^ping (?<message>.*)$")]
-        public Task PingAsync(
-            string message,
-            TenantMessage tenantMessage,
-            CancellationToken cancellationToken)
-        {
-            return tenantMessage.ReplyAsync($"pong {message}", cancellationToken);
-        }
-
-        [Command(
-            "Ask how the borg is doing",
-            "^status$")]
-        public Task StatusAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
-        {
-            return tenantMessage.ReplyAsync(
-                $"I'm the Borg v{typeof (StatusCommandSet).Assembly.GetName().Version}",
-                cancellationToken);
-        }
+        Task<IReadOnlyCollection<PluginInformation>> GetPluginsAsync(CancellationToken cancellationToken);
+        Task UnloadPluginAsync(PluginId pluginId, CancellationToken cancellationToken);
     }
 }

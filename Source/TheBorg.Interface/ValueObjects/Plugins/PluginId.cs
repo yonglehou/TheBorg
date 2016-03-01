@@ -23,11 +23,22 @@
 //
 
 using System;
+using System.Reflection;
 
 namespace TheBorg.Interface.ValueObjects.Plugins
 {
     public class PluginId : SingleValueObject<string>
     {
+        public static PluginId With(string value)
+        {
+            return new PluginId(value);
+        }
+
+        public static PluginId From(Assembly assembly)
+        {
+            return With(assembly.GetName().Name.ToLowerInvariant());
+        }
+
         public PluginId(string value)
             : base(value)
         {

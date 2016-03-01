@@ -92,6 +92,11 @@ namespace TheBorg.PluginManagement
             return Task.FromResult(0);
         }
 
+        public async Task<IReadOnlyCollection<PluginInformation>> GetPluginsAsync(CancellationToken cancellationToken)
+        {
+            return await Task.WhenAll(_plugins.Values.Select(p => p.Plugin.GetPluginInformationAsync(cancellationToken))).ConfigureAwait(false);
+        }
+
         public async Task<ProcessMessageResult> ProcessAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             foreach (var pluginCommandDescription in _pluginCommandDescriptions)

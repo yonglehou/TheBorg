@@ -63,10 +63,30 @@ namespace TheBorg.Host.Apis
             }
         }
 
+        protected async Task<T> GetAsAsync<T>(
+            string path,
+            CancellationToken cancellationToken)
+        {
+            using (var httpResponseMessage = await SendAsync(path, HttpMethod.Get, cancellationToken).ConfigureAwait(false))
+            {
+                httpResponseMessage.EnsureSuccessStatusCode();
+                var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+        }
+
         private static HttpContent BuildJsonContent<T>(T value)
         {
             var json = JsonConvert.SerializeObject(value);
             return new StringContent(json, Encoding.UTF8, "application/json");
+        }
+
+        protected Task<HttpResponseMessage> SendAsync(
+            string path,
+            HttpMethod httpMethod,
+            CancellationToken cancellationToken)
+        {
+            return SendAsync(path, httpMethod, null, cancellationToken);
         }
 
         protected async Task<HttpResponseMessage> SendAsync(
@@ -75,11 +95,13 @@ namespace TheBorg.Host.Apis
             HttpContent httpContent,
             CancellationToken cancellationToken)
         {
-            using (var httpRequestMessage = new HttpRequestMessage(httpMethod, BuildUri(path))
-                {
-                    Content = httpContent,
-                })
+            using (var httpRequestMessage = new HttpRequestMessage(httpMethod, BuildUri(path)))
             {
+                if (httpContent != null)
+                {
+                    httpRequestMessage.Content = httpContent;
+                }
+
                 return await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false);
             }
         }

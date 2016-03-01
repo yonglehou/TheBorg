@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E1DCF0B9-CCF4-42E1-B39C-2191CC7C378B}</ProjectGuid>
+    <ProjectGuid>{A2968831-196D-4B58-8813-93EA1648703D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TheBorg.Interface</RootNamespace>
-    <AssemblyName>TheBorg.Interface</AssemblyName>
+    <RootNamespace>TheBorg.Plugins.Status</RootNamespace>
+    <AssemblyName>TheBorg.Plugins.Status</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,7 +28,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -42,36 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="Apis\ICommandApi.cs" />
-    <Compile Include="Apis\IHttpApi.cs" />
-    <Compile Include="Apis\IMessageApi.cs" />
-    <Compile Include="Apis\IPluginApi.cs" />
-    <Compile Include="Attributes\FromBodyAttribute.cs" />
-    <Compile Include="Attributes\HttpMethodAttribute.cs" />
-    <Compile Include="IHttpApiRequestContext.cs" />
-    <Compile Include="IPluginHttpApi.cs" />
-    <Compile Include="IPluginBootstrapper.cs" />
-    <Compile Include="IPluginRegistration.cs" />
+    <Compile Include="StatusApi.cs" />
+    <Compile Include="StatusPluginBootstrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ValueObjects\Address.cs" />
-    <Compile Include="ValueObjects\CommandDescription.cs" />
-    <Compile Include="ValueObjects\LogLevel.cs" />
-    <Compile Include="ValueObjects\LogMessage.cs" />
-    <Compile Include="ValueObjects\Plugins\PluginDescription.cs" />
-    <Compile Include="ValueObjects\Plugins\PluginId.cs" />
-    <Compile Include="ValueObjects\Plugins\PluginInformation.cs" />
-    <Compile Include="ValueObjects\Plugins\PluginPath.cs" />
-    <Compile Include="ValueObjects\Plugins\PluginTitle.cs" />
-    <Compile Include="ValueObjects\Plugins\PluginVersion.cs" />
-    <Compile Include="ValueObjects\TenantChannel.cs" />
-    <Compile Include="ValueObjects\SingleValueObject.cs" />
-    <Compile Include="ValueObjects\Tenant.cs" />
-    <Compile Include="ValueObjects\TenantMessage.cs" />
-    <Compile Include="ValueObjects\TenantUser.cs" />
-    <Compile Include="ValueObjects\ValueObject.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TheBorg.Interface\TheBorg.Interface.csproj">
+      <Project>{e1dcf0b9-ccf4-42e1-b39c-2191cc7c378b}</Project>
+      <Name>TheBorg.Interface</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

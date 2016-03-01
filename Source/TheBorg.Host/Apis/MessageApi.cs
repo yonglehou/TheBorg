@@ -40,6 +40,16 @@ namespace TheBorg.Host.Apis
         {
         }
 
+        public Task ReplyToAsync(TenantMessage tenantMessage, string text, CancellationToken cancellationToken)
+        {
+            return SendAsync(tenantMessage.Address, text, cancellationToken);
+        }
+
+        public Task SendAsync(Address address, string text, CancellationToken cancellationToken)
+        {
+            return SendAsync(new TenantMessage(text, address, null), cancellationToken);
+        }
+
         public Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             return PostAsync("api/tenant-messages", tenantMessage, cancellationToken);

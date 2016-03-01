@@ -37,5 +37,6 @@ namespace TheBorg.PluginManagement
         Task UnloadPluginAsync(PluginId pluginId);
         Task InitializeAsync(CancellationToken cancellationToken);
         Task RegisterAsync(PluginId pluginId, IEnumerable<CommandDescription> commandDescriptions);
+        Task<IReadOnlyCollection<PluginInformation>> GetPluginsAsync(CancellationToken cancellationToken);
     }
 }

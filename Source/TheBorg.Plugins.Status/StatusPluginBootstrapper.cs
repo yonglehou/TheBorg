@@ -22,16 +22,30 @@
 // SOFTWARE.
 //
 
-using System.Threading;
-using System.Threading.Tasks;
+using System;
+using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Interface.Apis
+namespace TheBorg.Plugins.Status
 {
-    public interface IMessageApi
+    public class StatusPluginBootstrapper : IPluginBootstrapper
     {
-        Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
-        Task SendAsync(Address address, string text, CancellationToken cancellationToken);
-        Task ReplyToAsync(TenantMessage tenantMessage, string text, CancellationToken cancellationToken);
+        public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
+        {
+            pluginRegistra(r =>
+                {
+                    var assembly = typeof(StatusPluginBootstrapper).Assembly;
+
+                    r.SetPluginInformation(new PluginInformation(
+                        PluginId.From(assembly),
+                        PluginTitle.With("Status"),
+                        PluginVersion.From(assembly),
+                        PluginDescription.With("Provides status on the Borg")));
+                    r.RegisterHttpApi(new StatusApi(r.MessageApi));
+                    r.RegisterCommands(
+                        new CommandDescription("^ping$", "pings the borg", "api/commands/ping"));
+                });
+        }
     }
 }

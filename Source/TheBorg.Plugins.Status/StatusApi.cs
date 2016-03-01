@@ -24,14 +24,28 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Interface;
+using TheBorg.Interface.Apis;
+using TheBorg.Interface.Attributes;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Interface.Apis
+namespace TheBorg.Plugins.Status
 {
-    public interface IMessageApi
+    public class StatusApi : IPluginHttpApi
     {
-        Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
-        Task SendAsync(Address address, string text, CancellationToken cancellationToken);
-        Task ReplyToAsync(TenantMessage tenantMessage, string text, CancellationToken cancellationToken);
+        private readonly IMessageApi _messageApi;
+
+        public StatusApi(
+            IMessageApi messageApi)
+        {
+            _messageApi = messageApi;
+        }
+
+        [HttpApi(HttpApiMethod.Post, "api/commands/ping")]
+        public async Task<string> Ping([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
+        {
+            await _messageApi.ReplyToAsync(tenantMessage, "pong", cancellationToken).ConfigureAwait(false);
+            return string.Empty;
+        }
     }
 }

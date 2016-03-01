@@ -55,18 +55,6 @@ namespace TheBorg.Commands.CommandSets
         }
 
         [Command(
-            "unload plugin <plugin name> - loads a plugin",
-            @"^unload plugin (?<pluginName>[\.a-z0-9]+)$")]
-        public async Task UnloadPluginAsync(string pluginName, TenantMessage tenantMessage, CancellationToken cancellationToken)
-        {
-            await tenantMessage.ReplyAsync($"Unloading plugin '{pluginName}'", cancellationToken).ConfigureAwait(false);
-            var stopwatch = Stopwatch.StartNew();
-            await _pluginManagementService.UnloadPluginAsync(new PluginId(pluginName)).ConfigureAwait(false);
-            var time = stopwatch.Elapsed;
-            await tenantMessage.ReplyAsync($"It took me {time.TotalSeconds:0.00} seconds to unload '{pluginName}'", cancellationToken).ConfigureAwait(false);
-        }
-
-        [Command(
             "install plugin from github <owner>/<repo>",
             @"^install plugin from github (?<owner>[\.a-z\-0-9]+)/(?<repo>[\.a-z\-0-9]+)$")]
         public async Task InstallPluginFromGitHubAsync(

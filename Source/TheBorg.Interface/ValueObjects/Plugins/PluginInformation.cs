@@ -28,22 +28,26 @@ namespace TheBorg.Interface.ValueObjects.Plugins
 {
     public class PluginInformation : ValueObject
     {
-        public PluginTitle Title { get; }
-        public PluginVersion Version { get; }
-        public PluginDescription Description { get; }
-
         public PluginInformation(
+            PluginId id,
             PluginTitle title,
             PluginVersion version,
             PluginDescription description)
         {
+            if (id == null) throw new ArgumentNullException(nameof(id));
             if (title == null) throw new ArgumentNullException(nameof(title));
             if (version == null) throw new ArgumentNullException(nameof(version));
             if (description == null) throw new ArgumentNullException(nameof(description));
 
+            Id = id;
             Title = title;
             Version = version;
             Description = description;
         }
+
+        public PluginId Id { get; }
+        public PluginTitle Title { get; }
+        public PluginVersion Version { get; }
+        public PluginDescription Description { get; }
     }
 }

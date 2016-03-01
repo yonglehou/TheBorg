@@ -63,6 +63,7 @@
     <Compile Include="Core\CertificateGenerator.cs" />
     <Compile Include="Extensions\PrincipalExtensions.cs" />
     <Compile Include="Plugins\Controllers\CommandDescriptionsController.cs" />
+    <Compile Include="Plugins\Controllers\PluginsController.cs" />
     <Compile Include="Plugins\Controllers\TenantMessagesController.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\GitHubService.cs" />
@@ -76,7 +77,6 @@
     <Compile Include="Services\Slack\DTOs\ChannelDto.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandBuilder.cs" />
-    <Compile Include="Commands\CommandSets\StatusCommandSet.cs" />
     <Compile Include="Commands\ICommandBuilder.cs" />
     <Compile Include="Conversations\ActiveConversation.cs" />
     <Compile Include="Conversations\ConversationManager.cs" />
@@ -128,9 +128,17 @@
       <Project>{a418717d-e36d-43cb-8a46-ae50a2d38cc7}</Project>
       <Name>TheBorg.PluginManagement</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Plugins.Administration\TheBorg.Plugins.Administration.csproj">
+      <Project>{c9efbe31-45a6-4e51-98de-d871b4ac61d2}</Project>
+      <Name>TheBorg.Plugins.Administration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TheBorg.Plugins.Jokes\TheBorg.Plugins.Jokes.csproj">
       <Project>{721cf637-01fe-4691-a6a1-eff1ec4e9d25}</Project>
       <Name>TheBorg.Plugins.Jokes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Plugins.Status\TheBorg.Plugins.Status.csproj">
+      <Project>{a2968831-196d-4b58-8813-93ea1648703d}</Project>
+      <Name>TheBorg.Plugins.Status</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
