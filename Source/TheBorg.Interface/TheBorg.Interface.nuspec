@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>TheBorg.Interface</id>
+    <title>TheBorg.Interface</title>
+    <version>0.0.2-alpha</version>
+    <authors>rasmus</authors>
+    <description>Interface for The Borg bot</description>
+    <language>en-US</language>
+    <projectUrl>https://github.com/rasmus/TheBorg</projectUrl>
+    <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+    <copyright>Copyright (c) 2015-2016 Rasmus Mikkelsen</copyright>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <tags>slack chat bot</tags>
+  </metadata>
+  <files>
+  	<file src="bin\TheBorg.Interface.dll" target="lib\net451" />
+  </files>
+</package>

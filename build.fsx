@@ -46,14 +46,6 @@ Target "UnitTest" (fun _ ->
                 OutputFile = "nunit.xml"})
     )
 
-Target "CreateRelease" (fun _ ->
-    let binDir = "Source\\TheBorg\\bin\\" + buildMode + "\\"
-    let result = ExecProcess (fun info ->
-       info.Arguments <- "/targetplatform:v4 /wildcards /closed /target:exe /out:Source\\TheBorg\\bin\\TheBorg.exe " + binDir + "TheBorg.exe " + binDir + "*.dll"
-       info.FileName <- toolIlMerge) (TimeSpan.FromMinutes 5.0)
-    if result <> 0 then failwithf "ILMerge of TheBorg returned with a non-zero exit code"
-    )
-
 
 Target "Default" DoNothing
 
@@ -61,7 +53,7 @@ Target "Default" DoNothing
     ==> "SetVersion"
     ==> "BuildApp"
 //    ==> "UnitTest"
-    ==> "CreateRelease"
+//    ==> "CreateRelease"
     ==> "Default"
 
 RunTargetOrDefault "Default"
