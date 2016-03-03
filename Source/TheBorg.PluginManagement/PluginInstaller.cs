@@ -23,38 +23,47 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using TheBorg.Core.Extensions;
+using TheBorg.Core;
+using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.PluginManagement
 {
     public class PluginInstaller : IPluginInstaller
     {
         private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
 
         public PluginInstaller(
-            ILogger logger)
+            ILogger logger,
+            IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
-        public Task<string> InstallPluginAsync(
+        public Task<PluginPath> InstallPluginAsync(
             string name,
-            string version,
             string path,
             PluginPackageType packageType,
             CancellationToken cancellationToken)
         {
-            var serviceDirectory = Path.GetDirectoryName(typeof (PluginInstaller).Assembly.GetCodeBase());
-            _logger.Verbose($"Service install location is '{serviceDirectory}'");
+            var pluginInstallPath = _configuration.PluginInstallPath;
+            _logger.Verbose($"Plugin install path is '{pluginInstallPath}'");
 
-            var installDirectory = Path.Combine(serviceDirectory, name, version);
+            var installDirectory = Path.Combine(pluginInstallPath, name);
             _logger.Verbose($"Plugin install directory is '{installDirectory}'");
-            Directory.CreateDirectory(installDirectory);
+            if (!Directory.Exists(installDirectory))
+            {
+                _logger.Verbose($"Creating directory as it does not exists '{installDirectory}'");
+                Directory.CreateDirectory(installDirectory);
+            }
 
             switch (packageType)
             {
@@ -63,11 +72,32 @@ namespace TheBorg.PluginManagement
                         ZipFile.ExtractToDirectory(path, installDirectory);
                         var pluginDll = Path.Combine(installDirectory, $"{name}.dll");
                         _logger.Verbose($"Guessing that plugin location is '{pluginDll}'");
-                        return Task.FromResult(pluginDll);
+                        return Task.FromResult(new PluginPath(pluginDll));
                     }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(packageType), packageType, null);
             }
+        }
+
+        public Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken)
+        {
+            var pluginInstallPath = _configuration.PluginInstallPath;
+            if (!Directory.Exists(pluginInstallPath))
+            {
+                return Task.FromResult<IReadOnlyCollection<PluginPath>>(new PluginPath[] {});
+            }
+
+            var pluginPaths = Directory.GetDirectories(pluginInstallPath)
+                .Select(d =>
+                {
+                    var p = Path.Combine(d, $"{Path.GetFileName(d)}.dll");
+                    return p;
+                })
+                .Where(File.Exists)
+                .Select(PluginPath.With)
+                .ToList();
+
+            return Task.FromResult<IReadOnlyCollection<PluginPath>>(pluginPaths);
         }
     }
 }

@@ -31,7 +31,7 @@ using TheBorg.PluginManagement;
 namespace TheBorg.Controllers
 {
     [RoutePrefix("api/plugin-installs")]
-    public class PluginInstallsController
+    public class PluginInstallsController : ApiController
     {
         private readonly IPluginManagementService _pluginManagementService;
 
@@ -43,9 +43,10 @@ namespace TheBorg.Controllers
 
         [HttpPost]
         [Route("by-uri")]
-        public Task ByUri([FromBody] Uri uri, CancellationToken cancellationToken)
+        public async Task<IHttpActionResult> ByUri([FromBody] Uri uri, CancellationToken cancellationToken)
         {
-            return _pluginManagementService.InstallPluginAsync(uri, cancellationToken);
+            var pluginInformation = await _pluginManagementService.InstallPluginAsync(uri, cancellationToken).ConfigureAwait(false);
+            return Json(pluginInformation);
         }
     }
 }

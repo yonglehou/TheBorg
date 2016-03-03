@@ -22,21 +22,11 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects.Plugins;
-
-namespace TheBorg.PluginManagement
+namespace TheBorg.Core
 {
-    public enum PluginPackageType
+    public interface IConfigurationReader
     {
-        Zip,
-    }
-
-    public interface IPluginInstaller
-    {
-        Task<PluginPath> InstallPluginAsync(string name, string path, PluginPackageType packageType, CancellationToken cancellationToken);
-        Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken);
+        bool TryReadString(string key, out string value);
+        string ReadString(string key, string defaultValue = null);
     }
 }

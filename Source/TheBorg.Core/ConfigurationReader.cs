@@ -22,21 +22,29 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects.Plugins;
+using System;
+using System.Configuration;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Core
 {
-    public enum PluginPackageType
+    public class ConfigurationReader : IConfigurationReader
     {
-        Zip,
-    }
+        public bool TryReadString(string key, out string value)
+        {
+            if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
 
-    public interface IPluginInstaller
-    {
-        Task<PluginPath> InstallPluginAsync(string name, string path, PluginPackageType packageType, CancellationToken cancellationToken);
-        Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken);
+            value = ConfigurationManager.AppSettings[key];
+            return !string.IsNullOrEmpty(value);
+        }
+
+        public string ReadString(string key, string defaultValue = null)
+        {
+            string value;
+            if (!TryReadString(key, out value) && string.IsNullOrEmpty(defaultValue))
+            {
+                throw new ConfigurationErrorsException($"Configuration key '{key}' not set and no default value provided");
+            }
+            return value;
+        }
     }
 }

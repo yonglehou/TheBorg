@@ -87,15 +87,12 @@ namespace TheBorg.Commands.CommandSets
 
             using (var tempFile = await _restClient.DownloadAsync(releaseAsset.Uri, cancellationToken).ConfigureAwait(false))
             {
-                var dllLocation = await _pluginInstaller.InstallPluginAsync(
+                var pluginPath = await _pluginInstaller.InstallPluginAsync(
                     releaseAsset.Name.Replace(".zip", string.Empty),
-                    release.Name,
                     tempFile.Path,
                     PluginPackageType.Zip,
                     cancellationToken)
                     .ConfigureAwait(false);
-
-                var pluginPath = new PluginPath(dllLocation);
 
                 await _pluginManagementService.LoadPluginAsync(
                     pluginPath,

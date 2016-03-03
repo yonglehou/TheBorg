@@ -22,21 +22,32 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects.Plugins;
+using System.Linq;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Core
 {
-    public enum PluginPackageType
+    public class Configuration : IConfiguration
     {
-        Zip,
-    }
+        private static readonly Dictionary<string, string> PathReplacements = new Dictionary<string, string>
+            {
+                {"APPDATA", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)},
+            };   
 
-    public interface IPluginInstaller
-    {
-        Task<PluginPath> InstallPluginAsync(string name, string path, PluginPackageType packageType, CancellationToken cancellationToken);
-        Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken);
+        private readonly IConfigurationReader _configurationReader;
+
+        public Configuration(
+            IConfigurationReader configurationReader)
+        {
+            _configurationReader = configurationReader;
+        }
+
+        public string PluginInstallPath => ReplaceSpecialPaths(_configurationReader.ReadString("plugins.install-path"));
+
+        private static string ReplaceSpecialPaths(string path)
+        {
+            return PathReplacements.Aggregate(path, (s, kv) => s.Replace($"{{{kv.Key}}}", kv.Value));
+        }
     }
 }

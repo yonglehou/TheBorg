@@ -63,6 +63,24 @@ namespace TheBorg.Host.Apis
             }
         }
 
+        protected async Task<TResult> PostReadAsAsync<T, TResult>(
+            string path,
+            T value,
+            CancellationToken cancellationToken)
+        {
+            var httpContent = BuildJsonContent(value);
+            using (var httpResponseMessage = await SendAsync(
+                path,
+                HttpMethod.Post,
+                httpContent,
+                cancellationToken))
+            {
+                httpResponseMessage.EnsureSuccessStatusCode();
+                var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonConvert.DeserializeObject<TResult>(json);
+            }
+        }
+
         protected async Task<T> GetAsAsync<T>(
             string path,
             CancellationToken cancellationToken)

@@ -34,11 +34,12 @@ namespace TheBorg.PluginManagement
 {
     public interface IPluginManagementService : IMessageProcessor
     {
-        Task LoadPluginAsync(PluginPath pluginPath, CancellationToken cancellationToken);
+        Task<PluginInformation> LoadPluginAsync(PluginPath pluginPath, CancellationToken cancellationToken);
         Task UnloadPluginAsync(PluginId pluginId);
         Task InitializeAsync(CancellationToken cancellationToken);
         Task RegisterAsync(PluginId pluginId, IEnumerable<CommandDescription> commandDescriptions);
         Task<IReadOnlyCollection<PluginInformation>> GetPluginsAsync(CancellationToken cancellationToken);
-        Task InstallPluginAsync(Uri uri, CancellationToken cancellationToken);
+        Task<PluginInformation> InstallPluginAsync(Uri uri, CancellationToken cancellationToken);
+        Task<IReadOnlyCollection<PluginInformation>> LoadInstalledPluginsAsync(CancellationToken cancellationToken);
     }
 }

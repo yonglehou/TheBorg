@@ -50,9 +50,9 @@ namespace TheBorg.Host.Apis
             return PostAsync($"api/plugins/{pluginId.Value}/unload", null as object, cancellationToken);
         }
 
-        public Task InstallPluginAsync(Uri uri, CancellationToken cancellationToken)
+        public Task<PluginInformation> InstallPluginAsync(Uri uri, CancellationToken cancellationToken)
         {
-            return PostAsync("api/plugin-installs/by-uri", uri, cancellationToken);
+            return PostReadAsAsync<Uri, PluginInformation>("api/plugin-installs/by-uri", uri, cancellationToken);
         }
     }
 }

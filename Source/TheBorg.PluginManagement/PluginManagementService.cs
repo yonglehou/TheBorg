@@ -70,11 +70,14 @@ namespace TheBorg.PluginManagement
             return _pluginHttpApi.StartAsync(_serverPort, cancellationToken);
         }
 
-        public async Task LoadPluginAsync(PluginPath pluginPath, CancellationToken cancellationToken)
+        public async Task<PluginInformation> LoadPluginAsync(PluginPath pluginPath, CancellationToken cancellationToken)
         {
             var plugin = await _pluginLoader.LoadPluginAsync(pluginPath, _pluginApiUri, cancellationToken).ConfigureAwait(false);
+            var pluginInformation = await plugin.Plugin.GetPluginInformationAsync(cancellationToken).ConfigureAwait(false);
 
             _plugins.TryAdd(plugin.Id, plugin);
+
+            return pluginInformation;
         }
 
         public Task UnloadPluginAsync(PluginId pluginId)
@@ -91,6 +94,12 @@ namespace TheBorg.PluginManagement
             return Task.FromResult(0);
         }
 
+        public async Task<IReadOnlyCollection<PluginInformation>> LoadInstalledPluginsAsync(CancellationToken cancellationToken)
+        {
+            var pluginPaths = await _pluginInstaller.GetInstalledPluginsAsync(cancellationToken).ConfigureAwait(false);
+            return await Task.WhenAll(pluginPaths.Select(p => LoadPluginAsync(p, cancellationToken))).ConfigureAwait(false);
+        }
+
         public Task RegisterAsync(PluginId pluginId, IEnumerable<CommandDescription> commandDescriptions)
         {
             _pluginCommandDescriptions[pluginId] = commandDescriptions.ToList();
@@ -102,24 +111,21 @@ namespace TheBorg.PluginManagement
             return await Task.WhenAll(_plugins.Values.Select(p => p.Plugin.GetPluginInformationAsync(cancellationToken))).ConfigureAwait(false);
         }
 
-        public async Task InstallPluginAsync(Uri uri, CancellationToken cancellationToken)
+        public async Task<PluginInformation> InstallPluginAsync(Uri uri, CancellationToken cancellationToken)
         {
             var filename = uri.GetFilename();
             if (!uri.ToString().ToLowerInvariant().EndsWith(".zip")) throw new ArgumentException($"Only understands ZIP files: {uri} ({filename})");
 
             using (var tempFile = await _restClient.DownloadAsync(uri, cancellationToken).ConfigureAwait(false))
             {
-                var dllLocation = await _pluginInstaller.InstallPluginAsync(
-                    Path.GetFileNameWithoutExtension(filename),
-                    "1.0", // TODO: Fix
+                var pluginPath = await _pluginInstaller.InstallPluginAsync(
+                    Path.GetFileNameWithoutExtension(filename), // TODO: Fix
                     tempFile.Path,
                     PluginPackageType.Zip,
                     cancellationToken)
                     .ConfigureAwait(false);
 
-                var pluginPath = new PluginPath(dllLocation);
-
-                await LoadPluginAsync(
+                return await LoadPluginAsync(
                     pluginPath,
                     cancellationToken)
                     .ConfigureAwait(false);

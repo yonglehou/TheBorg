@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -56,14 +57,39 @@ namespace TheBorg.Plugins.Administration
             await _messageApi.ReplyToAsync(tenantMessage, stringBuilder.ToString(), cancellationToken).ConfigureAwait(false);
         }
 
-        private static readonly Regex Regex = new Regex(@"^unload plugin (?<pluginId>[a-z0-9\.]+)$", RegexOptions.Compiled);
+        private static readonly Regex RegexUnloadPlugin = new Regex(@"^unload plugin (?<pluginId>[a-z0-9\.]+)$", RegexOptions.Compiled);
         [HttpApi(HttpApiMethod.Post, "api/commands/unload-plugin")]
         public async Task UnloadPlugin([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
-            var pId = Regex.Match(tenantMessage.Text).Groups["pluginId"].Value;
+            var pId = RegexUnloadPlugin.Match(tenantMessage.Text).Groups["pluginId"].Value;
             var pluginId = PluginId.With(pId);
             await _pluginApi.UnloadPluginAsync(pluginId, cancellationToken).ConfigureAwait(false);
             await _messageApi.ReplyToAsync(tenantMessage, $"Unloaded plugin {pluginId}", cancellationToken).ConfigureAwait(false);
+        }
+
+        private static readonly Regex RegexInstallPlugin = new Regex(@"^install plugin (?<url>.+)$", RegexOptions.Compiled);
+        [HttpApi(HttpApiMethod.Post, "api/commands/install-plugin")]
+        public async Task InstallPlugin([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
+        {
+            var url = RegexInstallPlugin.Match(tenantMessage.Text).Groups["url"].Value;
+            Uri uri;
+            if (!Uri.TryCreate(url, UriKind.Absolute, out uri))
+            {
+                await _messageApi.ReplyToAsync(
+                    tenantMessage,
+                    $"This is not a valid URI {url}, please provide me with a real one",
+                    cancellationToken)
+                    .ConfigureAwait(false);
+                return;
+            }
+
+            var pluginInformation = await _pluginApi.InstallPluginAsync(uri, cancellationToken).ConfigureAwait(false);
+
+            await _messageApi.ReplyToAsync(
+                tenantMessage,
+                $"Installed {pluginInformation.Id}: {pluginInformation.Description}",
+                cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }

@@ -29,6 +29,8 @@ namespace TheBorg.Interface.ValueObjects.Plugins
 {
     public class PluginPath : SingleValueObject<string>
     {
+        public static PluginPath With(string path) { return new PluginPath(path); }
+
         public PluginPath(
             string value)
             : base(value)

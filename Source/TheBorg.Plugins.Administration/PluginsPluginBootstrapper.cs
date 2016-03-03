@@ -53,6 +53,7 @@ namespace TheBorg.Plugins.Administration
         {
             yield return new CommandDescription("^plugins$", "list all plugins", "api/commands/list-plugins");
             yield return new CommandDescription(@"^unload plugin (?<pluginId>[a-z0-9\.]+)$", "unload specific plugin", "api/commands/unload-plugin");
+            yield return new CommandDescription("^install plugin (?<url>.+)$", "installs plugin", "api/commands/install-plugin");
         }
     }
 }

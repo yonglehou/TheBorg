@@ -57,7 +57,6 @@
     <Compile Include="Commands\CommandSets\GitHubCommandSet.cs" />
     <Compile Include="Commands\CommandSets\PluginCommandSet.cs" />
     <Compile Include="Commands\ICommandSet.cs" />
-    <Compile Include="Core\CertificateGenerator.cs" />
     <Compile Include="Extensions\PrincipalExtensions.cs" />
     <Compile Include="Controllers\CommandDescriptionsController.cs" />
     <Compile Include="Controllers\PluginInstallsController.cs" />

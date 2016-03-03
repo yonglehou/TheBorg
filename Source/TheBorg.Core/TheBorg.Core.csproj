@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -43,10 +44,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CertificateGenerator.cs" />
     <Compile Include="Clients\IWebSocketClient.cs" />
     <Compile Include="Clients\WebSocketClient.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="ConfigurationReader.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Extensions\UriExtensions.cs" />
+    <Compile Include="IConfiguration.cs" />
+    <Compile Include="IConfigurationReader.cs" />
     <Compile Include="IMessageProcessors.cs" />
     <Compile Include="ProcessMessageResult.cs" />
     <Compile Include="Serialization\IJsonSerializer.cs" />

@@ -51,7 +51,7 @@ namespace TheBorg
 
         private static readonly IReadOnlyCollection<string> BuiltInPlugins = new []
             {
-                typeof(JokesPluginBootstrapper).Assembly.GetName().Name,
+                //typeof(JokesPluginBootstrapper).Assembly.GetName().Name,
                 typeof(StatusPluginBootstrapper).Assembly.GetName().Name,
                 typeof(PluginsPluginBootstrapper).Assembly.GetName().Name,
             };
@@ -71,6 +71,9 @@ namespace TheBorg
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             await _pluginManagementService.InitializeAsync(cancellationToken).ConfigureAwait(false);
+
+            await _pluginManagementService.LoadInstalledPluginsAsync(cancellationToken).ConfigureAwait(false);
+
             await LoadBuildInPluginsAsync(cancellationToken).ConfigureAwait(false);
 
             var disposables = await Task.WhenAll(_tenants.Select(async t =>

@@ -34,6 +34,6 @@ namespace TheBorg.Interface.Apis
     {
         Task<IReadOnlyCollection<PluginInformation>> GetPluginsAsync(CancellationToken cancellationToken);
         Task UnloadPluginAsync(PluginId pluginId, CancellationToken cancellationToken);
-        Task InstallPluginAsync(Uri uri, CancellationToken cancellationToken);
+        Task<PluginInformation> InstallPluginAsync(Uri uri, CancellationToken cancellationToken);
     }
 }
