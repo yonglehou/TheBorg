@@ -29,7 +29,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using TheBorg.Commands;
 using TheBorg.Core;
 using TheBorg.Core.Extensions;
 using TheBorg.Interface.ValueObjects;
@@ -46,7 +45,6 @@ namespace TheBorg
     {
         private readonly ILogger _logger;
         private readonly IPluginManagementService _pluginManagementService;
-        private readonly ICommandManager _commandManager;
         private readonly IReadOnlyCollection<ITenant> _tenants;
 
         private static readonly IReadOnlyCollection<string> BuiltInPlugins = new []
@@ -59,12 +57,10 @@ namespace TheBorg
         public Collective(
             ILogger logger,
             IPluginManagementService pluginManagementService,
-            ICommandManager commandManager,
             IEnumerable<ITenant> tenants)
         {
             _logger = logger;
             _pluginManagementService = pluginManagementService;
-            _commandManager = commandManager;
             _tenants = tenants.ToList();
         }
 
@@ -126,7 +122,6 @@ namespace TheBorg
         private IEnumerable<IMessageProcessor> MessageProcessors()
         {
             yield return _pluginManagementService;
-            yield return _commandManager;
         } 
     }
 }

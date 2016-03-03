@@ -88,11 +88,7 @@ namespace TheBorg.PluginManagement
             }
 
             var pluginPaths = Directory.GetDirectories(pluginInstallPath)
-                .Select(d =>
-                {
-                    var p = Path.Combine(d, $"{Path.GetFileName(d)}.dll");
-                    return p;
-                })
+                .Select(d => Path.Combine(d, $"{Path.GetFileName(d)}.dll"))
                 .Where(File.Exists)
                 .Select(PluginPath.With)
                 .ToList();

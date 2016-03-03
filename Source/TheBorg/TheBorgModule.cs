@@ -29,7 +29,6 @@ using System.Web.Http.Controllers;
 using Autofac;
 using Autofac.Integration.WebApi;
 using Microsoft.Owin;
-using TheBorg.Commands;
 using Module = Autofac.Module;
 
 namespace TheBorg
@@ -40,7 +39,6 @@ namespace TheBorg
 
         private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
             {
-                typeof(Command),
             };
 
         private static readonly IReadOnlyCollection<Type> Singletons = new Type[]

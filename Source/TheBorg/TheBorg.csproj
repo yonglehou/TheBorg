@@ -53,10 +53,6 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Commands\CommandAttribute.cs" />
-    <Compile Include="Commands\CommandSets\GitHubCommandSet.cs" />
-    <Compile Include="Commands\CommandSets\PluginCommandSet.cs" />
-    <Compile Include="Commands\ICommandSet.cs" />
     <Compile Include="Extensions\PrincipalExtensions.cs" />
     <Compile Include="Controllers\CommandDescriptionsController.cs" />
     <Compile Include="Controllers\PluginInstallsController.cs" />
@@ -72,9 +68,6 @@
     <Compile Include="Services\SlackService.cs" />
     <Compile Include="Services\Slack\ApiResponses\UserInfoApiResponse.cs" />
     <Compile Include="Services\Slack\DTOs\ChannelDto.cs" />
-    <Compile Include="Commands\Command.cs" />
-    <Compile Include="Commands\CommandBuilder.cs" />
-    <Compile Include="Commands\ICommandBuilder.cs" />
     <Compile Include="Tenants\ITenant.cs" />
     <Compile Include="Tenants\SlackTenant.cs" />
     <Compile Include="Services\Slack\ApiResponses\ApiResponse.cs" />
@@ -86,9 +79,6 @@
     <Compile Include="Tenants\Slack\RtmResponses\HelloRtmResponse.cs" />
     <Compile Include="Tenants\Slack\RtmResponses\MessageRtmResponse.cs" />
     <Compile Include="Tenants\Slack\RtmResponses\RtmResponse.cs" />
-    <Compile Include="Commands\CommandManager.cs" />
-    <Compile Include="Commands\ICommand.cs" />
-    <Compile Include="Commands\ICommandManager.cs" />
     <Compile Include="ICollective.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
