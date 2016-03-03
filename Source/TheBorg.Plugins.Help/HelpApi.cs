@@ -62,7 +62,7 @@ namespace TheBorg.Plugins.Help
                 .OrderBy(c => c.Regex)
                 .ToList();
 
-            var commandHelp = commandDescriptions.Aggregate(new StringBuilder(), (b, c) => b.AppendLine($"{CleanRegEx(c.Regex)}")).ToString();
+            var commandHelp = commandDescriptions.Aggregate(new StringBuilder(), (b, c) => b.AppendLine($"{CleanRegEx(c.Regex)}: {c.Help}")).ToString();
 
             await _messageApi.ReplyToAsync(tenantMessage, commandHelp, cancellationToken).ConfigureAwait(false);
         }
