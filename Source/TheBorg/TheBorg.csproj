@@ -57,9 +57,6 @@
     <Compile Include="Commands\CommandSets\GitHubCommandSet.cs" />
     <Compile Include="Commands\CommandSets\PluginCommandSet.cs" />
     <Compile Include="Commands\ICommandSet.cs" />
-    <Compile Include="Conversations\ConversationTopicAttribute.cs" />
-    <Compile Include="Conversations\IActiveConversation.cs" />
-    <Compile Include="Conversations\IConversationTopic.cs" />
     <Compile Include="Core\CertificateGenerator.cs" />
     <Compile Include="Extensions\PrincipalExtensions.cs" />
     <Compile Include="Controllers\CommandDescriptionsController.cs" />
@@ -79,10 +76,6 @@
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandBuilder.cs" />
     <Compile Include="Commands\ICommandBuilder.cs" />
-    <Compile Include="Conversations\ActiveConversation.cs" />
-    <Compile Include="Conversations\ConversationManager.cs" />
-    <Compile Include="Conversations\IConversationManager.cs" />
-    <Compile Include="Conversations\Topics\OctopusCreateReleaseTopic.cs" />
     <Compile Include="Tenants\ITenant.cs" />
     <Compile Include="Tenants\SlackTenant.cs" />
     <Compile Include="Services\Slack\ApiResponses\ApiResponse.cs" />
