@@ -35,6 +35,7 @@ using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 using TheBorg.PluginManagement;
 using TheBorg.Plugins.Administration;
+using TheBorg.Plugins.Help;
 using TheBorg.Plugins.Jokes;
 using TheBorg.Plugins.Status;
 using TheBorg.Tenants;
@@ -52,6 +53,7 @@ namespace TheBorg
                 //typeof(JokesPluginBootstrapper).Assembly.GetName().Name,
                 typeof(StatusPluginBootstrapper).Assembly.GetName().Name,
                 typeof(PluginsPluginBootstrapper).Assembly.GetName().Name,
+                typeof(HelpPluginBootstrapper).Assembly.GetName().Name,
             };
 
         public Collective(

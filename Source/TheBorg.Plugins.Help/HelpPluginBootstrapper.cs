@@ -23,34 +23,30 @@
 //
 
 using System;
+using TheBorg.Interface;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Interface.ValueObjects.Plugins
+namespace TheBorg.Plugins.Help
 {
-    public class PluginInformation : ValueObject
+    public class HelpPluginBootstrapper : IPluginBootstrapper
     {
-        public PluginInformation(
-            PluginId id,
-            PluginTitle title,
-            PluginVersion version,
-            PluginDescription description,
-            Uri uri)
+        public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
         {
-            if (id == null) throw new ArgumentNullException(nameof(id));
-            if (title == null) throw new ArgumentNullException(nameof(title));
-            if (version == null) throw new ArgumentNullException(nameof(version));
-            if (description == null) throw new ArgumentNullException(nameof(description));
+            pluginRegistra(r =>
+                {
+                    var assembly = typeof(HelpPluginBootstrapper).Assembly;
 
-            Id = id;
-            Title = title;
-            Version = version;
-            Description = description;
-            Uri = uri;
+                    r.SetPluginInformation(new PluginInformation(
+                        PluginId.From(assembly),
+                        PluginTitle.With("Help"),
+                        PluginVersion.From(assembly),
+                        PluginDescription.With("Provides help for the Borg"),
+                        r.Uri));
+                    r.RegisterHttpApi(new HelpApi(r.HttpApi, r.MessageApi, r.PluginApi));
+                    r.RegisterCommands(
+                        new CommandDescription("^help", "list commands", "api/commands/help"));
+                });
         }
-
-        public PluginId Id { get; }
-        public PluginTitle Title { get; }
-        public PluginVersion Version { get; }
-        public PluginDescription Description { get; }
-        public Uri Uri { get; }
     }
 }

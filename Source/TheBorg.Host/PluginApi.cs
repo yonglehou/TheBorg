@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface;
@@ -34,11 +35,14 @@ namespace TheBorg.Host
     public class PluginApi : IPluginHttpApi
     {
         private readonly PluginInformation _pluginInformation;
+        private readonly IReadOnlyCollection<CommandDescription> _commandDescriptions;
 
         public PluginApi(
-            PluginInformation pluginInformation)
+            PluginInformation pluginInformation,
+            IReadOnlyCollection<CommandDescription> commandDescriptions)
         {
             _pluginInformation = pluginInformation;
+            _commandDescriptions = commandDescriptions;
         }
 
         [HttpApi(HttpApiMethod.Get, "_plugin/ping")]
@@ -51,6 +55,12 @@ namespace TheBorg.Host
         public Task<PluginInformation> PluginInformation()
         {
             return Task.FromResult(_pluginInformation);
+        }
+
+        [HttpApi(HttpApiMethod.Get, "_plugin/commands")]
+        public Task<IReadOnlyCollection<CommandDescription>> ListCommands()
+        {
+            return Task.FromResult(_commandDescriptions);
         }
     }
 }

@@ -42,7 +42,8 @@ namespace TheBorg.Plugins.Administration
                         PluginId.From(assembly),
                         PluginTitle.With("Admin"),
                         PluginVersion.From(assembly),
-                        PluginDescription.With("Provides administration")));
+                        PluginDescription.With("Provides administration"),
+                        r.Uri));
                     r.RegisterHttpApi(new PluginsApi(r.PluginApi, r.MessageApi));
                     r.RegisterCommands(
                         CommandDescriptions());

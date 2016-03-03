@@ -115,6 +115,10 @@
       <Project>{c9efbe31-45a6-4e51-98de-d871b4ac61d2}</Project>
       <Name>TheBorg.Plugins.Administration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Plugins.Help\TheBorg.Plugins.Help.csproj">
+      <Project>{21f28795-57ea-45cc-b15b-1fcecc20dc3c}</Project>
+      <Name>TheBorg.Plugins.Help</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TheBorg.Plugins.Jokes\TheBorg.Plugins.Jokes.csproj">
       <Project>{721cf637-01fe-4691-a6a1-eff1ec4e9d25}</Project>
       <Name>TheBorg.Plugins.Jokes</Name>

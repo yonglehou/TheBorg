@@ -51,7 +51,10 @@ namespace TheBorg.Host
             var pluginBootstrapperType = assembly.GetTypes().Single(t => typeof (IPluginBootstrapper).IsAssignableFrom(t));
             var pluginBootstrapper = (IPluginBootstrapper) Activator.CreateInstance(pluginBootstrapperType);
 
+            var uri = new Uri($"http://127.0.0.1:{clientPort}");
+
             var pluginRegistration = new PluginRegistration(
+                uri,
                 new CommandApi(pluginId, pluginApiUri),
                 new MessageApi(pluginId, pluginApiUri),
                 new HttpApi(),
@@ -74,7 +77,7 @@ namespace TheBorg.Host
                 });
             
             _apiHost = new ApiHost();
-            _apiHost.Start(clientPort, pluginRegistration);
+            _apiHost.Start(uri, pluginRegistration);
         }
     }
 }

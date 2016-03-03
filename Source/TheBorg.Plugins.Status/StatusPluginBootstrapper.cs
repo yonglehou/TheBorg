@@ -41,7 +41,8 @@ namespace TheBorg.Plugins.Status
                         PluginId.From(assembly),
                         PluginTitle.With("Status"),
                         PluginVersion.From(assembly),
-                        PluginDescription.With("Provides status on the Borg")));
+                        PluginDescription.With("Provides status on the Borg"),
+                        r.Uri));
                     r.RegisterHttpApi(new StatusApi(r.MessageApi));
                     r.RegisterCommands(
                         new CommandDescription("^ping$", "pings the borg", "api/commands/ping"));

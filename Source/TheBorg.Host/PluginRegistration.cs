@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CSharp.RuntimeBinder;
 using Nancy;
 using TheBorg.Interface;
@@ -44,6 +43,7 @@ namespace TheBorg.Host
         public IMessageApi MessageApi { get; }
         public IHttpApi HttpApi { get; }
         public IPluginApi PluginApi { get; }
+        public Uri Uri { get; }
 
         private readonly List<CommandDescription> _commandDescriptions = new List<CommandDescription>();
         private readonly Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>>();
@@ -52,11 +52,13 @@ namespace TheBorg.Host
         public IReadOnlyCollection<CommandDescription> CommandDescriptions => _commandDescriptions;
 
         public PluginRegistration(
+            Uri uri,
             ICommandApi commandApi,
             IMessageApi messageApi,
             IHttpApi httpApi,
             IPluginApi pluginApi)
         {
+            Uri = uri;
             CommandApi = commandApi;
             MessageApi = messageApi;
             HttpApi = httpApi;

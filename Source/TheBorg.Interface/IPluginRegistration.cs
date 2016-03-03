@@ -37,6 +37,8 @@ namespace TheBorg.Interface
         IHttpApi HttpApi { get; }
         IPluginApi PluginApi { get; }
 
+        Uri Uri { get; }
+
         IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
 
         IPluginRegistration RegisterHttpApi<T>(T instance)
