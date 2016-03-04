@@ -28,6 +28,21 @@ namespace TheBorg.Interface.ValueObjects.Plugins
 {
     public class PluginInformation : ValueObject
     {
+        public static PluginInformation With(
+            PluginId id,
+            PluginTitle title,
+            PluginVersion version,
+            PluginDescription description,
+            Uri uri)
+        {
+            return new PluginInformation(
+                id,
+                title,
+                version,
+                description,
+                uri);
+        }
+
         public PluginInformation(
             PluginId id,
             PluginTitle title,
@@ -39,6 +54,7 @@ namespace TheBorg.Interface.ValueObjects.Plugins
             if (title == null) throw new ArgumentNullException(nameof(title));
             if (version == null) throw new ArgumentNullException(nameof(version));
             if (description == null) throw new ArgumentNullException(nameof(description));
+            if (uri == null) throw new ArgumentNullException(nameof(uri));
 
             Id = id;
             Title = title;

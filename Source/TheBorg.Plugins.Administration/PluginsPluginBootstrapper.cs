@@ -38,7 +38,7 @@ namespace TheBorg.Plugins.Administration
                 {
                     var assembly = typeof(PluginsPluginBootstrapper).Assembly;
 
-                    r.SetPluginInformation(new PluginInformation(
+                    r.SetPluginInformation(PluginInformation.With(
                         PluginId.From(assembly),
                         PluginTitle.With("Admin"),
                         PluginVersion.From(assembly),

@@ -37,7 +37,7 @@ namespace TheBorg.Plugins.Help
                 {
                     var assembly = typeof(HelpPluginBootstrapper).Assembly;
 
-                    r.SetPluginInformation(new PluginInformation(
+                    r.SetPluginInformation(PluginInformation.With(
                         PluginId.From(assembly),
                         PluginTitle.With("Help"),
                         PluginVersion.From(assembly),

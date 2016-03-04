@@ -37,7 +37,7 @@ namespace TheBorg.Plugins.Status
                 {
                     var assembly = typeof(StatusPluginBootstrapper).Assembly;
 
-                    r.SetPluginInformation(new PluginInformation(
+                    r.SetPluginInformation(PluginInformation.With(
                         PluginId.From(assembly),
                         PluginTitle.With("Status"),
                         PluginVersion.From(assembly),

@@ -37,7 +37,7 @@ namespace TheBorg.Plugins.Jokes
                 {
                     var assembly = typeof(JokesPluginBootstrapper).Assembly;
 
-                    r.SetPluginInformation(new PluginInformation(
+                    r.SetPluginInformation(PluginInformation.With(
                         PluginId.From(assembly),
                         PluginTitle.With("Jokes"),
                         PluginVersion.From(assembly),
