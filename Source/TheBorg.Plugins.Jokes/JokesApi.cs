@@ -25,6 +25,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using TheBorg.Interface;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.Attributes;
@@ -73,7 +74,7 @@ namespace TheBorg.Plugins.Jokes
                 string joke)
             {
                 Id = id;
-                Joke = joke;
+                Joke = HttpUtility.HtmlDecode(joke);
             }
 
             public int Id { get; }

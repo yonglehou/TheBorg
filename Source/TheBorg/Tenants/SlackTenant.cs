@@ -28,6 +28,7 @@ using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Newtonsoft.Json;
 using Serilog;
 using TheBorg.Core;
@@ -194,7 +195,7 @@ namespace TheBorg.Tenants
         private static readonly string[] InvalidStrings = {"<", ">", "@"};
         private static string SanitiseText(string text)
         {
-            return InvalidStrings.Aggregate(text, ((s, t) => s.Replace(t, string.Empty)));
+            return HttpUtility.HtmlDecode(InvalidStrings.Aggregate(text, (s, t) => s.Replace(t, string.Empty)));
         }
 
         private async Task PingLoopAsync()
