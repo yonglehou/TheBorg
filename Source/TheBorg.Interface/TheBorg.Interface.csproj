@@ -58,8 +58,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueObjects\Address.cs" />
     <Compile Include="ValueObjects\CommandDescription.cs" />
-    <Compile Include="ValueObjects\LogLevel.cs" />
-    <Compile Include="ValueObjects\LogMessage.cs" />
     <Compile Include="ValueObjects\Plugins\PluginDescription.cs" />
     <Compile Include="ValueObjects\Plugins\PluginId.cs" />
     <Compile Include="ValueObjects\Plugins\PluginInformation.cs" />
