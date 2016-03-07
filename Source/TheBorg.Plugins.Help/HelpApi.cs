@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using TheBorg.Interface;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.Attributes;
+using TheBorg.Interface.Extensions;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
@@ -63,7 +64,7 @@ namespace TheBorg.Plugins.Help
                 .OrderBy(c => c.Regex)
                 .ToList();
 
-            var commandHelp = commandDescriptions.Aggregate(new StringBuilder(), (b, c) => b.AppendLine($"{CleanRegEx(c.Regex)}: {c.Help}")).ToString();
+            var commandHelp = commandDescriptions.Aggregate(new StringBuilder(), (b, c) => b.AppendLine($"{c.Regex.PrettyRegex()}: {c.Help}")).ToString();
 
             await _messageApi.ReplyToAsync(tenantMessage, commandHelp, cancellationToken).ConfigureAwait(false);
         }
@@ -75,11 +76,6 @@ namespace TheBorg.Plugins.Help
             return _httpApi.GetAsyncAs<IReadOnlyCollection<CommandDescription>>(
                 new Uri(pluginInformation.Uri, "_plugin/commands"),
                 cancellationToken);
-        }
-
-        private static string CleanRegEx(string regex)
-        {
-            return regex.Trim('^', '$');
         }
     }
 }

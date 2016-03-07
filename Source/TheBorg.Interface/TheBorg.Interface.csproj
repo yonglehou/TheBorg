@@ -53,6 +53,7 @@
     <Compile Include="Attributes\CommandAttribute.cs" />
     <Compile Include="Attributes\FromBodyAttribute.cs" />
     <Compile Include="Attributes\HttpMethodAttribute.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="IHttpApiRequestContext.cs" />
     <Compile Include="IPluginHttpApi.cs" />
     <Compile Include="IPluginBootstrapper.cs" />

@@ -44,11 +44,16 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTests\Core\Extensions\UriExtensionsTests.cs" />
+    <Compile Include="UnitTests\Interface\Extensions\StringExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TheBorg.Core\TheBorg.Core.csproj">
       <Project>{82560bc4-8a1a-4300-a84c-9c617a392612}</Project>
       <Name>TheBorg.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Interface\TheBorg.Interface.csproj">
+      <Project>{e1dcf0b9-ccf4-42e1-b39c-2191cc7c378b}</Project>
+      <Name>TheBorg.Interface</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheBorg\TheBorg.csproj">
       <Project>{e1e9ed6d-4dae-46c8-92cb-538fd02762ee}</Project>
