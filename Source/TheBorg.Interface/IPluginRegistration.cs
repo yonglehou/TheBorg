@@ -49,5 +49,6 @@ namespace TheBorg.Interface
 
         IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
         IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);
+        IPluginRegistration RegisterHttpApiCommands();
     }
 }

@@ -23,9 +23,7 @@
 //
 
 using System;
-using System.Collections.Generic;
 using TheBorg.Interface;
-using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Plugins.Administration
@@ -45,16 +43,8 @@ namespace TheBorg.Plugins.Administration
                         PluginDescription.With("Provides administration"),
                         r.Uri));
                     r.RegisterHttpApi(new PluginsApi(r.PluginApi, r.MessageApi));
-                    r.RegisterCommands(
-                        CommandDescriptions());
+                    r.RegisterHttpApiCommands();
                 });
-        }
-
-        private static IEnumerable<CommandDescription> CommandDescriptions()
-        {
-            yield return new CommandDescription("^plugins$", "list all plugins", "api/commands/list-plugins");
-            yield return new CommandDescription(@"^unload plugin (?<pluginId>[a-z0-9\.]+)$", "unload specific plugin", "api/commands/unload-plugin");
-            yield return new CommandDescription("^install plugin (?<url>.+)$", "installs plugin", "api/commands/install-plugin");
         }
     }
 }

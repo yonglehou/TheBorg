@@ -53,6 +53,7 @@ namespace TheBorg.Plugins.Help
         }
 
         [HttpApi(HttpApiMethod.Post, "api/commands/help")]
+        [Command("^help$", "list commands")]
         public async Task Help([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var pluginInformations = await _pluginApi.GetPluginsAsync(cancellationToken).ConfigureAwait(false);

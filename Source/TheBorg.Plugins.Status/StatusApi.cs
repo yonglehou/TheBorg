@@ -42,6 +42,7 @@ namespace TheBorg.Plugins.Status
         }
 
         [HttpApi(HttpApiMethod.Post, "api/commands/ping")]
+        [Command("^ping$", "pings the borg")]
         public async Task Ping([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             await _messageApi.ReplyToAsync(tenantMessage, "pong", cancellationToken).ConfigureAwait(false);

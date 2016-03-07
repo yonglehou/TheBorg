@@ -23,28 +23,24 @@
 //
 
 using System;
-using TheBorg.Interface;
-using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Plugins.Jokes
+namespace TheBorg.Interface.Attributes
 {
-    public class JokesPluginBootstrapper : IPluginBootstrapper
+    [AttributeUsage(AttributeTargets.Method)]
+    public class CommandAttribute : Attribute
     {
-        public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
-        {
-            pluginRegistra(r =>
-                {
-                    var assembly = typeof(JokesPluginBootstrapper).Assembly;
+        public string Regex { get; set; }
+        public string Help { get; set; }
 
-                    r.SetPluginInformation(PluginInformation.With(
-                        PluginId.From(assembly),
-                        PluginTitle.With("Jokes"),
-                        PluginVersion.From(assembly),
-                        PluginDescription.With("Provides jokes"),
-                        r.Uri));
-                    r.RegisterHttpApi(new JokesApi(r.ConfigApi, r.HttpApi, r.MessageApi));
-                    r.RegisterHttpApiCommands();
-                });
+        public CommandAttribute(
+            string regex,
+            string help)
+        {
+            if (string.IsNullOrEmpty(regex)) throw new ArgumentNullException(nameof(regex));
+            if (string.IsNullOrEmpty(help)) throw new ArgumentNullException(nameof(help));
+
+            Regex = regex;
+            Help = help;
         }
     }
 }

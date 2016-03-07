@@ -55,5 +55,10 @@ namespace TheBorg.Interface.ValueObjects
         {
             return _lazyRegex.Value.IsMatch(text);
         }
+
+        public override string ToString()
+        {
+            return $"'{Regex}' - '{Help}'";
+        }
     }
 }

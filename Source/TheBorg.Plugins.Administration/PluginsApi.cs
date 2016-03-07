@@ -50,6 +50,7 @@ namespace TheBorg.Plugins.Administration
         }
 
         [HttpApi(HttpApiMethod.Post, "api/commands/list-plugins")]
+        [Command("^plugins$", "list all plugins")]
         public async Task ListPlugins([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var pluginInformations = await _pluginApi.GetPluginsAsync(cancellationToken).ConfigureAwait(false);
@@ -59,6 +60,7 @@ namespace TheBorg.Plugins.Administration
 
         private static readonly Regex RegexUnloadPlugin = new Regex(@"^unload plugin (?<pluginId>[a-z0-9\.]+)$", RegexOptions.Compiled);
         [HttpApi(HttpApiMethod.Post, "api/commands/unload-plugin")]
+        [Command(@"^unload plugin (?<pluginId>[a-z0-9\.]+)$", "unload specific plugin")]
         public async Task UnloadPlugin([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var pId = RegexUnloadPlugin.Match(tenantMessage.Text).Groups["pluginId"].Value;
@@ -69,6 +71,7 @@ namespace TheBorg.Plugins.Administration
 
         private static readonly Regex RegexInstallPlugin = new Regex(@"^install plugin (?<url>.+)$", RegexOptions.Compiled);
         [HttpApi(HttpApiMethod.Post, "api/commands/install-plugin")]
+        [Command("^install plugin (?<url>.+)$", "installs plugin")]
         public async Task InstallPlugin([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var url = RegexInstallPlugin.Match(tenantMessage.Text).Groups["url"].Value;

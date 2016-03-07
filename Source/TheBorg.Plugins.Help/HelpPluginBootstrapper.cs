@@ -24,7 +24,6 @@
 
 using System;
 using TheBorg.Interface;
-using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Plugins.Help
@@ -44,8 +43,7 @@ namespace TheBorg.Plugins.Help
                         PluginDescription.With("Provides help for the Borg"),
                         r.Uri));
                     r.RegisterHttpApi(new HelpApi(r.HttpApi, r.MessageApi, r.PluginApi));
-                    r.RegisterCommands(
-                        new CommandDescription("^help", "list commands", "api/commands/help"));
+                    r.RegisterHttpApiCommands();
                 });
         }
     }

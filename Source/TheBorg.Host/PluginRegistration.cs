@@ -85,6 +85,28 @@ namespace TheBorg.Host
             return this;
         }
 
+        public IPluginRegistration RegisterHttpApiCommands()
+        {
+            foreach (var a in _factories.Keys
+                .Select(t => t.GetGenericArguments()[0])
+                .SelectMany(t => t.GetMethods(BindingFlags.Instance | BindingFlags.Public).Select(mi => new { Type = t, Method = mi })))
+            {
+                var commandAttribute = a.Method.GetCustomAttributes<CommandAttribute>().SingleOrDefault();
+                var httpApiAttribute = a.Method.GetCustomAttributes<HttpApiAttribute>().SingleOrDefault();
+                if (commandAttribute == null || httpApiAttribute == null)
+                {
+                    continue;
+                }
+
+                _commandDescriptions.Add(new CommandDescription(
+                    commandAttribute.Regex,
+                    commandAttribute.Help,
+                    httpApiAttribute.Path));
+            }
+
+            return this;
+        }
+
         public IPluginRegistration RegisterHttpApi<T>(T instance) where T : IPluginHttpApi
         {
             return RegisterHttpApi(_ => instance);

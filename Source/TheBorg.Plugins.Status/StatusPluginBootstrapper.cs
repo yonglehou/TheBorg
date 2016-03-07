@@ -24,7 +24,6 @@
 
 using System;
 using TheBorg.Interface;
-using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Plugins.Status
@@ -44,8 +43,7 @@ namespace TheBorg.Plugins.Status
                         PluginDescription.With("Provides status on the Borg"),
                         r.Uri));
                     r.RegisterHttpApi(new StatusApi(r.MessageApi));
-                    r.RegisterCommands(
-                        new CommandDescription("^ping$", "pings the borg", "api/commands/ping"));
+                    r.RegisterHttpApiCommands();
                 });
         }
     }

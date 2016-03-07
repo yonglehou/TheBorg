@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using TheBorg.Core;
 using TheBorg.Core.Clients;
 using TheBorg.Core.Extensions;
@@ -41,6 +42,7 @@ namespace TheBorg.PluginManagement
 {
     public class PluginManagementService : IPluginManagementService
     {
+        private readonly ILogger _logger;
         private readonly IRestClient _restClient;
         private readonly IPluginInstaller _pluginInstaller;
         private readonly IPluginLoader _pluginLoader;
@@ -51,11 +53,13 @@ namespace TheBorg.PluginManagement
         private readonly Uri _pluginApiUri;
 
         public PluginManagementService(
+            ILogger logger,
             IRestClient restClient,
             IPluginInstaller pluginInstaller,
             IPluginLoader pluginLoader,
             IPluginHttpApi pluginHttpApi)
         {
+            _logger = logger;
             _restClient = restClient;
             _pluginInstaller = pluginInstaller;
             _pluginLoader = pluginLoader;
@@ -102,7 +106,11 @@ namespace TheBorg.PluginManagement
 
         public Task RegisterAsync(PluginId pluginId, IEnumerable<CommandDescription> commandDescriptions)
         {
-            _pluginCommandDescriptions[pluginId] = commandDescriptions.ToList();
+            var commandDescriptionList = commandDescriptions.ToList();
+            _pluginCommandDescriptions[pluginId] = commandDescriptionList;
+
+            _logger.Verbose($"Registerd commands for '{pluginId}': {string.Join(", ", commandDescriptionList.Select(d => d.ToString()))}");
+
             return Task.FromResult(0);
         }
 

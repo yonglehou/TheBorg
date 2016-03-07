@@ -59,6 +59,7 @@ namespace TheBorg.Plugins.Jokes
         }
 
         [HttpApi(HttpApiMethod.Post, "api/commands/joke")]
+        [Command("^joke$", "tells a joke")]
         public async Task TellJoke([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var joke = await Joke(cancellationToken).ConfigureAwait(false);
