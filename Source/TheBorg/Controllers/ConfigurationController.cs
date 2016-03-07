@@ -22,31 +22,48 @@
 // SOFTWARE.
 //
 
-using System;
-using TheBorg.Interface;
-using TheBorg.Interface.ValueObjects;
+using System.Web.Http;
+using Serilog;
+using TheBorg.Core;
+using TheBorg.Extensions;
 using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Plugins.Jokes
+namespace TheBorg.Controllers
 {
-    public class JokesPluginBootstrapper : IPluginBootstrapper
+    [RoutePrefix("api/plugin-configuration")]
+    public class ConfigurationController : ApiController
     {
-        public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
-        {
-            pluginRegistra(r =>
-                {
-                    var assembly = typeof(JokesPluginBootstrapper).Assembly;
+        private readonly ILogger _logger;
+        private readonly IConfigurationReader _configurationReader;
 
-                    r.SetPluginInformation(PluginInformation.With(
-                        PluginId.From(assembly),
-                        PluginTitle.With("Jokes"),
-                        PluginVersion.From(assembly),
-                        PluginDescription.With("Provides jokes"),
-                        r.Uri));
-                    r.RegisterHttpApi(new JokesApi(r.ConfigApi, r.HttpApi, r.MessageApi));
-                    r.RegisterCommands(
-                        new CommandDescription("^joke$", "tells a joke", "api/commands/joke"));
-                });
+        public ConfigurationController(
+            ILogger logger,
+            IConfigurationReader configurationReader)
+        {
+            _logger = logger;
+            _configurationReader = configurationReader;
+        }
+
+        [Route("{key}")]
+        [HttpGet]
+        public IHttpActionResult Get(string key)
+        {
+            var pluginId = User.GetPluginId();
+            var configKey = ConfigKey(pluginId, key);
+            string value;
+            if (!_configurationReader.TryReadString(configKey, out value))
+            {
+                _logger.Debug($"Could not find configuration key '{configKey}'");
+                return NotFound();
+            }
+
+            _logger.Verbose($"Read configuration key '{configKey}'");
+            return Json(value);
+        }
+
+        private static string ConfigKey(PluginId pluginId, string key)
+        {
+            return $"{pluginId.Value}:{key}";
         }
     }
 }

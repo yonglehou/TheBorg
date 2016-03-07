@@ -46,6 +46,7 @@
     <Compile Include="ApiBootstrapper.cs" />
     <Compile Include="ApiEndpoint.cs" />
     <Compile Include="Apis\CommandApi.cs" />
+    <Compile Include="Apis\ConfigApi.cs" />
     <Compile Include="Apis\HttpApi.cs" />
     <Compile Include="Apis\MessageApi.cs" />
     <Compile Include="Apis\PluginApi.cs" />

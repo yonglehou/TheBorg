@@ -23,31 +23,28 @@
 //
 
 using System;
-using System.Collections.Generic;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using TheBorg.Interface.Apis;
-using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Interface
+namespace TheBorg.Host.Apis
 {
-    public interface IPluginRegistration
+    public class ConfigApi : Api, IConfigApi
     {
-        ICommandApi CommandApi { get; }
-        IConfigApi ConfigApi { get; }
-        IMessageApi MessageApi { get; }
-        IHttpApi HttpApi { get; }
-        IPluginApi PluginApi { get; }
+        public ConfigApi(
+            PluginId pluginId,
+            Uri baseUri)
+            : base(pluginId, baseUri)
+        {
+        }
 
-        Uri Uri { get; }
+        public Task<string> GetAsync(string key, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
 
-        IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
-
-        IPluginRegistration RegisterHttpApi<T>(T instance)
-            where T : IPluginHttpApi;
-        IPluginRegistration RegisterHttpApi<T>(Func<IHttpApiRequestContext, T> factory)
-            where T : IPluginHttpApi;
-
-        IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
-        IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);
+            return GetAsAsync<string>($"api/plugin-configuration/{key}", cancellationToken, HttpStatusCode.NotFound);
+        }
     }
 }

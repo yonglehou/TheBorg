@@ -40,6 +40,7 @@ namespace TheBorg.Host
     public class PluginRegistration : IPluginRegistration
     {
         public ICommandApi CommandApi { get; }
+        public IConfigApi ConfigApi { get; }
         public IMessageApi MessageApi { get; }
         public IHttpApi HttpApi { get; }
         public IPluginApi PluginApi { get; }
@@ -56,13 +57,15 @@ namespace TheBorg.Host
             ICommandApi commandApi,
             IMessageApi messageApi,
             IHttpApi httpApi,
-            IPluginApi pluginApi)
+            IPluginApi pluginApi,
+            IConfigApi configApi)
         {
             Uri = uri;
             CommandApi = commandApi;
             MessageApi = messageApi;
             HttpApi = httpApi;
             PluginApi = pluginApi;
+            ConfigApi = configApi;
         }
 
         public IPluginRegistration SetPluginInformation(PluginInformation pluginInformation)

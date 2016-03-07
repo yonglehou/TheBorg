@@ -46,6 +46,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Apis\ICommandApi.cs" />
+    <Compile Include="Apis\IConfigApi.cs" />
     <Compile Include="Apis\IHttpApi.cs" />
     <Compile Include="Apis\IMessageApi.cs" />
     <Compile Include="Apis\IPluginApi.cs" />

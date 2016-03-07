@@ -23,6 +23,8 @@
 //
 
 using System;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -83,11 +85,17 @@ namespace TheBorg.Host.Apis
 
         protected async Task<T> GetAsAsync<T>(
             string path,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            params HttpStatusCode[] validStatusCodes)
         {
             using (var httpResponseMessage = await SendAsync(path, HttpMethod.Get, cancellationToken).ConfigureAwait(false))
             {
-                httpResponseMessage.EnsureSuccessStatusCode();
+                if (!validStatusCodes.Any() ||
+                    (!httpResponseMessage.IsSuccessStatusCode && !validStatusCodes.Contains(httpResponseMessage.StatusCode)))
+                {
+                    httpResponseMessage.EnsureSuccessStatusCode();
+                }
+
                 var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                 return JsonConvert.DeserializeObject<T>(json);
             }

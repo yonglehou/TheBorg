@@ -34,14 +34,16 @@ namespace TheBorg.Plugins.Jokes
 {
     public class JokesApi : IPluginHttpApi
     {
+        private readonly IConfigApi _configApi;
         private readonly IHttpApi _httpApi;
         private readonly IMessageApi _messageApi;
-        private static readonly Uri IcndbUri = new Uri("http://api.icndb.com/jokes/random");
 
         public JokesApi(
+            IConfigApi configApi,
             IHttpApi httpApi,
             IMessageApi messageApi)
         {
+            _configApi = configApi;
             _httpApi = httpApi;
             _messageApi = messageApi;
         }
@@ -49,7 +51,10 @@ namespace TheBorg.Plugins.Jokes
         [HttpApi(HttpApiMethod.Get, "api/joke")]
         public async Task<string> Joke(CancellationToken cancellationToken)
         {
-            var jokeContainer = await _httpApi.GetAsyncAs<JokeContainer>(IcndbUri, cancellationToken).ConfigureAwait(false);
+            var uriStr = await _configApi.GetAsync("api-uri", cancellationToken).ConfigureAwait(false);
+            var uri = new Uri(uriStr, UriKind.Absolute);
+
+            var jokeContainer = await _httpApi.GetAsyncAs<JokeContainer>(uri, cancellationToken).ConfigureAwait(false);
             return jokeContainer.Value.Joke;
         }
 
