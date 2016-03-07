@@ -68,17 +68,21 @@ namespace TheBorg
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _pluginManagementService.InitializeAsync(cancellationToken).ConfigureAwait(false);
+            using (_logger.Time("TheBorg start"))
+            {
+                await _pluginManagementService.InitializeAsync(cancellationToken).ConfigureAwait(false);
 
-            await _pluginManagementService.LoadInstalledPluginsAsync(cancellationToken).ConfigureAwait(false);
+                await Task.WhenAll(
+                    LoadBuildInPluginsAsync(cancellationToken),
+                    _pluginManagementService.LoadInstalledPluginsAsync(cancellationToken))
+                    .ConfigureAwait(false);
 
-            await LoadBuildInPluginsAsync(cancellationToken).ConfigureAwait(false);
-
-            var disposables = await Task.WhenAll(_tenants.Select(async t =>
-                {
-                    await t.ConnectAsync(cancellationToken).ConfigureAwait(false);
-                    return t.Messages.Subscribe(HandleMessage);
-                })).ConfigureAwait(false);
+                var disposables = await Task.WhenAll(_tenants.Select(async t =>
+                    {
+                        await t.ConnectAsync(cancellationToken).ConfigureAwait(false);
+                        return t.Messages.Subscribe(HandleMessage);
+                    })).ConfigureAwait(false);
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -100,25 +104,13 @@ namespace TheBorg
             }
         }
 
-        private async Task LoadBuildInPluginsAsync(CancellationToken cancellationToken)
+        private Task LoadBuildInPluginsAsync(CancellationToken cancellationToken)
         {
             var applicationRoot = Path.GetDirectoryName(typeof (Collective).Assembly.GetCodeBase());
 
-            foreach (var builtInPlugin in BuiltInPlugins)
-            {
-                try
-                {
-                    var pluginPath = new PluginPath(Path.Combine(applicationRoot, $"{builtInPlugin}.dll"));
-                    await _pluginManagementService.LoadPluginAsync(
-                        pluginPath,
-                        cancellationToken)
-                        .ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-                    _logger.Error(e, $"Failed to load '{builtInPlugin}'");
-                }
-            }
+            return Task.WhenAll(BuiltInPlugins
+                .Select(a => PluginPath.With(applicationRoot, $"{a}.dll"))
+                .Select(p => _pluginManagementService.LoadPluginAsync(p, cancellationToken)));
         }
 
         private IEnumerable<IMessageProcessor> MessageProcessors()

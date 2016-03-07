@@ -23,24 +23,38 @@
 //
 
 using System;
-using System.IO;
+using System.Diagnostics;
+using Serilog;
 
-namespace TheBorg.Interface.ValueObjects.Plugins
+namespace TheBorg.Core.Extensions
 {
-    public class PluginPath : SingleValueObject<string>
+    public static class LoggerExtensions
     {
-        public static PluginPath With(params string[] path) { return new PluginPath(Path.Combine(path)); }
-
-        public PluginPath(
-            string value)
-            : base(value)
+        public static IDisposable Time(this ILogger logger, string message)
         {
-            if (!File.Exists(value)) throw new ArgumentException($"Plugin '{value}' does not exist");
+            return new TimeLogger(logger, message);
         }
 
-        public PluginId GetPluginId()
+        private class TimeLogger : IDisposable
         {
-            return new PluginId(Path.GetFileNameWithoutExtension(Value).ToLowerInvariant());
+            private readonly ILogger _logger;
+            private readonly string _message;
+            private readonly Stopwatch _stopwatch;
+
+            public TimeLogger(
+                ILogger logger,
+                string message)
+            {
+                _logger = logger;
+                _message = message;
+                _stopwatch = Stopwatch.StartNew();
+            }
+
+            public void Dispose()
+            {
+                _stopwatch.Stop();
+                _logger.Verbose($"{_message}: {_stopwatch.Elapsed.TotalSeconds:0.###} seconds");
+            }
         }
     }
 }
