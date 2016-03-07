@@ -61,21 +61,45 @@ namespace TheBorg.Plugins.Help
 
             var commandDescriptions = (await Task.WhenAll(pluginInformations.Select(i => GetCommandDescriptionAsync(i, cancellationToken))).ConfigureAwait(false))
                 .SelectMany(l => l)
-                .OrderBy(c => c.Regex)
+                .OrderBy(c => c.Command)
                 .ToList();
 
-            var commandHelp = commandDescriptions.Aggregate(new StringBuilder(), (b, c) => b.AppendLine($"{c.Regex.PrettyRegex()}: {c.Help}")).ToString();
+            var commandHelp = commandDescriptions.Aggregate(new StringBuilder(), (b, c) => b.AppendLine(c.ToString())).ToString();
 
             await _messageApi.ReplyToAsync(tenantMessage, commandHelp, cancellationToken).ConfigureAwait(false);
         }
 
-        private Task<IReadOnlyCollection<CommandDescription>> GetCommandDescriptionAsync(
+        private async Task<IReadOnlyCollection<HelpDetails>> GetCommandDescriptionAsync(
             PluginInformation pluginInformation,
             CancellationToken cancellationToken)
         {
-            return _httpApi.GetAsyncAs<IReadOnlyCollection<CommandDescription>>(
+            var commandDescriptions = await _httpApi.GetAsyncAs<IReadOnlyCollection<CommandDescription>>(
                 new Uri(pluginInformation.Uri, "_plugin/commands"),
-                cancellationToken);
+                cancellationToken)
+                .ConfigureAwait(false);
+            return commandDescriptions
+                .Select(d => new HelpDetails(d.Regex, d.Help))
+                .ToList();
+        }
+
+        private class HelpDetails
+        {
+            public readonly string Command;
+            private readonly string _help;
+
+            public HelpDetails(
+                string command,
+                string help)
+            {
+                _help = help;
+
+                Command = command.PrettyRegex();
+            }
+
+            public override string ToString()
+            {
+                return $"{Command}: {_help}";
+            }
         }
     }
 }

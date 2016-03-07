@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using Serilog;
-using TheBorg.Core;
 using TheBorg.Core.Clients;
 using TheBorg.Core.Serialization.Resolvers;
 using TheBorg.Interface.ValueObjects;
