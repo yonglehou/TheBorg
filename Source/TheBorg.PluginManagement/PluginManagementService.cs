@@ -48,7 +48,7 @@ namespace TheBorg.PluginManagement
         private readonly IPluginLoader _pluginLoader;
         private readonly IPluginHttpApi _pluginHttpApi;
         private readonly ConcurrentDictionary<PluginId, IPluginProxy> _plugins = new ConcurrentDictionary<PluginId, IPluginProxy>();
-        private readonly Dictionary<PluginId, IReadOnlyCollection<CommandDescription>> _pluginCommandDescriptions = new Dictionary<PluginId, IReadOnlyCollection<CommandDescription>>();
+        private readonly ConcurrentDictionary<PluginId, IReadOnlyCollection<CommandDescription>> _pluginCommandDescriptions = new ConcurrentDictionary<PluginId, IReadOnlyCollection<CommandDescription>>();
         private readonly int _serverPort;
         private readonly Uri _pluginApiUri;
 
