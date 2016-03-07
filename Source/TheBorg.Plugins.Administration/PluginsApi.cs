@@ -54,7 +54,9 @@ namespace TheBorg.Plugins.Administration
         public async Task ListPlugins([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             var pluginInformations = await _pluginApi.GetPluginsAsync(cancellationToken).ConfigureAwait(false);
-            var stringBuilder = pluginInformations.Aggregate(new StringBuilder(), (s, i) => s.AppendLine($"{i.Id} - {i.Description}"));
+            var stringBuilder = pluginInformations
+                .OrderBy(i => i.Id.Value)
+                .Aggregate(new StringBuilder(), (s, i) => s.AppendLine($"{i.Id} - {i.Description} v{i.Version}"));
             await _messageApi.ReplyToAsync(tenantMessage, stringBuilder.ToString(), cancellationToken).ConfigureAwait(false);
         }
 

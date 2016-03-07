@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface;
@@ -67,6 +68,29 @@ namespace TheBorg.Plugins.Help
             var commandHelp = commandDescriptions.Aggregate(new StringBuilder(), (b, c) => b.AppendLine(c.ToString())).ToString();
 
             await _messageApi.ReplyToAsync(tenantMessage, commandHelp, cancellationToken).ConfigureAwait(false);
+        }
+
+        private static readonly Regex HelpPlugin = new Regex(@"^help (?<pluginId>[a-z0-9\.]{3,})$", RegexOptions.Compiled);
+        [HttpApi(HttpApiMethod.Post, "api/commands/help-plugin-information")]
+        [Command(@"^help (?<pluginId>[a-z0-9\.]{3,})$", "list commands")]
+        public async Task PluginInfo([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
+        {
+            var pId = HelpPlugin.Match(tenantMessage.Text).Groups["pluginId"].Value.ToLowerInvariant().Trim();
+            var pluginInformations = await _pluginApi.GetPluginsAsync(cancellationToken).ConfigureAwait(false);
+            var pluginInformation = pluginInformations.SingleOrDefault(i => i.Id.Value == pId);
+            if (pluginInformation == null)
+            {
+                await _messageApi.ReplyToAsync(tenantMessage, $"There's no plugin with ID '{pId}'", cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
+            var text = new StringBuilder()
+                .AppendLine($"ID: {pluginInformation.Id.Value} v{pluginInformation.Version.Value}")
+                .AppendLine($"Title: {pluginInformation.Title.Value}")
+                .AppendLine($"Description: {pluginInformation.Description.Value}")
+                .ToString();
+
+            await _messageApi.ReplyToAsync(tenantMessage, text, cancellationToken).ConfigureAwait(false);
         }
 
         private async Task<IReadOnlyCollection<HelpDetails>> GetCommandDescriptionAsync(
