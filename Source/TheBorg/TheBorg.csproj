@@ -66,8 +66,10 @@
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\IConfigurationService.cs" />
     <Compile Include="Services\IMessageService.cs" />
+    <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="Services\ISlackService.cs" />
     <Compile Include="Services\MessageService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\SlackService.cs" />
     <Compile Include="Services\Slack\ApiResponses\UserInfoApiResponse.cs" />
     <Compile Include="Services\Slack\DTOs\ChannelDto.cs" />
@@ -137,8 +139,9 @@
       <Name>TheBorg.Plugins.Status</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="MsSql\Scripts\" />
+    <EmbeddedResource Include="MsSql\Scripts\0001 - Create table Settings.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
