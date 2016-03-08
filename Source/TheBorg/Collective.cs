@@ -50,7 +50,7 @@ namespace TheBorg
 
         private static readonly IReadOnlyCollection<string> BuiltInPlugins = new []
             {
-                //typeof(JokesPluginBootstrapper).Assembly.GetName().Name,
+                typeof(JokesPluginBootstrapper).Assembly.GetName().Name,
                 typeof(StatusPluginBootstrapper).Assembly.GetName().Name,
                 typeof(PluginsPluginBootstrapper).Assembly.GetName().Name,
                 typeof(HelpPluginBootstrapper).Assembly.GetName().Name,
