@@ -25,7 +25,7 @@
 using System;
 using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.ValueObjects
+namespace TheBorg.Plugins.GitHub.Interface.ValueObjects
 {
     public class GitHubReleaseAsset : ValueObject
     {

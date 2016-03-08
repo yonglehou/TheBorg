@@ -22,29 +22,14 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Linq;
-using TheBorg.Interface.ValueObjects;
+using System.Threading;
+using System.Threading.Tasks;
+using Octokit;
 
-namespace TheBorg.ValueObjects
+namespace TheBorg.Plugins.GitHub.Services
 {
-    public class GitHubRelease : ValueObject
+    public interface IGitHubClientFactory
     {
-        public GitHubRelease(
-            bool isPrerelease,
-            string tagName,
-            string name,
-            IEnumerable<GitHubReleaseAsset> releaseAssets)
-        {
-            IsPrerelease = isPrerelease;
-            TagName = tagName;
-            Name = name;
-            ReleaseAssets = releaseAssets.ToList();
-        }
-
-        public bool IsPrerelease { get; }
-        public string TagName { get; }
-        public string Name { get; }
-        public IReadOnlyCollection<GitHubReleaseAsset> ReleaseAssets { get; }
+        Task<IGitHubClient> GetClientAsync(CancellationToken cancellationToken);
     }
 }

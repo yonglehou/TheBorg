@@ -30,6 +30,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{C9DB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Plugins.Help", "Source\TheBorg.Plugins.Help\TheBorg.Plugins.Help.csproj", "{21F28795-57EA-45CC-B15B-1FCECC20DC3C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Plugins.GitHub", "Source\TheBorg.Plugins.GitHub\TheBorg.Plugins.GitHub.csproj", "{A9131032-0359-49B5-BC71-BC8AEB016EEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Plugins.GitHub.Interface", "Source\TheBorg.Plugins.GitHub.Interface\TheBorg.Plugins.GitHub.Interface.csproj", "{9F628896-E7A9-45C1-9358-FEC34A7B0325}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +80,14 @@ Global
 		{21F28795-57EA-45CC-B15B-1FCECC20DC3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21F28795-57EA-45CC-B15B-1FCECC20DC3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21F28795-57EA-45CC-B15B-1FCECC20DC3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9131032-0359-49B5-BC71-BC8AEB016EEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9131032-0359-49B5-BC71-BC8AEB016EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9131032-0359-49B5-BC71-BC8AEB016EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9131032-0359-49B5-BC71-BC8AEB016EEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F628896-E7A9-45C1-9358-FEC34A7B0325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F628896-E7A9-45C1-9358-FEC34A7B0325}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F628896-E7A9-45C1-9358-FEC34A7B0325}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F628896-E7A9-45C1-9358-FEC34A7B0325}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,5 +97,7 @@ Global
 		{A2968831-196D-4B58-8813-93EA1648703D} = {C9DB0131-C1DD-464F-B528-33A687B59F30}
 		{C9EFBE31-45A6-4E51-98DE-D871B4AC61D2} = {C9DB0131-C1DD-464F-B528-33A687B59F30}
 		{21F28795-57EA-45CC-B15B-1FCECC20DC3C} = {C9DB0131-C1DD-464F-B528-33A687B59F30}
+		{A9131032-0359-49B5-BC71-BC8AEB016EEC} = {C9DB0131-C1DD-464F-B528-33A687B59F30}
+		{9F628896-E7A9-45C1-9358-FEC34A7B0325} = {C9DB0131-C1DD-464F-B528-33A687B59F30}
 	EndGlobalSection
 EndGlobal

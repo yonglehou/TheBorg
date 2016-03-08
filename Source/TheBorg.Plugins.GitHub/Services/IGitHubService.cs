@@ -25,9 +25,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.ValueObjects;
+using TheBorg.Plugins.GitHub.Interface.ValueObjects;
 
-namespace TheBorg.Services
+namespace TheBorg.Plugins.GitHub.Services
 {
     public interface IGitHubService
     {

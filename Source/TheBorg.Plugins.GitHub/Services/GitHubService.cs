@@ -24,25 +24,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Octokit;
-using TheBorg.ValueObjects;
+using TheBorg.Plugins.GitHub.Interface.ValueObjects;
 
-namespace TheBorg.Services
+namespace TheBorg.Plugins.GitHub.Services
 {
     public class GitHubService : IGitHubService
     {
-        private static readonly GitHubClient GitHubClient = new GitHubClient(new ProductHeaderValue(
-            "TheBorg",
-            typeof(GitHubService).Assembly.GetName().Version.ToString()));
+        private readonly IGitHubClientFactory _gitHubClientFactory;
 
-        static GitHubService()
+        public GitHubService(
+            IGitHubClientFactory gitHubClientFactory)
         {
-            var token = ConfigurationManager.AppSettings["theborg:github.token"] ?? Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-            GitHubClient.Credentials = new Credentials(token);
+            _gitHubClientFactory = gitHubClientFactory;
         }
 
         public async Task<IReadOnlyCollection<GitHubRelease>> GetAllReleasesAsync(
@@ -50,7 +47,8 @@ namespace TheBorg.Services
             string name,
             CancellationToken cancellationToken)
         {
-            var allRelases = await GitHubClient.Repository.Release.GetAll(owner, name).ConfigureAwait(false);
+            var gitHubClient = await _gitHubClientFactory.GetClientAsync(cancellationToken).ConfigureAwait(false);
+            var allRelases = await gitHubClient.Repository.Release.GetAll(owner, name).ConfigureAwait(false);
             return CreateReleases(allRelases).ToList();
         }
 

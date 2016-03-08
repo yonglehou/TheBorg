@@ -60,9 +60,7 @@
     <Compile Include="Controllers\PluginsController.cs" />
     <Compile Include="Controllers\TenantMessagesController.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
-    <Compile Include="Services\GitHubService.cs" />
     <Compile Include="Services\IConfigurationService.cs" />
-    <Compile Include="Services\IGitHubService.cs" />
     <Compile Include="Services\IMessageService.cs" />
     <Compile Include="Services\ISlackService.cs" />
     <Compile Include="Services\MessageService.cs" />
@@ -85,8 +83,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collective.cs" />
     <Compile Include="TheBorgModule.cs" />
-    <Compile Include="ValueObjects\GitHubRelease.cs" />
-    <Compile Include="ValueObjects\GitHubReleaseAsset.cs" />
     <Compile Include="ValueObjects\PluginIdentity.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +111,14 @@
     <ProjectReference Include="..\TheBorg.Plugins.Administration\TheBorg.Plugins.Administration.csproj">
       <Project>{c9efbe31-45a6-4e51-98de-d871b4ac61d2}</Project>
       <Name>TheBorg.Plugins.Administration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Plugins.GitHub.Interface\TheBorg.Plugins.GitHub.Interface.csproj">
+      <Project>{9f628896-e7a9-45c1-9358-fec34a7b0325}</Project>
+      <Name>TheBorg.Plugins.GitHub.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Plugins.GitHub\TheBorg.Plugins.GitHub.csproj">
+      <Project>{a9131032-0359-49b5-bc71-bc8aeb016eec}</Project>
+      <Name>TheBorg.Plugins.GitHub</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheBorg.Plugins.Help\TheBorg.Plugins.Help.csproj">
       <Project>{21f28795-57ea-45cc-b15b-1fcecc20dc3c}</Project>
