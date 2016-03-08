@@ -52,7 +52,7 @@ namespace TheBorg.Plugins.Jokes
         [HttpApi(HttpApiMethod.Get, "api/joke")]
         public async Task<string> Joke(CancellationToken cancellationToken)
         {
-            var uriStr = await _configApi.GetAsync("api-uri", cancellationToken).ConfigureAwait(false);
+            var uriStr = await _configApi.GetAsync(ConfigKey.With("api-uri"), cancellationToken).ConfigureAwait(false);
             var uri = new Uri(uriStr, UriKind.Absolute);
 
             var jokeContainer = await _httpApi.GetAsyncAs<JokeContainer>(uri, cancellationToken).ConfigureAwait(false);

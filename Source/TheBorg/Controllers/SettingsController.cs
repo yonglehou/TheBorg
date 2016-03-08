@@ -22,48 +22,53 @@
 // SOFTWARE.
 //
 
-using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Octokit;
-using TheBorg.Interface.Apis;
+using System.Web.Http;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Services;
 
-namespace TheBorg.Plugins.GitHub.Services
+namespace TheBorg.Controllers
 {
-    public class GitHubClientFactory : IGitHubClientFactory
+    [RoutePrefix("api/settings")]
+    public class SettingsController : ApiController
     {
-        private readonly IConfigApi _configApi;
-        private IGitHubClient _gitHubClient;
+        private readonly ISettingsService _settingsService;
 
-        public GitHubClientFactory(
-            IConfigApi configApi)
+        public SettingsController(
+            ISettingsService settingsService)
         {
-            _configApi = configApi;
+            _settingsService = settingsService;
         }
 
-        public async Task<IGitHubClient> GetClientAsync(CancellationToken cancellationToken)
+        [Route("{key}")]
+        [HttpPut]
+        [HttpPost]
+        public async Task<IHttpActionResult> Set(string key, CancellationToken cancellationToken)
         {
-            if (_gitHubClient != null)
+            var settingKey = SettingKey.With(key);
+            var content = await Request.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            if (string.IsNullOrEmpty(content))
             {
-                return _gitHubClient;
+                return BadRequest("No content");
             }
 
-            var token = await _configApi.GetAsync(ConfigKey.With("github-token"), cancellationToken).ConfigureAwait(false);
-            if (string.IsNullOrEmpty(token))
-            {
-                token = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-            }
+            await _settingsService.SetAsync(settingKey.Value, content, cancellationToken).ConfigureAwait(false);
 
-            var productHeaderValue = new ProductHeaderValue(
-                "TheBorg.Plugins.GitHub",
-                GetType().Assembly.GetName().Version.ToString());
+            return Ok();
+        }
 
-            _gitHubClient = new GitHubClient(productHeaderValue)
-                {
-                    Credentials = new Credentials(token)
-                };
-            return _gitHubClient;
+        [Route("{key}")]
+        [HttpGet]
+        public async Task<IHttpActionResult> Get(string key, CancellationToken cancellationToken)
+        {
+            var settingKey = SettingKey.With(key);
+
+            var content = await _settingsService.GetAsync(settingKey.Value, cancellationToken).ConfigureAwait(false);
+
+            return Content(HttpStatusCode.OK, content);
         }
     }
 }

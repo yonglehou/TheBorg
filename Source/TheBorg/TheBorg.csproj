@@ -54,6 +54,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Controllers\ConfigurationController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Extensions\PrincipalExtensions.cs" />
     <Compile Include="Controllers\CommandDescriptionsController.cs" />
     <Compile Include="Controllers\PluginInstallsController.cs" />

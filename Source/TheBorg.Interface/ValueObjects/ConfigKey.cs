@@ -22,30 +22,14 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.Apis;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
-
-namespace TheBorg.Host.Apis
+namespace TheBorg.Interface.ValueObjects
 {
-    public class ConfigApi : Api, IConfigApi
+    public class ConfigKey : Key
     {
-        public ConfigApi(
-            PluginId pluginId,
-            Uri baseUri)
-            : base(pluginId, baseUri)
-        {
-        }
+        public static ConfigKey With(string value) { return new ConfigKey(value); }
 
-        public Task<string> GetAsync(ConfigKey configKey, CancellationToken cancellationToken)
+        public ConfigKey(string value) : base(value)
         {
-            if (configKey == null) throw new ArgumentNullException(nameof(configKey));
-
-            return GetAsAsync<string>($"api/plugin-configuration/{configKey.Value}", cancellationToken, HttpStatusCode.NotFound);
         }
     }
 }

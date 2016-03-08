@@ -24,11 +24,12 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Interface.Apis
 {
     public interface IConfigApi
     {
-        Task<string> GetAsync(string key, CancellationToken cancellationToken);
+        Task<string> GetAsync(ConfigKey configKey, CancellationToken cancellationToken);
     }
 }

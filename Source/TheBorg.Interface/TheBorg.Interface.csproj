@@ -61,12 +61,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueObjects\Address.cs" />
     <Compile Include="ValueObjects\CommandDescription.cs" />
+    <Compile Include="ValueObjects\ConfigKey.cs" />
+    <Compile Include="ValueObjects\Key.cs" />
     <Compile Include="ValueObjects\Plugins\PluginDescription.cs" />
     <Compile Include="ValueObjects\Plugins\PluginId.cs" />
     <Compile Include="ValueObjects\Plugins\PluginInformation.cs" />
     <Compile Include="ValueObjects\Plugins\PluginPath.cs" />
     <Compile Include="ValueObjects\Plugins\PluginTitle.cs" />
     <Compile Include="ValueObjects\Plugins\PluginVersion.cs" />
+    <Compile Include="ValueObjects\SettingKey.cs" />
     <Compile Include="ValueObjects\TenantChannel.cs" />
     <Compile Include="ValueObjects\SingleValueObject.cs" />
     <Compile Include="ValueObjects\Tenant.cs" />
