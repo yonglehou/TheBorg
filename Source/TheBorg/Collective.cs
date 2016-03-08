@@ -33,6 +33,7 @@ using TheBorg.Core;
 using TheBorg.Core.Extensions;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
+using TheBorg.MsSql;
 using TheBorg.PluginManagement;
 using TheBorg.Plugins.Administration;
 using TheBorg.Plugins.GitHub;
@@ -46,6 +47,7 @@ namespace TheBorg
     public class Collective : ICollective
     {
         private readonly ILogger _logger;
+        private readonly IMsSqlUpgrader _msSqlUpgrader;
         private readonly IPluginManagementService _pluginManagementService;
         private readonly IReadOnlyCollection<ITenant> _tenants;
 
@@ -60,16 +62,23 @@ namespace TheBorg
 
         public Collective(
             ILogger logger,
+            IMsSqlUpgrader msSqlUpgrader,
             IPluginManagementService pluginManagementService,
             IEnumerable<ITenant> tenants)
         {
             _logger = logger;
+            _msSqlUpgrader = msSqlUpgrader;
             _pluginManagementService = pluginManagementService;
             _tenants = tenants.ToList();
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            using (_logger.Time("Upgrade database"))
+            {
+                await _msSqlUpgrader.UpgradeAsync().ConfigureAwait(false);
+            }
+
             using (_logger.Time("TheBorg start"))
             {
                 await _pluginManagementService.InitializeAsync(cancellationToken).ConfigureAwait(false);

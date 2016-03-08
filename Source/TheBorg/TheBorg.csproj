@@ -59,6 +59,10 @@
     <Compile Include="Controllers\PluginInstallsController.cs" />
     <Compile Include="Controllers\PluginsController.cs" />
     <Compile Include="Controllers\TenantMessagesController.cs" />
+    <Compile Include="MsSql\IMsSqlConnection.cs" />
+    <Compile Include="MsSql\MsSqlConnection.cs" />
+    <Compile Include="MsSql\IMsSqlUpgrader.cs" />
+    <Compile Include="MsSql\MsSqlUpgrader.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\IConfigurationService.cs" />
     <Compile Include="Services\IMessageService.cs" />
@@ -133,6 +137,9 @@
       <Name>TheBorg.Plugins.Status</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MsSql\Scripts\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -188,6 +195,46 @@
       <ItemGroup>
         <Reference Include="Autofac.Integration.WebApi.Owin">
           <HintPath>..\..\packages\Autofac.WebApi2.Owin\lib\net45\Autofac.Integration.WebApi.Owin.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Dapper">
+          <HintPath>..\..\packages\Dapper\lib\net35\Dapper.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0')">
+      <ItemGroup>
+        <Reference Include="Dapper">
+          <HintPath>..\..\packages\Dapper\lib\net40\Dapper.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+      <ItemGroup>
+        <Reference Include="Dapper">
+          <HintPath>..\..\packages\Dapper\lib\net45\Dapper.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v3.5' Or $(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+      <ItemGroup>
+        <Reference Include="DbUp">
+          <HintPath>..\..\packages\dbup\lib\net35\DbUp.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
