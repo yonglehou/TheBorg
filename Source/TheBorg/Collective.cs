@@ -98,7 +98,7 @@ namespace TheBorg
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(0);
+            return Task.WhenAll(_tenants.Select(t => t.DisconnectAsync(cancellationToken)));
         }
 
         private async void HandleMessage(TenantMessage tenantMessage)

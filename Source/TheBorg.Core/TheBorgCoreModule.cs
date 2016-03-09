@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Autofac;
 using Serilog;
+using TheBorg.Core.Clients;
 using Module = Autofac.Module;
 
 namespace TheBorg.Core
@@ -37,7 +38,8 @@ namespace TheBorg.Core
 
         private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
             {
-                typeof(TcpHelper)
+                typeof(TcpHelper),
+                typeof(WebSocketClient),
             };
 
         protected override void Load(ContainerBuilder builder)
@@ -55,7 +57,13 @@ namespace TheBorg.Core
             builder
                 .RegisterAssemblyTypes(Assembly)
                 .Where(t => !TypesNotRegisteredByConvention.Contains(t))
-                .AsImplementedInterfaces();
+                .AsImplementedInterfaces()
+                .OwnedByLifetimeScope();
+
+            builder
+                .RegisterType<WebSocketClient>()
+                .As<IWebSocketClient>()
+                .ExternallyOwned();
         }
     }
 }

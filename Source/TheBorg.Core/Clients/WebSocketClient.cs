@@ -29,10 +29,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using TheBorg.Core.Extensions;
 
 namespace TheBorg.Core.Clients
 {
-    public class WebSocketClient : IWebSocketClient, IDisposable
+    public class WebSocketClient : IWebSocketClient
     {
         private readonly ILogger _logger;
         private readonly ClientWebSocket _webSocket = new ClientWebSocket();
@@ -67,6 +68,7 @@ namespace TheBorg.Core.Clients
             try
             {
                 ListenAsync().GetAwaiter().GetResult();
+                _messages.OnCompleted();
             }
             catch (OperationCanceledException) { }
             catch (Exception e)
@@ -74,8 +76,6 @@ namespace TheBorg.Core.Clients
                 _messages.OnError(e);
                 _logger.Error(e, "Web socket failed");
             }
-
-            _messages.OnCompleted();
 
             _logger.Information("Web socket closed");
         }
@@ -127,6 +127,8 @@ namespace TheBorg.Core.Clients
         public void Dispose()
         {
             _cancellationTokenSource.Cancel();
+            _messages.DisposeExceptionSafe(_logger);
+            _webSocket.DisposeExceptionSafe(_logger);
         }
     }
 }

@@ -29,10 +29,13 @@ using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Autofac;
 using Newtonsoft.Json;
 using Serilog;
 using TheBorg.Core.Clients;
+using TheBorg.Core.Extensions;
 using TheBorg.Core.Serialization.Resolvers;
+using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Services;
 using TheBorg.Services.Slack.ApiResponses;
@@ -43,10 +46,11 @@ namespace TheBorg.Tenants
 {
     public class SlackTenant : ITenant
     {
+        private IWebSocketClient _webSocketClient;
         private readonly ILogger _logger;
         private readonly ISlackService _slackService;
-        private readonly IWebSocketClient _webSocketClient;
-        private readonly List<IDisposable> _disposables = new List<IDisposable>();
+        private readonly IComponentContext _componentContext;
+        private readonly AsyncLock _asyncLock = new AsyncLock();
         private readonly Subject<TenantMessage> _messages = new Subject<TenantMessage>();
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
             {
@@ -63,33 +67,54 @@ namespace TheBorg.Tenants
         public SlackTenant(
             ILogger logger,
             ISlackService slackService,
-            IWebSocketClient webSocketClient)
+            IComponentContext componentContext)
         {
             _logger = logger;
             _slackService = slackService;
-            _webSocketClient = webSocketClient;
-
-            _disposables.Add(_webSocketClient.Messages.Subscribe(Received, Error));
+            _componentContext = componentContext;
         }
 
         public async Task ConnectAsync(CancellationToken cancellationToken)
         {
-            var rtmStartResponse = await _slackService.CallApiAsync<RtmStartApiResponse>(
-                "rtm.start",
-                new Dictionary<string, string>
-                    {
-                        {"simple_latest", "true"},
-                        {"no_unreads", "true" },
-                    },
-                cancellationToken)
-                .ConfigureAwait(false);
-            _self = rtmStartResponse.Self;
-            await _webSocketClient.ConnectAsync(rtmStartResponse.Url, cancellationToken).ConfigureAwait(false);
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                return;
+            }
+
+            using (await _asyncLock.WaitAsync(cancellationToken).ConfigureAwait(false))
+            {
+                _webSocketClient?.DisposeExceptionSafe(_logger);
+                _webSocketClient = null;
+
+                var webSocketClient = _componentContext.Resolve<IWebSocketClient>();
+                var rtmStartResponse = await _slackService.CallApiAsync<RtmStartApiResponse>(
+                    "rtm.start",
+                    new Dictionary<string, string>
+                        {
+                            {"simple_latest", "true"},
+                            {"no_unreads", "true" },
+                        },
+                    cancellationToken)
+                    .ConfigureAwait(false);
+
+                await webSocketClient.ConnectAsync(rtmStartResponse.Url, cancellationToken).ConfigureAwait(false);
+
+                _self = rtmStartResponse.Self;
+                _webSocketClient = webSocketClient;
+                _webSocketClient.Messages.Subscribe(Received, Error); // No need to handle disposable
+            }
         }
 
-        public Task DisconnectAsync(CancellationToken cancellationToken)
+        public async Task DisconnectAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(0);
+            using (await _asyncLock.WaitAsync(cancellationToken).ConfigureAwait(false))
+            {
+                _logger.Verbose("Disconnecting Slack");
+
+                _cancellationTokenSource.Cancel();
+                _webSocketClient?.DisposeExceptionSafe(_logger);
+                _webSocketClient = null;
+            }
         }
 
         private async void Received(string json)
@@ -212,8 +237,16 @@ namespace TheBorg.Tenants
                             time = DateTimeOffset.Now,
                         },
                         _jsonSerializerSettings);
-                    await _webSocketClient.SendAsync(json, _cancellationTokenSource.Token).ConfigureAwait(false);
+
+                    using (await _asyncLock.WaitAsync(CancellationToken.None).ConfigureAwait(false))
+                    {
+                        await _webSocketClient.SendAsync(json, _cancellationTokenSource.Token).ConfigureAwait(false);
+                    }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.Debug("Ping loop closed");
             }
             catch (Exception e)
             {

@@ -23,16 +23,25 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
+using Serilog;
 
-namespace TheBorg.Core.Clients
+namespace TheBorg.Core.Extensions
 {
-    public interface IWebSocketClient : IDisposable
+    public static class DisposableExtensions
     {
-        IObservable<string> Messages { get; }
+        public static void DisposeExceptionSafe(this IDisposable disposable, ILogger logger)
+        {
+            if (disposable == null) return;
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
 
-        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
-        Task SendAsync(string message, CancellationToken cancellationToken);
+            try
+            {
+                disposable.Dispose();
+            }
+            catch (Exception e)
+            {
+                logger.Warning(e, $"Failed to dispose '{disposable.GetType().Name}'");
+            }
+        }
     }
 }

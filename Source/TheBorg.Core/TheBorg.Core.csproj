@@ -50,6 +50,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="ConfigurationReader.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
+    <Compile Include="Extensions\DisposableExtensions.cs" />
     <Compile Include="Extensions\LoggerExtensions.cs" />
     <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="IConfiguration.cs" />
