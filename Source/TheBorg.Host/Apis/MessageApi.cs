@@ -47,7 +47,7 @@ namespace TheBorg.Host.Apis
 
         public Task SendAsync(Address address, string text, CancellationToken cancellationToken)
         {
-            return SendAsync(new TenantMessage(text, address, null), cancellationToken);
+            return SendAsync(new TenantMessage(text, address), cancellationToken);
         }
 
         public Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)

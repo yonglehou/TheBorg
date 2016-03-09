@@ -152,14 +152,20 @@ namespace TheBorg.PluginManagement
                     }
 
                     var plugin = _plugins[pluginCommandDescription.Key];
+
+                    _logger.Verbose($"Plugin '{pluginCommandDescription.Key}' handles: {tenantMessage.Text}");
+
                     await _restClient.PostAsync<object, TenantMessage>(new Uri(plugin.Plugin.BaseUri, commandDescription.Endpoint),
                         tenantMessage,
                         JsonFormat.PascalCase,
                         cancellationToken)
                         .ConfigureAwait(false);
+
                     return ProcessMessageResult.Handled;
                 }
             }
+
+            _logger.Verbose($"Could not find a command match: {tenantMessage.Text}");
 
             return ProcessMessageResult.Skipped;
         }

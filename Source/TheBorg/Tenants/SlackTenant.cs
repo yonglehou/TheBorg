@@ -175,8 +175,7 @@ namespace TheBorg.Tenants
 
             _messages.OnNext(new TenantMessage(
                 text,
-                sender,
-                (t, c) => ReplyToAsync(messageRtmResponse, t, c)));
+                sender));
         }
 
         private Task ReplyToAsync(

@@ -23,6 +23,9 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,13 +38,43 @@ namespace TheBorg.Host.Apis
     {
         private static readonly HttpClient HttpClient = new HttpClient();
 
-        public async Task<T> GetAsyncAs<T>(Uri uri, CancellationToken cancellationToken)
+        public async Task<T> GetAsyncAs<T>(
+            Uri uri,
+            CancellationToken cancellationToken,
+            IEnumerable<KeyValuePair<string, string>> headers = null,
+            IEnumerable<HttpStatusCode> validStatusCodes = null)
         {
-            using (var httpResponseMessage = await HttpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
+            var content = await GetAsync(uri, cancellationToken, headers, validStatusCodes).ConfigureAwait(false);
+
+            return JsonConvert.DeserializeObject<T>(content);
+        }
+
+        public async Task<string> GetAsync(
+            Uri uri,
+            CancellationToken cancellationToken,
+            IEnumerable<KeyValuePair<string, string>> headers = null,
+            IEnumerable<HttpStatusCode> validStatusCodes = null)
+        {
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
             {
-                httpResponseMessage.EnsureSuccessStatusCode();
-                var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<T>(json);
+                if (headers != null)
+                {
+                    foreach (var header in headers)
+                    {
+                        httpRequestMessage.Headers.Add(header.Key, header.Value);
+                    }
+                }
+
+                using (var httpResponseMessage = await HttpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
+                {
+                    if (validStatusCodes == null ||
+                        (!validStatusCodes.Contains(httpResponseMessage.StatusCode)))
+                    {
+                        httpResponseMessage.EnsureSuccessStatusCode();
+                    }
+
+                    return await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                }
             }
         }
     }
