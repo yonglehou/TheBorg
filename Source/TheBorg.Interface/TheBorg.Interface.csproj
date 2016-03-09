@@ -51,6 +51,7 @@
     <Compile Include="Apis\IMessageApi.cs" />
     <Compile Include="Apis\IPluginApi.cs" />
     <Compile Include="Apis\IUpdateApi.cs" />
+    <Compile Include="AsyncLock.cs" />
     <Compile Include="Attributes\CommandAttribute.cs" />
     <Compile Include="Attributes\FromBodyAttribute.cs" />
     <Compile Include="Attributes\HttpMethodAttribute.cs" />
@@ -89,4 +90,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Import Project="..\..\.paket\paket.targets" />
 </Project>
