@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Apis\Api.cs" />
     <Compile Include="ApiBootstrapper.cs" />
     <Compile Include="ApiEndpoint.cs" />
