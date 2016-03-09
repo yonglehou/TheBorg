@@ -31,7 +31,6 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using Newtonsoft.Json;
 using Serilog;
 using TheBorg.Core.Extensions;
@@ -106,8 +105,11 @@ namespace TheBorg.Core.Clients
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri))
             {
                 httpRequestMessage.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
                 using (var httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
                 {
+                    httpResponseMessage.EnsureSuccessStatusCode();
+
                     var responseJson = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                     return _jsonSerializer.Deserialize<TResult>(responseJson, jsonFormat);
                 }
