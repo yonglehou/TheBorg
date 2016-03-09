@@ -41,7 +41,7 @@ namespace TheBorg.Tenants.Slack
         private readonly ILogger _logger;
         private readonly IRestClient _restClient;
         private readonly ConcurrentDictionary<string, Task<TenantUser>> _userCache = new ConcurrentDictionary<string, Task<TenantUser>>();
-        private static readonly Tenant Tenant = new Tenant("slack");
+        private static readonly TenantKey TenantKey = new TenantKey("slack");
 
         public SlackService(
             ILogger logger,
@@ -67,7 +67,7 @@ namespace TheBorg.Tenants.Slack
                 cancellationToken,
                 new KeyValuePair<string, string>("user", userId))
                 .ConfigureAwait(false);
-            return new TenantUser(userInfoApiResponse.User.Name, userInfoApiResponse.User.Id, Tenant);
+            return new TenantUser(userInfoApiResponse.User.Name, userInfoApiResponse.User.Id, TenantKey);
         }
 
         public Task<ApiResponse> SendMessageAsync(

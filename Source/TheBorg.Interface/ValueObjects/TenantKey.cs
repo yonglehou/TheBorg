@@ -24,9 +24,11 @@
 
 namespace TheBorg.Interface.ValueObjects
 {
-    public class Tenant : SingleValueObject<string>
+    public class TenantKey : Key
     {
-        public Tenant(string value) : base(value)
+        public static TenantKey With(string value) { return new TenantKey(value); }
+
+        public TenantKey(string value) : base(value)
         {
         }
     }

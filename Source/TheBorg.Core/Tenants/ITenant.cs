@@ -31,6 +31,8 @@ namespace TheBorg.Core.Tenants
 {
     public interface ITenant
     {
+        TenantKey TenantKey { get; }
+
         IObservable<TenantMessage> Messages { get; }
 
         Task ConnectAsync(CancellationToken cancellationToken);

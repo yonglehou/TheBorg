@@ -73,7 +73,7 @@
     <Compile Include="ValueObjects\SettingKey.cs" />
     <Compile Include="ValueObjects\TenantChannel.cs" />
     <Compile Include="ValueObjects\SingleValueObject.cs" />
-    <Compile Include="ValueObjects\Tenant.cs" />
+    <Compile Include="ValueObjects\TenantKey.cs" />
     <Compile Include="ValueObjects\TenantMessage.cs" />
     <Compile Include="ValueObjects\TenantUser.cs" />
     <Compile Include="ValueObjects\ValueObject.cs" />
