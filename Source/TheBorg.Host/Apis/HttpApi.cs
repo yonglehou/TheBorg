@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,13 +36,27 @@ namespace TheBorg.Host.Apis
     {
         private static readonly HttpClient HttpClient = new HttpClient();
 
-        public async Task<T> GetAsyncAs<T>(Uri uri, CancellationToken cancellationToken)
+        public async Task<T> GetAsyncAs<T>(
+            Uri uri,
+            CancellationToken cancellationToken,
+            IEnumerable<KeyValuePair<string, string>> headers = null)
         {
-            using (var httpResponseMessage = await HttpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
+            using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
             {
-                httpResponseMessage.EnsureSuccessStatusCode();
-                var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<T>(json);
+                if (headers != null)
+                {
+                    foreach (var header in headers)
+                    {
+                        httpRequestMessage.Headers.Add(header.Key, header.Value);
+                    }
+                }
+
+                using (var httpResponseMessage = await HttpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
+                {
+                    httpResponseMessage.EnsureSuccessStatusCode();
+                    var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    return JsonConvert.DeserializeObject<T>(json);
+                }
             }
         }
     }

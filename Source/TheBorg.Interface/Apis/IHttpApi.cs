@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,6 +31,6 @@ namespace TheBorg.Interface.Apis
 {
     public interface IHttpApi
     {
-        Task<T> GetAsyncAs<T>(Uri uri, CancellationToken cancellationToken);
+        Task<T> GetAsyncAs<T>(Uri uri, CancellationToken cancellationToken, IEnumerable<KeyValuePair<string, string>> headers = null);
     }
 }
