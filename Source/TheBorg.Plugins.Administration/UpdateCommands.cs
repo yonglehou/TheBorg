@@ -22,34 +22,33 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface;
 using TheBorg.Interface.Apis;
+using TheBorg.Interface.Attributes;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Interface
+namespace TheBorg.Plugins.Administration
 {
-    public interface IPluginRegistration
+    public class UpdateCommands : IPluginHttpApi
     {
-        ICommandApi CommandApi { get; }
-        IConfigApi ConfigApi { get; }
-        IMessageApi MessageApi { get; }
-        IHttpApi HttpApi { get; }
-        IPluginApi PluginApi { get; }
-        IUpdateApi UpdateApi { get; }
+        private readonly IMessageApi _messageApi;
+        private readonly IUpdateApi _updateApi;
 
-        Uri Uri { get; }
+        public UpdateCommands(
+            IMessageApi messageApi,
+            IUpdateApi updateApi)
+        {
+            _messageApi = messageApi;
+            _updateApi = updateApi;
+        }
 
-        IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
-
-        IPluginRegistration RegisterHttpApi<T>(T instance)
-            where T : IPluginHttpApi;
-        IPluginRegistration RegisterHttpApi<T>(Func<IHttpApiRequestContext, T> factory)
-            where T : IPluginHttpApi;
-
-        IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
-        IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);
-        IPluginRegistration RegisterHttpApiCommands();
+        [HttpApi(HttpApiMethod.Post, "api/commands/check-for-update")]
+        [Command("^are you outdated$", "check if there's a new release for the Borg")]
+        public async Task CheckForUpdate([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
+        {
+            await _updateApi.UpdateCheckAsync(cancellationToken).ConfigureAwait(false);
+        }
     }
 }

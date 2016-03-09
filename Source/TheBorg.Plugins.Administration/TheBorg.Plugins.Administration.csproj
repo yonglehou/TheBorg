@@ -43,6 +43,7 @@
     <Compile Include="PluginsApi.cs" />
     <Compile Include="PluginsPluginBootstrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpdateCommands.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TheBorg.Interface\TheBorg.Interface.csproj">

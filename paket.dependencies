@@ -12,6 +12,7 @@ nuget Newtonsoft.Json 8.0.2
 nuget Octokit
 nuget Rx-Main 2.2.5
 nuget Serilog 1.5.14
+nuget squirrel.windows 1.2.5
 nuget Topshelf 3.3.1
 
 group Test

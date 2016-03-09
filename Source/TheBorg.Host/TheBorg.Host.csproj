@@ -50,6 +50,7 @@
     <Compile Include="Apis\HttpApi.cs" />
     <Compile Include="Apis\MessageApi.cs" />
     <Compile Include="Apis\PluginApi.cs" />
+    <Compile Include="Apis\UpdateApi.cs" />
     <Compile Include="HttpApiRequestContext.cs" />
     <Compile Include="ApiHost.cs" />
     <Compile Include="ApiModule.cs" />

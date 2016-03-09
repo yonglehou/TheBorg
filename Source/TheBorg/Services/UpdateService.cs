@@ -22,34 +22,29 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Interface.Apis;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
+using System.Threading;
+using System.Threading.Tasks;
+using Squirrel;
+using TheBorg.Services.Update;
 
-namespace TheBorg.Interface
+namespace TheBorg.Services
 {
-    public interface IPluginRegistration
+    public class UpdateService : IUpdateService
     {
-        ICommandApi CommandApi { get; }
-        IConfigApi ConfigApi { get; }
-        IMessageApi MessageApi { get; }
-        IHttpApi HttpApi { get; }
-        IPluginApi PluginApi { get; }
-        IUpdateApi UpdateApi { get; }
+        private readonly ITheBorgDownloader _theBorgDownloader;
 
-        Uri Uri { get; }
+        public UpdateService(
+            ITheBorgDownloader theBorgDownloader)
+        {
+            _theBorgDownloader = theBorgDownloader;
+        }
 
-        IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
-
-        IPluginRegistration RegisterHttpApi<T>(T instance)
-            where T : IPluginHttpApi;
-        IPluginRegistration RegisterHttpApi<T>(Func<IHttpApiRequestContext, T> factory)
-            where T : IPluginHttpApi;
-
-        IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
-        IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);
-        IPluginRegistration RegisterHttpApiCommands();
+        public async Task UpdateCheckAsync(CancellationToken cancellationToken)
+        {
+            using (var aa = new UpdateManager(@"http://localhost/", "TheBorg", urlDownloader: _theBorgDownloader))
+            {
+                var updateInfo = await aa.CheckForUpdate().ConfigureAwait(false);
+            }
+        }
     }
 }

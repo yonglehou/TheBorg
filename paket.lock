@@ -16,6 +16,7 @@ NUGET
       Microsoft.AspNet.WebApi.Owin (>= 5.2.0)
     Dapper (1.42)
     dbup (3.3.2)
+    DeltaCompressionDotNet (1.0.0)
     Microsoft.AspNet.WebApi.Client (5.2.3)
       Microsoft.Net.Http (>= 2.2.22) - framework: portable-wp80+win+net45+wp81+wpa81
       Newtonsoft.Json (>= 6.0.4) - framework: >= net45, portable-wp80+win+net45+wp81+wpa81
@@ -41,6 +42,7 @@ NUGET
     Microsoft.Owin.Hosting (3.0.1)
       Microsoft.Owin (>= 3.0.1)
       Owin (>= 1.0)
+    Mono.Cecil (0.9.6.1)
     Nancy (1.4.3)
     Nancy.Hosting.Self (1.4.1)
       Nancy (>= 1.4.1)
@@ -63,6 +65,11 @@ NUGET
       Rx-Core (>= 2.2.5)
       Rx-Interfaces (>= 2.2.5)
     Serilog (1.5.14)
+    Splat (1.6.2)
+    squirrel.windows (1.2.5)
+      DeltaCompressionDotNet (>= 1.0.0)
+      Mono.Cecil (>= 0.9.6.1)
+      Splat (>= 1.6.2)
     Topshelf (3.3.1)
 
 GROUP Build

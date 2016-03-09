@@ -44,6 +44,7 @@ namespace TheBorg.Core
         }
 
         public string PluginInstallPath => ReplaceSpecialPaths(_configurationReader.ReadString("plugins.install-path"));
+        public Uri LatestReleasesUri => new Uri(_configurationReader.ReadString("update.latest-releases-uri"), UriKind.Absolute);
 
         private static string ReplaceSpecialPaths(string path)
         {

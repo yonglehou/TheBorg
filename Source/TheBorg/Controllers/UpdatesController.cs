@@ -22,34 +22,30 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Interface.Apis;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
+using TheBorg.Services;
 
-namespace TheBorg.Interface
+namespace TheBorg.Controllers
 {
-    public interface IPluginRegistration
+    [RoutePrefix("api/updates")]
+    public class UpdatesController : ApiController
     {
-        ICommandApi CommandApi { get; }
-        IConfigApi ConfigApi { get; }
-        IMessageApi MessageApi { get; }
-        IHttpApi HttpApi { get; }
-        IPluginApi PluginApi { get; }
-        IUpdateApi UpdateApi { get; }
+        private readonly IUpdateService _updateService;
 
-        Uri Uri { get; }
+        public UpdatesController(
+            IUpdateService updateService)
+        {
+            _updateService = updateService;
+        }
 
-        IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
-
-        IPluginRegistration RegisterHttpApi<T>(T instance)
-            where T : IPluginHttpApi;
-        IPluginRegistration RegisterHttpApi<T>(Func<IHttpApiRequestContext, T> factory)
-            where T : IPluginHttpApi;
-
-        IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
-        IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);
-        IPluginRegistration RegisterHttpApiCommands();
+        [HttpGet]
+        [Route("")]
+        public async Task<IHttpActionResult> ListUpdates(CancellationToken cancellationToken)
+        {
+            await _updateService.UpdateCheckAsync(cancellationToken).ConfigureAwait(false);
+            return Ok();
+        }
     }
 }

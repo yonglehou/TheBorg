@@ -74,6 +74,7 @@ namespace TheBorg
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+
             using (_logger.Time("Upgrade database"))
             {
                 await _msSqlUpgrader.UpgradeAsync().ConfigureAwait(false);

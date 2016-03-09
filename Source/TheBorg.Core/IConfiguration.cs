@@ -22,10 +22,13 @@
 // SOFTWARE.
 //
 
+using System;
+
 namespace TheBorg.Core
 {
     public interface IConfiguration
     {
         string PluginInstallPath { get; }
+        Uri LatestReleasesUri { get; }
     }
 }

@@ -44,6 +44,7 @@ namespace TheBorg.Host
         public IMessageApi MessageApi { get; }
         public IHttpApi HttpApi { get; }
         public IPluginApi PluginApi { get; }
+        public IUpdateApi UpdateApi { get; }
         public Uri Uri { get; }
 
         private readonly List<CommandDescription> _commandDescriptions = new List<CommandDescription>();
@@ -58,7 +59,8 @@ namespace TheBorg.Host
             IMessageApi messageApi,
             IHttpApi httpApi,
             IPluginApi pluginApi,
-            IConfigApi configApi)
+            IConfigApi configApi,
+            IUpdateApi updateApi)
         {
             Uri = uri;
             CommandApi = commandApi;
@@ -66,6 +68,7 @@ namespace TheBorg.Host
             HttpApi = httpApi;
             PluginApi = pluginApi;
             ConfigApi = configApi;
+            UpdateApi = updateApi;
         }
 
         public IPluginRegistration SetPluginInformation(PluginInformation pluginInformation)

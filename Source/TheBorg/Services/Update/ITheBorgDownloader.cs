@@ -22,34 +22,11 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Interface.Apis;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
+using Squirrel;
 
-namespace TheBorg.Interface
+namespace TheBorg.Services.Update
 {
-    public interface IPluginRegistration
+    public interface ITheBorgDownloader : IFileDownloader
     {
-        ICommandApi CommandApi { get; }
-        IConfigApi ConfigApi { get; }
-        IMessageApi MessageApi { get; }
-        IHttpApi HttpApi { get; }
-        IPluginApi PluginApi { get; }
-        IUpdateApi UpdateApi { get; }
-
-        Uri Uri { get; }
-
-        IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
-
-        IPluginRegistration RegisterHttpApi<T>(T instance)
-            where T : IPluginHttpApi;
-        IPluginRegistration RegisterHttpApi<T>(Func<IHttpApiRequestContext, T> factory)
-            where T : IPluginHttpApi;
-
-        IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
-        IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);
-        IPluginRegistration RegisterHttpApiCommands();
     }
 }

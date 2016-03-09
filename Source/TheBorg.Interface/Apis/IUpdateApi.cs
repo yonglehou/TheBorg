@@ -22,34 +22,13 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Interface.Apis;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Interface
+namespace TheBorg.Interface.Apis
 {
-    public interface IPluginRegistration
+    public interface IUpdateApi
     {
-        ICommandApi CommandApi { get; }
-        IConfigApi ConfigApi { get; }
-        IMessageApi MessageApi { get; }
-        IHttpApi HttpApi { get; }
-        IPluginApi PluginApi { get; }
-        IUpdateApi UpdateApi { get; }
-
-        Uri Uri { get; }
-
-        IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
-
-        IPluginRegistration RegisterHttpApi<T>(T instance)
-            where T : IPluginHttpApi;
-        IPluginRegistration RegisterHttpApi<T>(Func<IHttpApiRequestContext, T> factory)
-            where T : IPluginHttpApi;
-
-        IPluginRegistration RegisterCommands(params CommandDescription[] commandDescriptions);
-        IPluginRegistration RegisterCommands(IEnumerable<CommandDescription> commandDescriptions);
-        IPluginRegistration RegisterHttpApiCommands();
+        Task UpdateCheckAsync(CancellationToken cancellationToken);
     }
 }
