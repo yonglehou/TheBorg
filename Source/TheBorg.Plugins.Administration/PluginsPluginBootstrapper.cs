@@ -43,6 +43,7 @@ namespace TheBorg.Plugins.Administration
                         PluginDescription.With("Provides administration"),
                         r.Uri));
                     r.RegisterHttpApi(new PluginsApi(r.PluginApi, r.MessageApi));
+                    r.RegisterHttpApi(new UpdateCommands(r.MessageApi, r.UpdateApi));
                     r.RegisterHttpApiCommands();
                 });
         }

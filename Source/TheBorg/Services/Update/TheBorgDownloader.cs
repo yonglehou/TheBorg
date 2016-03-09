@@ -24,6 +24,7 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
@@ -59,7 +60,7 @@ namespace TheBorg.Services.Update
 
         public async Task<byte[]> DownloadUrl(string url)
         {
-            _logger.Debug($"Requesting to download '{url}'");
+            _logger.Debug($"Requesting to download fake '{url}'");
 
             var fakeUri = new Uri(url, UriKind.Absolute);
             if (!fakeUri.AbsolutePath.EndsWith("/RELEASES"))
@@ -70,6 +71,8 @@ namespace TheBorg.Services.Update
             var uri = await GetReleaseUrlAsync().ConfigureAwait(false);
             var newUri = new Uri($"{uri}{fakeUri.AbsolutePath}".Replace("/tag/", "/download/"), UriKind.Absolute);
 
+            _logger.Verbose($"Calculated the real download URL for '{url}' to be '{newUri}'");
+
             return await HttpClient.GetByteArrayAsync(newUri).ConfigureAwait(false);
         }
 
@@ -77,10 +80,13 @@ namespace TheBorg.Services.Update
         {
             using (var httpResponseMessage = await RedirectReaderHttpClient.GetAsync(_configuration.LatestReleasesUri).ConfigureAwait(false))
             {
-                if (httpResponseMessage.Headers.Location == null)
+                if (httpResponseMessage.StatusCode != HttpStatusCode.Found ||
+                    httpResponseMessage.Headers.Location == null)
                 {
-                    throw new Exception();
+                    throw new Exception($"{httpResponseMessage.StatusCode} was unexpected!");
                 }
+
+                _logger.Verbose($"Latest release is found at '{httpResponseMessage.Headers.Location}'");
 
                 return httpResponseMessage.Headers.Location;
             }
