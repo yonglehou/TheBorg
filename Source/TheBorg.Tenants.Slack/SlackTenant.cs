@@ -35,14 +35,14 @@ using Serilog;
 using TheBorg.Core.Clients;
 using TheBorg.Core.Extensions;
 using TheBorg.Core.Serialization.Resolvers;
+using TheBorg.Core.Tenants;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Services;
-using TheBorg.Services.Slack.ApiResponses;
-using TheBorg.Services.Slack.DTOs;
+using TheBorg.Tenants.Slack.ApiResponses;
+using TheBorg.Tenants.Slack.DTOs;
 using TheBorg.Tenants.Slack.RtmResponses;
 
-namespace TheBorg.Tenants
+namespace TheBorg.Tenants.Slack
 {
     public class SlackTenant : ITenant
     {

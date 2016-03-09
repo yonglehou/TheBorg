@@ -22,25 +22,21 @@
 // SOFTWARE.
 //
 
-using System;
-using TheBorg.Services.Slack.DTOs;
+using TheBorg.Tenants.Slack.DTOs;
 
-namespace TheBorg.Services.Slack.ApiResponses
+namespace TheBorg.Tenants.Slack.ApiResponses
 {
-    public class RtmStartApiResponse : ApiResponse
+    public class UserInfoApiResponse : ApiResponse
     {
-        public RtmStartApiResponse(
+        public UserDto User { get; }
+
+        public UserInfoApiResponse(
             string ok,
             string error,
-            Uri url,
-            UserDto self)
+            UserDto user)
             : base(ok, error)
         {
-            Url = url;
-            Self = self;
+            User = user;
         }
-
-        public Uri Url { get; }
-        public UserDto Self { get; }
     }
 }

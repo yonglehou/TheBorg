@@ -22,22 +22,25 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Services.Slack.DTOs
+using System;
+using TheBorg.Tenants.Slack.DTOs;
+
+namespace TheBorg.Tenants.Slack.ApiResponses
 {
-    /// <summary>
-    ///     https://api.slack.com/types/user
-    /// </summary>
-    public class UserDto
+    public class RtmStartApiResponse : ApiResponse
     {
-        public UserDto(
-            string id,
-            string name)
+        public RtmStartApiResponse(
+            string ok,
+            string error,
+            Uri url,
+            UserDto self)
+            : base(ok, error)
         {
-            Id = id;
-            Name = name;
+            Url = url;
+            Self = self;
         }
 
-        public string Id { get; }
-        public string Name { get; }
+        public Uri Url { get; }
+        public UserDto Self { get; }
     }
 }

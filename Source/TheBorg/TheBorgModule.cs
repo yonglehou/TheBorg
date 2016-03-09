@@ -24,41 +24,27 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Web.Http.Controllers;
 using Autofac;
 using Autofac.Integration.WebApi;
 using Microsoft.Owin;
-using Module = Autofac.Module;
+using TheBorg.Core;
 
 namespace TheBorg
 {
-    public class TheBorgModule : Module
+    public class TheBorgModule : ConventionModule
     {
-        public static Assembly Assembly { get; } = typeof (TheBorgModule).Assembly;
-
-        private static readonly ISet<Type> TypesNotRegisteredByConvention = new HashSet<Type>
-            {
-            };
-
-        private static readonly IReadOnlyCollection<Type> Singletons = new Type[]
-            {
-            }; 
-
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterApiControllers(Assembly);
-            builder
-                .RegisterAssemblyTypes(Assembly)
-                .Where(t => !TypesNotRegisteredByConvention.Contains(t))
-                .Where(t => !typeof(IHttpController).IsAssignableFrom(t))
-                .Where(t => !typeof(OwinMiddleware).IsAssignableFrom(t))
-                .AsImplementedInterfaces();
+            base.Load(builder);
 
-            foreach (var singleton in Singletons)
-            {
-                builder.RegisterType(singleton).AsImplementedInterfaces().SingleInstance();
-            }
+            builder.RegisterApiControllers(Assembly);
+        }
+
+        protected override IEnumerable<Type> BaseTypesToSkip()
+        {
+            yield return typeof (IHttpController);
+            yield return typeof (OwinMiddleware);
         }
     }
 }

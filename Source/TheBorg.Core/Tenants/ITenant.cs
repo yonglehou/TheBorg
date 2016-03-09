@@ -22,22 +22,18 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Services.Slack.DTOs
-{
-    /// <summary>
-    ///     https://api.slack.com/types/channel
-    /// </summary>
-    public class ChannelDto
-    {
-        public ChannelDto(
-            string id,
-            string name)
-        {
-            Id = id;
-            Name = name;
-        }
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects;
 
-        public string Id { get; }
-        public string Name { get; }
+namespace TheBorg.Core.Tenants
+{
+    public interface ITenant
+    {
+        IObservable<TenantMessage> Messages { get; }
+
+        Task ConnectAsync(CancellationToken cancellationToken);
+        Task DisconnectAsync(CancellationToken cancellationToken);
     }
 }

@@ -22,24 +22,33 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Services.Slack.ApiResponses
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.Tenants.Slack.ApiResponses;
+
+namespace TheBorg.Tenants.Slack
 {
-    public class ApiResponse
+    public interface ISlackService
     {
-        public ApiResponse(
-            string ok,
-            string error)
-        {
-            Error = error ?? string.Empty;
-            IsOk = bool.Parse(ok);
-        }
+        Task<TenantUser> GetUserAsync(
+            string userId,
+            CancellationToken cancellationToken);
 
-        public string Error { get; }
-        public bool IsOk { get; }
+        Task<ApiResponse> SendMessageAsync(
+            string channelId,
+            string text,
+            CancellationToken cancellationToken);
 
-        public override string ToString()
-        {
-            return $"IsOk: {IsOk}, Error: {Error}";
-        }
+        Task<T> CallApiAsync<T>(
+            string method,
+            Dictionary<string, string> arguments,
+            CancellationToken cancellationToken);
+
+        Task<T> CallApiAsync<T>(
+            string method,
+            CancellationToken cancellationToken,
+            params KeyValuePair<string, string>[] keyValuePairs);
     }
 }

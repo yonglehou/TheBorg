@@ -22,21 +22,11 @@
 // SOFTWARE.
 //
 
-using TheBorg.Services.Slack.DTOs;
+using TheBorg.Core;
 
-namespace TheBorg.Services.Slack.ApiResponses
+namespace TheBorg.Tenants.Slack
 {
-    public class UserInfoApiResponse : ApiResponse
+    public class TheBorgTenantsSlack : ConventionModule
     {
-        public UserDto User { get; }
-
-        public UserInfoApiResponse(
-            string ok,
-            string error,
-            UserDto user)
-            : base(ok, error)
-        {
-            User = user;
-        }
     }
 }

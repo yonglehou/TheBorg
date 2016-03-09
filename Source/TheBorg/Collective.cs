@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Core;
 using TheBorg.Core.Extensions;
+using TheBorg.Core.Tenants;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 using TheBorg.MsSql;
