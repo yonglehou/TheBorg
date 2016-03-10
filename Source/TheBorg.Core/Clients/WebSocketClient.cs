@@ -92,10 +92,15 @@ namespace TheBorg.Core.Clients
                                 .ConfigureAwait(false);
                             _messages.OnCompleted();
                         }
-                        else
+                        else if (webSocketReceiveResult.MessageType == WebSocketMessageType.Text)
                         {
                             stringBuilder.Append(Encoding.UTF8.GetString(buffer, 0, webSocketReceiveResult.Count));
                         }
+                        else
+                        {
+                            _logger.Warning($"Received unexpected message type '{webSocketReceiveResult.MessageType}' on web socket");
+                        }
+
                     } while (!webSocketReceiveResult.EndOfMessage);
 
                     var message = stringBuilder.ToString();
