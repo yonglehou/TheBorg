@@ -37,7 +37,6 @@ namespace TheBorg.Core.Clients
     {
         private readonly ILogger _logger;
         private readonly ClientWebSocket _webSocket = new ClientWebSocket();
-        private readonly Thread _receiverThread;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly Subject<string> _messages = new Subject<string>();
 
@@ -47,80 +46,77 @@ namespace TheBorg.Core.Clients
             ILogger logger)
         {
             _logger = logger;
-            _receiverThread = new Thread(Listen);
+            _webSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
         }
 
         public async Task ConnectAsync(Uri uri, CancellationToken cancellationToken)
         {
             await _webSocket.ConnectAsync(uri, cancellationToken).ConfigureAwait(false);
-            _receiverThread.Start();
+            Listen();
         }
 
         public Task SendAsync(string message, CancellationToken cancellationToken)
         {
+            if (_webSocket.State != WebSocketState.Open)
+            {
+                throw new InvalidOperationException($"Web socket isn't open, its '{_webSocket.State}'");
+            }
+
             var encoded = Encoding.UTF8.GetBytes(message);
             var buffer = new ArraySegment<byte>(encoded, 0, encoded.Length);
+
             return _webSocket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken);
         }
 
-        private void Listen()
-        {
-            try
-            {
-                ListenAsync().GetAwaiter().GetResult();
-                _messages.OnCompleted();
-            }
-            catch (OperationCanceledException) { }
-            catch (Exception e)
-            {
-                _messages.OnError(e);
-                _logger.Error(e, "Web socket failed");
-            }
-
-            _logger.Information("Web socket closed");
-        }
-
-        private async Task ListenAsync()
+        private async void Listen()
         {
             var buffer = new byte[1024];
-            while (true)
+
+            try
             {
-                var arraySegment = new ArraySegment<byte>(buffer);
-                var receiveResult = await _webSocket.ReceiveAsync(arraySegment, _cancellationTokenSource.Token).ConfigureAwait(false);
-
-                if (receiveResult.MessageType == WebSocketMessageType.Close)
+                while (_webSocket.State == WebSocketState.Open || _webSocket.State == WebSocketState.CloseSent)
                 {
-                    await _webSocket.CloseAsync(
-                        WebSocketCloseStatus.InvalidMessageType,
-                        "I don't do binary",
-                        _cancellationTokenSource.Token)
-                        .ConfigureAwait(false);
-                    return;
-                }
+                    var stringBuilder = new StringBuilder();
+                    WebSocketReceiveResult webSocketReceiveResult;
 
-                var count = receiveResult.Count;
-                while (!receiveResult.EndOfMessage)
-                {
-                    if (count >= buffer.Length)
+                    do
                     {
-                        await _webSocket.CloseAsync(
-                            WebSocketCloseStatus.InvalidPayloadData,
-                            "That's too long",
-                            _cancellationTokenSource.Token)
-                            .ConfigureAwait(false);
-                        return;
+                        webSocketReceiveResult = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), _cancellationTokenSource.Token).ConfigureAwait(false);
+                        if (webSocketReceiveResult.MessageType == WebSocketMessageType.Close)
+                        {
+                            _logger.Verbose("Web socket close message received");
+                            await _webSocket.CloseAsync(
+                                WebSocketCloseStatus.NormalClosure,
+                                string.Empty,
+                                CancellationToken.None)
+                                .ConfigureAwait(false);
+                            _messages.OnCompleted();
+                        }
+                        else
+                        {
+                            stringBuilder.Append(Encoding.UTF8.GetString(buffer, 0, webSocketReceiveResult.Count));
+                        }
+                    } while (!webSocketReceiveResult.EndOfMessage);
+
+                    var message = stringBuilder.ToString();
+                    if (!string.IsNullOrEmpty(message) && _webSocket.State == WebSocketState.Open)
+                    {
+                        _messages.OnNext(message);
                     }
-
-                    arraySegment = new ArraySegment<byte>(buffer, count, buffer.Length - count);
-                    receiveResult = await _webSocket.ReceiveAsync(
-                        arraySegment,
-                        _cancellationTokenSource.Token)
-                        .ConfigureAwait(false);
-                    count += receiveResult.Count;
                 }
-
-                var message = Encoding.UTF8.GetString(buffer, 0, count);
-                _messages.OnNext(message);
+            }
+            catch (OperationCanceledException)
+            {
+                
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Unexpected exception");
+                _messages.OnError(e);
+            }
+            finally
+            {
+                _webSocket.DisposeExceptionSafe(_logger);
             }
         }
 
