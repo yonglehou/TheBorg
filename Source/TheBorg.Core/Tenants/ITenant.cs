@@ -35,6 +35,7 @@ namespace TheBorg.Core.Tenants
 
         IObservable<TenantMessage> Messages { get; }
 
+        Task SendMessage(Address address, string text, CancellationToken cancellationToken);
         Task ConnectAsync(CancellationToken cancellationToken);
         Task DisconnectAsync(CancellationToken cancellationToken);
     }

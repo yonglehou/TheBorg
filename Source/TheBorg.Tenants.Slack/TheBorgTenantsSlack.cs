@@ -22,11 +22,17 @@
 // SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
 using TheBorg.Core;
 
 namespace TheBorg.Tenants.Slack
 {
     public class TheBorgTenantsSlack : ConventionModule
     {
+        protected override IEnumerable<Type> SingletonTypes()
+        {
+            yield return typeof (SlackTenant);
+        }
     }
 }

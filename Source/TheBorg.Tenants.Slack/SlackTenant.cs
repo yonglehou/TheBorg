@@ -78,6 +78,14 @@ namespace TheBorg.Tenants.Slack
 
         public IObservable<TenantMessage> Messages => _messages;
 
+        public Task SendMessage(Address address, string text, CancellationToken cancellationToken)
+        {
+            return _slackService.SendMessageAsync(
+                address.TenantChannel.Value,
+                text,
+                cancellationToken);
+        }
+
         public async Task ConnectAsync(CancellationToken cancellationToken)
         {
             if (_cancellationTokenSource.IsCancellationRequested)
