@@ -32,6 +32,7 @@ using TheBorg.Common;
 using TheBorg.Common.Clients;
 using TheBorg.Common.Extensions;
 using TheBorg.Host;
+using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Collective.PluginManagement
@@ -58,6 +59,7 @@ namespace TheBorg.Collective.PluginManagement
         private async Task<IPluginProxy> InternalLoadPluginAsync(PluginPath pluginPath, Uri pluginApiUri, CancellationToken cancellationToken)
         {
             var pluginId = pluginPath.GetPluginId();
+            var token = Token.NewFor(pluginId);
 
             using (_logger.Time($"Loading plugin '{pluginId}'"))
             {
@@ -80,7 +82,7 @@ namespace TheBorg.Collective.PluginManagement
 
                 try
                 {
-                    pluginHost.Launch(pluginPath.Value, appDomain, pluginApiUri, clientPort);
+                    pluginHost.Launch(pluginPath.Value, appDomain, pluginApiUri, clientPort, token.Value);
                     autoResetEvent.Set();
                 }
                 catch (Exception e)

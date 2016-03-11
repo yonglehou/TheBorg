@@ -23,28 +23,36 @@
 //
 
 using System;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.Apis;
-using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Host.Apis
+namespace TheBorg.Interface.ValueObjects
 {
-    public class ConfigApi : Api, IConfigApi
+    public class Token : SingleValueObject<string>
     {
-        public ConfigApi(
-            Uri baseUri,
-            Token token)
-            : base(baseUri, token)
+        public static Token With(string value) { return new Token(value); }
+
+        public static Token NewFor(PluginId pluginId)
         {
+            return With($"{Guid.NewGuid().ToString("D")}@{pluginId.Value}");
         }
 
-        public Task<string> GetAsync(ConfigKey configKey, CancellationToken cancellationToken)
+        public Token(string value) : base(value)
         {
-            if (configKey == null) throw new ArgumentNullException(nameof(configKey));
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
 
-            return GetAsAsync<string>($"api/plugin-configuration/{configKey.Value}", cancellationToken, HttpStatusCode.NotFound);
+            var parts = value.Split('@');
+            if (parts.Length != 2) throw new ArgumentException($"Malformed token '{value}' (parts)", nameof(value));
+
+            Guid tId;
+            if (!Guid.TryParse(parts[0], out tId)) throw new ArgumentException($"Malformed token '{value}' (guid)", nameof(value));
+
+            var pluginId = PluginId.With(parts[1]);
+
+            TokenId = TokenId.With(tId);
+            PluginId = pluginId;
         }
+
+        public TokenId TokenId { get; }
+        public PluginId PluginId { get; }
     }
 }

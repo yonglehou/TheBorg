@@ -39,6 +39,7 @@ namespace TheBorg.Interface
         IPluginApi PluginApi { get; }
 
         Uri Uri { get; }
+        Token Token { get; }
 
         IPluginRegistration SetPluginInformation(PluginInformation pluginInformation);
 

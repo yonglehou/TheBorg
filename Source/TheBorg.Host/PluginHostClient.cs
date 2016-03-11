@@ -29,6 +29,7 @@ using System.Reflection;
 using System.Threading;
 using TheBorg.Host.Apis;
 using TheBorg.Interface;
+using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Host
@@ -37,9 +38,9 @@ namespace TheBorg.Host
     {
         private ApiHost _apiHost;
 
-        public void Launch(string pluginPath, AppDomain appDomain, Uri pluginApiUri, int clientPort)
+        public void Launch(string pluginPath, AppDomain appDomain, Uri pluginApiUri, int clientPort, string tokenValue)
         {
-            var pluginId = new PluginPath(pluginPath).GetPluginId();
+            var token = Token.With(tokenValue);
             var assembly = appDomain.Load(AssemblyName.GetAssemblyName(pluginPath));
             var pluginDirectory = Path.GetDirectoryName(pluginPath);
             appDomain.AssemblyResolve += (sender, args) =>
@@ -55,11 +56,12 @@ namespace TheBorg.Host
 
             var pluginRegistration = new PluginRegistration(
                 uri,
-                new CommandApi(pluginId, pluginApiUri),
-                new MessageApi(pluginId, pluginApiUri),
+                token,
+                new CommandApi(pluginApiUri, token),
+                new MessageApi(pluginApiUri, token),
                 new HttpApi(),
-                new Apis.PluginApi(pluginId, pluginApiUri),
-                new ConfigApi(pluginId, pluginApiUri));
+                new Apis.PluginApi(pluginApiUri, token),
+                new ConfigApi(pluginApiUri, token));
 
             pluginBootstrapper.Start(r =>
                 {

@@ -23,28 +23,17 @@
 //
 
 using System;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.Apis;
-using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Host.Apis
+namespace TheBorg.Interface.ValueObjects
 {
-    public class ConfigApi : Api, IConfigApi
+    public class TokenId : SingleValueObject<Guid>
     {
-        public ConfigApi(
-            Uri baseUri,
-            Token token)
-            : base(baseUri, token)
-        {
-        }
+        public static TokenId New => new TokenId(Guid.NewGuid());
+        public static TokenId With(Guid value) { return new TokenId(value); }
 
-        public Task<string> GetAsync(ConfigKey configKey, CancellationToken cancellationToken)
+        public TokenId(Guid value) : base(value)
         {
-            if (configKey == null) throw new ArgumentNullException(nameof(configKey));
-
-            return GetAsAsync<string>($"api/plugin-configuration/{configKey.Value}", cancellationToken, HttpStatusCode.NotFound);
+            if (value == default(Guid)) throw new ArgumentNullException(nameof(value));
         }
     }
 }

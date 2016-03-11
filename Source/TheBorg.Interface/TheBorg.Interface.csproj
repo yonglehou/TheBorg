@@ -76,6 +76,8 @@
     <Compile Include="ValueObjects\TenantKey.cs" />
     <Compile Include="ValueObjects\TenantMessage.cs" />
     <Compile Include="ValueObjects\TenantUser.cs" />
+    <Compile Include="ValueObjects\Token.cs" />
+    <Compile Include="ValueObjects\TokenId.cs" />
     <Compile Include="ValueObjects\ValueObject.cs" />
   </ItemGroup>
   <ItemGroup>
