@@ -45,6 +45,7 @@ namespace TheBorg.Host
         public IHttpApi HttpApi { get; }
         public IPluginApi PluginApi { get; }
         public Uri Uri { get; }
+        public Token Token { get; }
 
         private readonly List<CommandDescription> _commandDescriptions = new List<CommandDescription>();
         private readonly Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>> _factories = new Dictionary<Type, Func<IHttpApiRequestContext, INancyModule>>();
@@ -54,6 +55,7 @@ namespace TheBorg.Host
 
         public PluginRegistration(
             Uri uri,
+            Token token,
             ICommandApi commandApi,
             IMessageApi messageApi,
             IHttpApi httpApi,
@@ -61,6 +63,7 @@ namespace TheBorg.Host
             IConfigApi configApi)
         {
             Uri = uri;
+            Token = token;
             CommandApi = commandApi;
             MessageApi = messageApi;
             HttpApi = httpApi;

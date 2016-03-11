@@ -29,8 +29,12 @@ namespace TheBorg.Interface.ValueObjects
 {
     public class Token : SingleValueObject<string>
     {
-        public TokenId TokenId { get; }
-        public PluginId PluginId { get; }
+        public static Token With(string value) { return new Token(value); }
+
+        public static Token NewFor(PluginId pluginId)
+        {
+            return With($"{Guid.NewGuid().ToString("D")}@{pluginId.Value}");
+        }
 
         public Token(string value) : base(value)
         {
@@ -47,5 +51,8 @@ namespace TheBorg.Interface.ValueObjects
             TokenId = TokenId.With(tId);
             PluginId = pluginId;
         }
+
+        public TokenId TokenId { get; }
+        public PluginId PluginId { get; }
     }
 }

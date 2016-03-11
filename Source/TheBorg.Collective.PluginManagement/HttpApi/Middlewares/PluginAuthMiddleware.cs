@@ -26,6 +26,7 @@ using System.Net;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.Owin;
+using Serilog;
 
 namespace TheBorg.Collective.PluginManagement.HttpApi.Middlewares
 {
@@ -73,6 +74,16 @@ namespace TheBorg.Collective.PluginManagement.HttpApi.Middlewares
             }
 
             var headerParts = context.Request.Headers.Get("Authorization").Split(' ');
+            if (headerParts.Length != 2)
+            {
+                context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
+                return;
+            }
+            if (headerParts[0] != "THEBORG-TOKEN")
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                return;
+            }
 
             context.Request.User = new PluginPrincipal(new PluginIdentity(headerParts[1]));
 

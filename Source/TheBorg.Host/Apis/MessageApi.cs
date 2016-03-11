@@ -27,16 +27,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Host.Apis
 {
     public class MessageApi : Api, IMessageApi
     {
         public MessageApi(
-            PluginId pluginId,
-            Uri baseUri)
-            : base(pluginId, baseUri)
+            Uri baseUri,
+            Token token)
+            : base(baseUri, token)
         {
         }
 
