@@ -62,7 +62,7 @@ namespace TheBorg
             Container = containerBuilder.Build();
         }
 
-        private static int Main(string[] args)
+        private static int Main()
         {
             return (int) HostFactory.Run(hc =>
             {
@@ -77,6 +77,7 @@ namespace TheBorg
                     });
                 });
 
+                hc.DependsOnMsSql();
                 hc.RunAsLocalSystem();
                 hc.SetDisplayName("TheBorg");
                 hc.SetServiceName("TheBorg");
