@@ -22,17 +22,40 @@
 // SOFTWARE.
 //
 
-using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading.Tasks;
+using System.Web.Http;
+using TheBorg.Collective.Extensions;
+using TheBorg.Collective.PluginManagement;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.Controllers
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    [RoutePrefix("api/command-descriptions")]
+    public class CommandDescriptionsController : ApiController
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private readonly IPluginManagementService _pluginManagementService;
+
+        public CommandDescriptionsController(
+            IPluginManagementService pluginManagementService)
         {
-            yield return typeof (SlackTenant);
+            _pluginManagementService = pluginManagementService;
+        }
+
+        [HttpPost]
+        [Route("")]
+        public async Task<IHttpActionResult> Post([FromBody] List<CommandDescription> commandDescriptions)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var pluginId = User.GetPluginId();
+
+            await _pluginManagementService.RegisterAsync(pluginId, commandDescriptions).ConfigureAwait(false);
+
+            return Ok();
         }
     }
 }

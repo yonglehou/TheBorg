@@ -24,15 +24,38 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Common.Tenants;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.Services
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class MessageService : IMessageService
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private readonly IReadOnlyDictionary<TenantKey, ITenant> _tenants;
+
+        public MessageService(
+            IEnumerable<ITenant> tenants)
         {
-            yield return typeof (SlackTenant);
+            _tenants = tenants.ToDictionary(t => t.TenantKey, t => t);
+        }
+
+        public Task ReplyAsync(TenantMessage tenantMessage, string text, CancellationToken cancellationToken)
+        {
+            return SendAsync(tenantMessage.Address, text, cancellationToken);
+        }
+
+        public Task SendAsync(Address address, string text, CancellationToken cancellationToken)
+        {
+            ITenant tenant;
+            if (!_tenants.TryGetValue(address.TenantKey, out tenant))
+            {
+                throw new ArgumentException($"There's no tenant with key '{address.TenantKey}'");
+            }
+
+            return tenant.SendMessage(address, text, cancellationToken);
         }
     }
 }

@@ -24,15 +24,29 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Linq;
+using System.Net.NetworkInformation;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class TcpHelper
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private static readonly Random Random = new Random();
+
+        public static int GetFreePort()
         {
-            yield return typeof (SlackTenant);
+            var ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+            var activeTcpListeners = ipGlobalProperties.GetActiveTcpListeners();
+            var ports = new HashSet<int>(activeTcpListeners.Select(p => p.Port));
+
+            while (true)
+            {
+                var port = Random.Next(10000, 50000);
+                if (!ports.Contains(port))
+                {
+                    return port;
+                }
+            }
         }
     }
 }

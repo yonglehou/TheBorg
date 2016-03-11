@@ -23,16 +23,43 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.Owin;
+using Serilog;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.PluginManagement.HttpApi.Middlewares
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class LoggerMiddleware : OwinMiddleware
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        public LoggerMiddleware(OwinMiddleware next) : base(next)
         {
-            yield return typeof (SlackTenant);
+        }
+
+        public override async Task Invoke(IOwinContext context)
+        {
+            Exception exception = null;
+
+            try
+            {
+                await Next.Invoke(context).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                throw;
+            }
+            finally
+            {
+                if (exception == null)
+                {
+                    Log.Verbose($"API {context.Request.Method} {(HttpStatusCode)context.Response.StatusCode} {context.Request.Uri.GetLeftPart(UriPartial.Path)}");
+                }
+                else
+                {
+                    Log.Error(exception, $"API {context.Request.Method} {(HttpStatusCode) context.Response.StatusCode} {context.Request.Uri.GetLeftPart(UriPartial.Path)}");
+                }
+            }
         }
     }
 }

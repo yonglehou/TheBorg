@@ -24,15 +24,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using TheBorg.Common;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.PluginManagement
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IPluginManagementService : IMessageProcessor
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        Task<PluginInformation> LoadPluginAsync(PluginPath pluginPath, CancellationToken cancellationToken);
+        Task UnloadPluginAsync(PluginId pluginId);
+        Task InitializeAsync(CancellationToken cancellationToken);
+        Task RegisterAsync(PluginId pluginId, IEnumerable<CommandDescription> commandDescriptions);
+        Task<IReadOnlyCollection<PluginInformation>> GetPluginsAsync(CancellationToken cancellationToken);
+        Task<PluginInformation> InstallPluginAsync(Uri uri, CancellationToken cancellationToken);
+        Task<IReadOnlyCollection<PluginInformation>> LoadInstalledPluginsAsync(CancellationToken cancellationToken);
     }
 }

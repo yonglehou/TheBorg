@@ -22,17 +22,11 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Common;
-
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IConfigurationReader
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        bool TryReadString(string key, out string value);
+        string ReadString(string key, string defaultValue = null);
     }
 }

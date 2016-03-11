@@ -23,16 +23,38 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Diagnostics;
+using Serilog;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common.Extensions
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public static class LoggerExtensions
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        public static IDisposable Time(this ILogger logger, string message)
         {
-            yield return typeof (SlackTenant);
+            return new TimeLogger(logger, message);
+        }
+
+        private class TimeLogger : IDisposable
+        {
+            private readonly ILogger _logger;
+            private readonly string _message;
+            private readonly Stopwatch _stopwatch;
+
+            public TimeLogger(
+                ILogger logger,
+                string message)
+            {
+                _logger = logger;
+                _message = message;
+                _stopwatch = Stopwatch.StartNew();
+            }
+
+            public void Dispose()
+            {
+                _stopwatch.Stop();
+                _logger.Verbose($"{_message}: {_stopwatch.Elapsed.TotalSeconds:0.###} seconds");
+            }
         }
     }
 }

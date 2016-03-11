@@ -22,17 +22,26 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
+using Autofac;
+using EventFlow;
+using EventFlow.Autofac.Extensions;
+using EventFlow.Extensions;
+using EventFlow.MetadataProviders;
 using TheBorg.Common;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.Domain
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class TheBorgCollectiveDomain : ConventionModule
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        protected override void Load(ContainerBuilder builder)
         {
-            yield return typeof (SlackTenant);
+            base.Load(builder);
+
+            EventFlowOptions.New
+                .UseAutofacContainerBuilder(builder)
+                .UseAutofacAggregateRootFactory()
+                .AddDefaults(Assembly)
+                .AddMetadataProvider<AddGuidMetadataProvider>();
         }
     }
 }

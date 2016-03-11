@@ -22,17 +22,29 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Common;
-
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common.Serialization
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public enum JsonFormat
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        /// <summary>
+        /// properties_are_like_this
+        /// </summary>
+        LowerSnakeCase,
+
+        /// <summary>
+        /// propertiesAreLikeThis
+        /// </summary>
+        CamelCase,
+
+        /// <summary>
+        /// PropertiesAreLikeThis
+        /// </summary>
+        PascalCase,
+    }
+
+    public interface IJsonSerializer
+    {
+        T Deserialize<T>(string json, JsonFormat jsonFormat = JsonFormat.CamelCase);
+        string Serialize<T>(T obj, JsonFormat jsonFormat = JsonFormat.CamelCase);
     }
 }

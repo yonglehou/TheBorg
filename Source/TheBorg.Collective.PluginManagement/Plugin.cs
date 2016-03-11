@@ -23,16 +23,46 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading;
+using System.Threading.Tasks;
+using Serilog;
+using TheBorg.Common.Clients;
+using TheBorg.Common.Serialization;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.PluginManagement
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class Plugin : IPlugin
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private readonly ILogger _logger;
+        private readonly IRestClient _restClient;
+
+        public Plugin(
+            ILogger logger,
+            Uri baseUri,
+            IRestClient restClient)
         {
-            yield return typeof (SlackTenant);
+            _logger = logger;
+            _restClient = restClient;
+
+            BaseUri = baseUri;
+        }
+
+        public Uri BaseUri { get; }
+
+        public Task PingAsync(CancellationToken cancellationToken)
+        {
+            return GetAsync<object>("_plugin/ping", cancellationToken);
+        }
+
+        public Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken)
+        {
+            return GetAsync<PluginInformation>("_plugin/plugin-information", cancellationToken);
+        }
+
+        private Task<T> GetAsync<T>(string path, CancellationToken cancellationToken)
+        {
+            return _restClient.GetAsync<T>(new Uri(BaseUri, path), JsonFormat.CamelCase, cancellationToken);
         }
     }
 }

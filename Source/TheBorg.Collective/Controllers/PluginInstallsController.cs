@@ -23,16 +23,30 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
+using TheBorg.Collective.PluginManagement;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.Controllers
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    [RoutePrefix("api/plugin-installs")]
+    public class PluginInstallsController : ApiController
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private readonly IPluginManagementService _pluginManagementService;
+
+        public PluginInstallsController(
+            IPluginManagementService pluginManagementService)
         {
-            yield return typeof (SlackTenant);
+            _pluginManagementService = pluginManagementService;
+        }
+
+        [HttpPost]
+        [Route("by-uri")]
+        public async Task<IHttpActionResult> ByUri([FromBody] Uri uri, CancellationToken cancellationToken)
+        {
+            var pluginInformation = await _pluginManagementService.InstallPluginAsync(uri, cancellationToken).ConfigureAwait(false);
+            return Json(pluginInformation);
         }
     }
 }

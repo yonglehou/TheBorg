@@ -24,15 +24,27 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.Http.Controllers;
+using Autofac;
+using Autofac.Integration.WebApi;
+using Microsoft.Owin;
 using TheBorg.Common;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class TheBorgCollective : ConventionModule
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        protected override void Load(ContainerBuilder builder)
         {
-            yield return typeof (SlackTenant);
+            base.Load(builder);
+
+            builder.RegisterApiControllers(Assembly);
+        }
+
+        protected override IEnumerable<Type> BaseTypesToSkip()
+        {
+            yield return typeof (IHttpController);
+            yield return typeof (OwinMiddleware);
         }
     }
 }

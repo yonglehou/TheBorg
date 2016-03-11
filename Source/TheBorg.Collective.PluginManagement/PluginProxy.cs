@@ -23,16 +23,33 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.PluginManagement
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class PluginProxy : IPluginProxy
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private readonly AppDomain _appDomain;
+
+        public PluginProxy(
+            PluginId id,
+            AppDomain appDomain,
+            IPlugin plugin)
         {
-            yield return typeof (SlackTenant);
+            Id = id;
+            Plugin = plugin;
+            _appDomain = appDomain;
+        }
+
+        public PluginId Id { get; }
+        public IPlugin Plugin { get; }
+
+        public void Dispose()
+        {
+            if (!_appDomain.IsFinalizingForUnload())
+            {
+                AppDomain.Unload(_appDomain);
+            }
         }
     }
 }

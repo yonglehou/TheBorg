@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E1E9ED6D-4DAE-46C8-92CB-538FD02762EE}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{D5BE9D14-0567-4B64-AA80-CD95076E7805}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TheBorg</RootNamespace>
-    <AssemblyName>TheBorg</AssemblyName>
+    <RootNamespace>TheBorg.Collective</RootNamespace>
+    <AssemblyName>TheBorg.Collective</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,26 +20,19 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,20 +44,36 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Program.cs" />
+    <Compile Include="Borg.cs" />
+    <Compile Include="Controllers\CommandDescriptionsController.cs" />
+    <Compile Include="Controllers\ConfigurationController.cs" />
+    <Compile Include="Controllers\PluginInstallsController.cs" />
+    <Compile Include="Controllers\PluginsController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
+    <Compile Include="Controllers\TenantMessagesController.cs" />
+    <Compile Include="Extensions\PrincipalExtensions.cs" />
+    <Compile Include="IBorg.cs" />
+    <Compile Include="MsSql\IMsSqlConnection.cs" />
+    <Compile Include="MsSql\IMsSqlUpgrader.cs" />
+    <Compile Include="MsSql\MsSqlConnection.cs" />
+    <Compile Include="MsSql\MsSqlUpgrader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\IConfigurationService.cs" />
+    <Compile Include="Services\IMessageService.cs" />
+    <Compile Include="Services\ISettingsService.cs" />
+    <Compile Include="Services\MessageService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="TheBorgCollective.cs" />
+    <Compile Include="ValueObjects\PluginIdentity.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TheBorg.Collective\TheBorg.Collective.csproj">
-      <Project>{d5be9d14-0567-4b64-aa80-cd95076e7805}</Project>
-      <Name>TheBorg.Collective</Name>
-    </ProjectReference>
+    <EmbeddedResource Include="MsSql\Scripts\0001 - Create table Settings.sql" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\TheBorg.Common\TheBorg.Common.csproj">
       <Project>{82560bc4-8a1a-4300-a84c-9c617a392612}</Project>
       <Name>TheBorg.Common</Name>
@@ -83,34 +90,6 @@
       <Project>{a418717d-e36d-43cb-8a46-ae50a2d38cc7}</Project>
       <Name>TheBorg.Collective.PluginManagement</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Plugins.Administration\TheBorg.Plugins.Administration.csproj">
-      <Project>{c9efbe31-45a6-4e51-98de-d871b4ac61d2}</Project>
-      <Name>TheBorg.Plugins.Administration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Plugins.GitHub.Interface\TheBorg.Plugins.GitHub.Interface.csproj">
-      <Project>{9f628896-e7a9-45c1-9358-fec34a7b0325}</Project>
-      <Name>TheBorg.Plugins.GitHub.Interface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Plugins.GitHub\TheBorg.Plugins.GitHub.csproj">
-      <Project>{a9131032-0359-49b5-bc71-bc8aeb016eec}</Project>
-      <Name>TheBorg.Plugins.GitHub</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Plugins.Help\TheBorg.Plugins.Help.csproj">
-      <Project>{21f28795-57ea-45cc-b15b-1fcecc20dc3c}</Project>
-      <Name>TheBorg.Plugins.Help</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Plugins.Jokes\TheBorg.Plugins.Jokes.csproj">
-      <Project>{721cf637-01fe-4691-a6a1-eff1ec4e9d25}</Project>
-      <Name>TheBorg.Plugins.Jokes</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Plugins.Status\TheBorg.Plugins.Status.csproj">
-      <Project>{a2968831-196d-4b58-8813-93ea1648703d}</Project>
-      <Name>TheBorg.Plugins.Status</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TheBorg.Tenants.Slack\TheBorg.Tenants.Slack.csproj">
-      <Project>{27d6e80f-e210-496e-aa2d-4cb4bedcec02}</Project>
-      <Name>TheBorg.Tenants.Slack</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -120,7 +99,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\..\.paket\paket.targets" />
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
@@ -1155,26 +1133,6 @@
       <ItemGroup>
         <Reference Include="Serilog">
           <HintPath>..\..\packages\Serilog\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+MonoTouch10\Serilog.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v3.5' Or $(TargetFrameworkVersion) == 'v4.0')">
-      <ItemGroup>
-        <Reference Include="Topshelf">
-          <HintPath>..\..\packages\Topshelf\lib\net35\Topshelf.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
-      <ItemGroup>
-        <Reference Include="Topshelf">
-          <HintPath>..\..\packages\Topshelf\lib\net40-full\Topshelf.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>

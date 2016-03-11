@@ -24,15 +24,32 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Data;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.MsSql
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IMsSqlConnection
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        Task<int> ExecuteAsync(
+            CancellationToken cancellationToken,
+            string sql,
+            object param = null);
+
+        Task<IReadOnlyCollection<TResult>> QueryAsync<TResult>(
+            CancellationToken cancellationToken,
+            string sql,
+            object param = null);
+
+        Task<IReadOnlyCollection<TResult>> InsertMultipleAsync<TResult, TRow>(
+            CancellationToken cancellationToken,
+            string sql,
+            IEnumerable<TRow> rows)
+            where TRow : class, new();
+
+        Task<TResult> WithConnectionAsync<TResult>(
+            Func<IDbConnection, CancellationToken, Task<TResult>> withConnection,
+            CancellationToken cancellationToken);
     }
 }

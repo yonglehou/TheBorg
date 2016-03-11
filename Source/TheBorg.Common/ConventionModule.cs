@@ -24,15 +24,49 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Linq;
+using System.Reflection;
+using Autofac;
+using Module = Autofac.Module;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public abstract class ConventionModule : Module
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        protected Assembly Assembly => GetType().Assembly;
+
+        protected override void Load(ContainerBuilder builder)
         {
-            yield return typeof (SlackTenant);
+            var typesToSkip = new HashSet<Type>(Enumerable.Empty<Type>()
+                .Concat(TypesToSkip())
+                .Concat(SingletonTypes()));
+
+            builder
+                .RegisterAssemblyTypes(GetType().Assembly)
+                .Where(t => !typesToSkip.Contains(t))
+                .Where(t => BaseTypesToSkip().All(b => !b.IsAssignableFrom(t)) )
+                .AsImplementedInterfaces()
+                .OwnedByLifetimeScope();
+
+            foreach (var singleton in SingletonTypes())
+            {
+                builder.RegisterType(singleton).AsImplementedInterfaces().SingleInstance();
+            }
         }
+
+        protected virtual IEnumerable<Type> TypesToSkip()
+        {
+            yield break;
+        }
+
+        protected virtual IEnumerable<Type> BaseTypesToSkip()
+        {
+            yield break;
+        }
+
+        protected virtual IEnumerable<Type> SingletonTypes()
+        {
+            yield break;
+        } 
     }
 }

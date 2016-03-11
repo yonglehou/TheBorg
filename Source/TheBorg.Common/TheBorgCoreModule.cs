@@ -24,15 +24,38 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using Autofac;
+using Serilog;
+using TheBorg.Common.Clients;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class TheBorgCoreModule : ConventionModule
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        protected override void Load(ContainerBuilder builder)
         {
-            yield return typeof (SlackTenant);
+            base.Load(builder);
+
+            Serilog.Debugging.SelfLog.Out = Console.Out;
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.ColoredConsole()
+                .CreateLogger();
+            Log.Logger = logger;
+
+            builder.RegisterInstance(logger);
+
+            builder
+                .RegisterType<WebSocketClient>()
+                .As<IWebSocketClient>()
+                .ExternallyOwned();
+        }
+
+        protected override IEnumerable<Type> TypesToSkip()
+        {
+            yield return typeof (TcpHelper);
+            yield return typeof (WebSocketClient);
         }
     }
 }
