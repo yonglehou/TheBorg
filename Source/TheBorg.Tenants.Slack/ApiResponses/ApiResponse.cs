@@ -22,40 +22,24 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using Autofac;
-using Serilog;
-using TheBorg.Core.Clients;
-
-namespace TheBorg.Core
+namespace TheBorg.Tenants.Slack.ApiResponses
 {
-    public class TheBorgCoreModule : ConventionModule
+    public class ApiResponse
     {
-        protected override void Load(ContainerBuilder builder)
+        public ApiResponse(
+            string ok,
+            string error)
         {
-            base.Load(builder);
-
-            Serilog.Debugging.SelfLog.Out = Console.Out;
-
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-            Log.Logger = logger;
-
-            builder.RegisterInstance(logger);
-
-            builder
-                .RegisterType<WebSocketClient>()
-                .As<IWebSocketClient>()
-                .ExternallyOwned();
+            Error = error ?? string.Empty;
+            IsOk = bool.Parse(ok);
         }
 
-        protected override IEnumerable<Type> TypesToSkip()
+        public string Error { get; }
+        public bool IsOk { get; }
+
+        public override string ToString()
         {
-            yield return typeof (TcpHelper);
-            yield return typeof (WebSocketClient);
+            return $"IsOk: {IsOk}, Error: {Error}";
         }
     }
 }

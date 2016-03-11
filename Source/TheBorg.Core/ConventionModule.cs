@@ -24,38 +24,49 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Autofac;
-using Serilog;
-using TheBorg.Core.Clients;
+using Module = Autofac.Module;
 
 namespace TheBorg.Core
 {
-    public class TheBorgCoreModule : ConventionModule
+    public abstract class ConventionModule : Module
     {
+        protected Assembly Assembly => GetType().Assembly;
+
         protected override void Load(ContainerBuilder builder)
         {
-            base.Load(builder);
-
-            Serilog.Debugging.SelfLog.Out = Console.Out;
-
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-            Log.Logger = logger;
-
-            builder.RegisterInstance(logger);
+            var typesToSkip = new HashSet<Type>(Enumerable.Empty<Type>()
+                .Concat(TypesToSkip())
+                .Concat(SingletonTypes()));
 
             builder
-                .RegisterType<WebSocketClient>()
-                .As<IWebSocketClient>()
-                .ExternallyOwned();
+                .RegisterAssemblyTypes(GetType().Assembly)
+                .Where(t => !typesToSkip.Contains(t))
+                .Where(t => BaseTypesToSkip().All(b => !b.IsAssignableFrom(t)) )
+                .AsImplementedInterfaces()
+                .OwnedByLifetimeScope();
+
+            foreach (var singleton in SingletonTypes())
+            {
+                builder.RegisterType(singleton).AsImplementedInterfaces().SingleInstance();
+            }
         }
 
-        protected override IEnumerable<Type> TypesToSkip()
+        protected virtual IEnumerable<Type> TypesToSkip()
         {
-            yield return typeof (TcpHelper);
-            yield return typeof (WebSocketClient);
+            yield break;
         }
+
+        protected virtual IEnumerable<Type> BaseTypesToSkip()
+        {
+            yield break;
+        }
+
+        protected virtual IEnumerable<Type> SingletonTypes()
+        {
+            yield break;
+        } 
     }
 }

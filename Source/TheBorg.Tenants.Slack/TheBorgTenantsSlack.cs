@@ -23,17 +23,16 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.ValueObjects;
+using System.Collections.Generic;
+using TheBorg.Core;
 
-namespace TheBorg.Tenants
+namespace TheBorg.Tenants.Slack
 {
-    public interface ITenant
+    public class TheBorgTenantsSlack : ConventionModule
     {
-        IObservable<TenantMessage> Messages { get; }
-
-        Task ConnectAsync(CancellationToken cancellationToken);
-        Task DisconnectAsync(CancellationToken cancellationToken);
+        protected override IEnumerable<Type> SingletonTypes()
+        {
+            yield return typeof (SlackTenant);
+        }
     }
 }

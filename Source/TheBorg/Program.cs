@@ -25,8 +25,8 @@
 using System.Threading;
 using Autofac;
 using TheBorg.Core;
-using TheBorg.Host;
 using TheBorg.PluginManagement;
+using TheBorg.Tenants.Slack;
 using Topshelf;
 
 namespace TheBorg
@@ -39,6 +39,7 @@ namespace TheBorg
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule<TheBorgCoreModule>();
+            containerBuilder.RegisterModule<TheBorgTenantsSlack>();
             containerBuilder.RegisterModule<TheBorgPluginManagementModule>();
             containerBuilder.RegisterModule<TheBorgModule>();
             Container = containerBuilder.Build();
@@ -53,17 +54,11 @@ namespace TheBorg
                     s.ConstructUsing(() => Container.Resolve<ICollective>());
                     s.WhenStarted(c =>
                     {
-                        using (var a = AsyncHelper.Wait)
-                        {
-                            a.Run(c.StartAsync(CancellationToken.None));
-                        }
+                        c.StartAsync(CancellationToken.None).Wait();
                     });
                     s.WhenStopped(c =>
                     {
-                        using (var a = AsyncHelper.Wait)
-                        {
-                            a.Run(c.StopAsync(CancellationToken.None));
-                        }
+                        c.StopAsync(CancellationToken.None).Wait();
                         Container.Dispose();
                     });
                 });

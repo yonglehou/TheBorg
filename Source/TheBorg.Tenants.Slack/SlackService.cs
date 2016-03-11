@@ -29,20 +29,19 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using TheBorg.Core;
 using TheBorg.Core.Clients;
 using TheBorg.Core.Serialization;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Services.Slack.ApiResponses;
+using TheBorg.Tenants.Slack.ApiResponses;
 
-namespace TheBorg.Services
+namespace TheBorg.Tenants.Slack
 {
     public class SlackService : ISlackService
     {
         private readonly ILogger _logger;
         private readonly IRestClient _restClient;
         private readonly ConcurrentDictionary<string, Task<TenantUser>> _userCache = new ConcurrentDictionary<string, Task<TenantUser>>();
-        private static readonly Tenant Tenant = new Tenant("slack");
+        private static readonly TenantKey TenantKey = new TenantKey("slack");
 
         public SlackService(
             ILogger logger,
@@ -68,7 +67,7 @@ namespace TheBorg.Services
                 cancellationToken,
                 new KeyValuePair<string, string>("user", userId))
                 .ConfigureAwait(false);
-            return new TenantUser(userInfoApiResponse.User.Name, userInfoApiResponse.User.Id, Tenant);
+            return new TenantUser(userInfoApiResponse.User.Name, userInfoApiResponse.User.Id, TenantKey);
         }
 
         public Task<ApiResponse> SendMessageAsync(

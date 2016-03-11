@@ -35,34 +35,34 @@ using Serilog;
 using TheBorg.Core.Clients;
 using TheBorg.Core.Extensions;
 using TheBorg.Core.Serialization.Resolvers;
+using TheBorg.Core.Tenants;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Services;
-using TheBorg.Services.Slack.ApiResponses;
-using TheBorg.Services.Slack.DTOs;
+using TheBorg.Tenants.Slack.ApiResponses;
+using TheBorg.Tenants.Slack.DTOs;
 using TheBorg.Tenants.Slack.RtmResponses;
 
-namespace TheBorg.Tenants
+namespace TheBorg.Tenants.Slack
 {
     public class SlackTenant : ITenant
     {
-        private IWebSocketClient _webSocketClient;
-        private readonly ILogger _logger;
-        private readonly ISlackService _slackService;
-        private readonly IComponentContext _componentContext;
+        private static readonly string[] InvalidStrings = {"<", ">", "@"};
         private readonly AsyncLock _asyncLock = new AsyncLock();
-        private readonly Subject<TenantMessage> _messages = new Subject<TenantMessage>();
-        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
-            {
-                ContractResolver = new UnderscoreMappingResolver(),
-            };
-        private static readonly Tenant Tenant = new Tenant("slack");
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly IComponentContext _componentContext;
+
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new UnderscoreMappingResolver()
+        };
+
+        private readonly ILogger _logger;
+        private readonly Subject<TenantMessage> _messages = new Subject<TenantMessage>();
+        private readonly ISlackService _slackService;
         private int _messageId;
 
         private UserDto _self;
-
-        public IObservable<TenantMessage> Messages => _messages; 
+        private IWebSocketClient _webSocketClient;
 
         public SlackTenant(
             ILogger logger,
@@ -72,6 +72,18 @@ namespace TheBorg.Tenants
             _logger = logger;
             _slackService = slackService;
             _componentContext = componentContext;
+        }
+
+        public TenantKey TenantKey { get; } = TenantKey.With("slack");
+
+        public IObservable<TenantMessage> Messages => _messages;
+
+        public Task SendMessage(Address address, string text, CancellationToken cancellationToken)
+        {
+            return _slackService.SendMessageAsync(
+                address.TenantChannel.Value,
+                text,
+                cancellationToken);
         }
 
         public async Task ConnectAsync(CancellationToken cancellationToken)
@@ -90,10 +102,10 @@ namespace TheBorg.Tenants
                 var rtmStartResponse = await _slackService.CallApiAsync<RtmStartApiResponse>(
                     "rtm.start",
                     new Dictionary<string, string>
-                        {
-                            {"simple_latest", "true"},
-                            {"no_unreads", "true" },
-                        },
+                    {
+                        {"simple_latest", "true"},
+                        {"no_unreads", "true"}
+                    },
                     cancellationToken)
                     .ConfigureAwait(false);
 
@@ -132,10 +144,10 @@ namespace TheBorg.Tenants
                         var t = Task.Run(async () => await PingLoopAsync()); // Not awaited
                         break;
                     case "pong":
-                        {
-                            var pongRtmResponse = JsonConvert.DeserializeObject<PongRtmResponse>(json, _jsonSerializerSettings);
-                            _logger.Verbose($"Received pong from the server. Latency is {(DateTimeOffset.Now - pongRtmResponse.Time).TotalSeconds:0.00} seconds");
-                        }
+                    {
+                        var pongRtmResponse = JsonConvert.DeserializeObject<PongRtmResponse>(json, _jsonSerializerSettings);
+                        _logger.Verbose($"Received pong from the server. Latency is {(DateTimeOffset.Now - pongRtmResponse.Time).TotalSeconds:0.00} seconds");
+                    }
                         break;
                     case "message":
                         await ReceivedMessage(JsonConvert.DeserializeObject<MessageRtmResponse>(json, _jsonSerializerSettings)).ConfigureAwait(false);
@@ -196,7 +208,7 @@ namespace TheBorg.Tenants
             var sender = new Address(
                 user,
                 new TenantChannel(messageRtmResponse.Channel),
-                Tenant);
+                TenantKey);
 
             _messages.OnNext(new TenantMessage(
                 text,
@@ -215,7 +227,6 @@ namespace TheBorg.Tenants
             return _slackService.SendMessageAsync(messageRtmResponse.Channel, text, cancellationToken);
         }
 
-        private static readonly string[] InvalidStrings = {"<", ">", "@"};
         private static string SanitiseText(string text)
         {
             return HttpUtility.HtmlDecode(InvalidStrings.Aggregate(text, (s, t) => s.Replace(t, string.Empty)));
@@ -234,7 +245,7 @@ namespace TheBorg.Tenants
                         {
                             id = messageId,
                             type = "ping",
-                            time = DateTimeOffset.Now,
+                            time = DateTimeOffset.Now
                         },
                         _jsonSerializerSettings);
 

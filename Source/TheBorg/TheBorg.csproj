@@ -68,23 +68,8 @@
     <Compile Include="Services\IConfigurationService.cs" />
     <Compile Include="Services\IMessageService.cs" />
     <Compile Include="Services\ISettingsService.cs" />
-    <Compile Include="Services\ISlackService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\SettingsService.cs" />
-    <Compile Include="Services\SlackService.cs" />
-    <Compile Include="Services\Slack\ApiResponses\UserInfoApiResponse.cs" />
-    <Compile Include="Services\Slack\DTOs\ChannelDto.cs" />
-    <Compile Include="Tenants\ITenant.cs" />
-    <Compile Include="Tenants\SlackTenant.cs" />
-    <Compile Include="Services\Slack\ApiResponses\ApiResponse.cs" />
-    <Compile Include="Services\Slack\ApiResponses\RtmStartApiResponse.cs" />
-    <Compile Include="Services\Slack\DTOs\UserDto.cs" />
-    <Compile Include="Tenants\Slack\RtmRequests\PingRtmRequest.cs" />
-    <Compile Include="Tenants\Slack\RtmRequests\RtmRequest.cs" />
-    <Compile Include="Tenants\Slack\RtmResponses\PongRtmResponse.cs" />
-    <Compile Include="Tenants\Slack\RtmResponses\HelloRtmResponse.cs" />
-    <Compile Include="Tenants\Slack\RtmResponses\MessageRtmResponse.cs" />
-    <Compile Include="Tenants\Slack\RtmResponses\RtmResponse.cs" />
     <Compile Include="ICollective.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -139,8 +124,11 @@
       <Project>{a2968831-196d-4b58-8813-93ea1648703d}</Project>
       <Name>TheBorg.Plugins.Status</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Tenants.Slack\TheBorg.Tenants.Slack.csproj">
+      <Project>{27d6e80f-e210-496e-aa2d-4cb4bedcec02}</Project>
+      <Name>TheBorg.Tenants.Slack</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="MsSql\Scripts\0001 - Create table Settings.sql" />
   </ItemGroup>

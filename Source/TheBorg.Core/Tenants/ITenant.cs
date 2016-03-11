@@ -22,33 +22,21 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Services.Slack.ApiResponses;
 
-namespace TheBorg.Services
+namespace TheBorg.Core.Tenants
 {
-    public interface ISlackService
+    public interface ITenant
     {
-        Task<TenantUser> GetUserAsync(
-            string userId,
-            CancellationToken cancellationToken);
+        TenantKey TenantKey { get; }
 
-        Task<ApiResponse> SendMessageAsync(
-            string channelId,
-            string text,
-            CancellationToken cancellationToken);
+        IObservable<TenantMessage> Messages { get; }
 
-        Task<T> CallApiAsync<T>(
-            string method,
-            Dictionary<string, string> arguments,
-            CancellationToken cancellationToken);
-
-        Task<T> CallApiAsync<T>(
-            string method,
-            CancellationToken cancellationToken,
-            params KeyValuePair<string, string>[] keyValuePairs);
+        Task SendMessage(Address address, string text, CancellationToken cancellationToken);
+        Task ConnectAsync(CancellationToken cancellationToken);
+        Task DisconnectAsync(CancellationToken cancellationToken);
     }
 }
