@@ -16,6 +16,11 @@ NUGET
       Microsoft.AspNet.WebApi.Owin (>= 5.2.0)
     Dapper (1.42)
     dbup (3.3.2)
+    EventFlow (0.27.1765)
+      Newtonsoft.Json (>= 7.0.1)
+    EventFlow.Autofac (0.27.1765)
+      Autofac (>= 3.5.2)
+      EventFlow (0.27.1765)
     Microsoft.AspNet.WebApi.Client (5.2.3)
       Microsoft.Net.Http (>= 2.2.22) - framework: portable-wp80+win+net45+wp81+wpa81
       Newtonsoft.Json (>= 6.0.4) - framework: >= net45, portable-wp80+win+net45+wp81+wpa81

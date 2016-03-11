@@ -38,6 +38,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tenants", "Tenants", "{FAEF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Tenants.Slack", "Source\TheBorg.Tenants.Slack\TheBorg.Tenants.Slack.csproj", "{27D6E80F-E210-496E-AA2D-4CB4BEDCEC02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBorg.Domain", "Source\TheBorg.Domain\TheBorg.Domain.csproj", "{66F135FD-03BD-40F4-9447-BAEE6B23C7EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,6 +98,10 @@ Global
 		{27D6E80F-E210-496E-AA2D-4CB4BEDCEC02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27D6E80F-E210-496E-AA2D-4CB4BEDCEC02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27D6E80F-E210-496E-AA2D-4CB4BEDCEC02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66F135FD-03BD-40F4-9447-BAEE6B23C7EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66F135FD-03BD-40F4-9447-BAEE6B23C7EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66F135FD-03BD-40F4-9447-BAEE6B23C7EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66F135FD-03BD-40F4-9447-BAEE6B23C7EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
