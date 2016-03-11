@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using NUnit.Framework;
-using TheBorg.Core.Extensions;
+using TheBorg.Common.Extensions;
 
 namespace TheBorg.Tests.UnitTests.Core.Extensions
 {

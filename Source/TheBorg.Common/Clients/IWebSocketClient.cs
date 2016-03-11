@@ -23,38 +23,16 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common.Clients
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public interface IWebSocketClient : IDisposable
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
+        IObservable<string> Messages { get; }
 
-            builder.RegisterApiControllers(Assembly);
-        }
-
-        protected override IEnumerable<Type> TypesToSkip()
-        {
-            yield return typeof (PluginProxy);
-        }
-
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
-        }
+        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
+        Task SendAsync(string message, CancellationToken cancellationToken);
     }
 }

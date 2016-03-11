@@ -30,7 +30,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using TheBorg.Core;
+using TheBorg.Common;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.PluginManagement

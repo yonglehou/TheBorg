@@ -22,39 +22,29 @@
 // SOFTWARE.
 //
 
-using System;
 using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using Newtonsoft.Json;
+using TheBorg.Common.Serialization.Resolvers;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common.Serialization
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public class JsonSerializer : IJsonSerializer
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
+        private static readonly IReadOnlyDictionary<JsonFormat, JsonSerializerSettings> JsonFormats = new Dictionary<JsonFormat, JsonSerializerSettings>
+            {
+                {JsonFormat.LowerSnakeCase, new JsonSerializerSettings { ContractResolver = new UnderscoreMappingResolver(), } },
+                {JsonFormat.CamelCase, new JsonSerializerSettings() },
+                {JsonFormat.PascalCase, new JsonSerializerSettings() },
+            };
 
-            builder.RegisterApiControllers(Assembly);
+        public T Deserialize<T>(string json, JsonFormat jsonFormat = JsonFormat.CamelCase)
+        {
+            return JsonConvert.DeserializeObject<T>(json, JsonFormats[jsonFormat]);
         }
 
-        protected override IEnumerable<Type> TypesToSkip()
+        public string Serialize<T>(T obj, JsonFormat jsonFormat = JsonFormat.CamelCase)
         {
-            yield return typeof (PluginProxy);
-        }
-
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            return JsonConvert.SerializeObject(obj, JsonFormats[jsonFormat]);
         }
     }
 }

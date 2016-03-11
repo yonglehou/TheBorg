@@ -24,37 +24,44 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Common.Serialization;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common.Clients
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public interface IRestClient
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
+        Task<TResult> PostAsync<TResult, T>(
+            Uri uri,
+            T obj,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
 
-            builder.RegisterApiControllers(Assembly);
-        }
+        Task<T> GetAsync<T>(
+            Uri uri,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
 
-        protected override IEnumerable<Type> TypesToSkip()
-        {
-            yield return typeof (PluginProxy);
-        }
+        Task<T> GetAsync<T>(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> queryString,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
 
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
+        Task<T> PostFormAsync<T>(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> keyValuePairs,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
 
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
-        }
+        Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage httpRequestMessage,
+            CancellationToken cancellationToken);
+
+        Task<TempFile> DownloadAsync(
+            Uri uri,
+            CancellationToken cancellationToken);
     }
 }

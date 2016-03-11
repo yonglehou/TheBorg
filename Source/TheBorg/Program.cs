@@ -24,7 +24,7 @@
 
 using System.Threading;
 using Autofac;
-using TheBorg.Core;
+using TheBorg.Common;
 using TheBorg.PluginManagement;
 using TheBorg.Tenants.Slack;
 using Topshelf;

@@ -22,39 +22,29 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
-
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common.Serialization
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public enum JsonFormat
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
+        /// <summary>
+        /// properties_are_like_this
+        /// </summary>
+        LowerSnakeCase,
 
-            builder.RegisterApiControllers(Assembly);
-        }
+        /// <summary>
+        /// propertiesAreLikeThis
+        /// </summary>
+        CamelCase,
 
-        protected override IEnumerable<Type> TypesToSkip()
-        {
-            yield return typeof (PluginProxy);
-        }
+        /// <summary>
+        /// PropertiesAreLikeThis
+        /// </summary>
+        PascalCase,
+    }
 
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
-        }
+    public interface IJsonSerializer
+    {
+        T Deserialize<T>(string json, JsonFormat jsonFormat = JsonFormat.CamelCase);
+        string Serialize<T>(T obj, JsonFormat jsonFormat = JsonFormat.CamelCase);
     }
 }

@@ -24,37 +24,25 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using System.Web;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common.Extensions
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public static class UriExtensions
     {
-        protected override void Load(ContainerBuilder builder)
+        public static Uri WithQueryString(this Uri uri, IEnumerable<KeyValuePair<string, string>> queryStringArguments)
         {
-            base.Load(builder);
-
-            builder.RegisterApiControllers(Assembly);
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            foreach (var kv in queryStringArguments)
+            {
+                queryString.Add(kv.Key, kv.Value);
+            }
+            return new UriBuilder(uri) { Query = queryString.ToString(), }.Uri;
         }
 
-        protected override IEnumerable<Type> TypesToSkip()
+        public static string GetFilename(this Uri uri)
         {
-            yield return typeof (PluginProxy);
-        }
-
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            return System.IO.Path.GetFileName(uri.LocalPath);
         }
     }
 }

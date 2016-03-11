@@ -28,7 +28,7 @@ using System.Web.Http.Controllers;
 using Autofac;
 using Autofac.Integration.WebApi;
 using Microsoft.Owin;
-using TheBorg.Core;
+using TheBorg.Common;
 
 namespace TheBorg
 {

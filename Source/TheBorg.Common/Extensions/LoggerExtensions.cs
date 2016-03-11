@@ -23,38 +23,38 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using System.Diagnostics;
+using Serilog;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common.Extensions
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public static class LoggerExtensions
     {
-        protected override void Load(ContainerBuilder builder)
+        public static IDisposable Time(this ILogger logger, string message)
         {
-            base.Load(builder);
-
-            builder.RegisterApiControllers(Assembly);
+            return new TimeLogger(logger, message);
         }
 
-        protected override IEnumerable<Type> TypesToSkip()
+        private class TimeLogger : IDisposable
         {
-            yield return typeof (PluginProxy);
-        }
+            private readonly ILogger _logger;
+            private readonly string _message;
+            private readonly Stopwatch _stopwatch;
 
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
+            public TimeLogger(
+                ILogger logger,
+                string message)
+            {
+                _logger = logger;
+                _message = message;
+                _stopwatch = Stopwatch.StartNew();
+            }
 
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            public void Dispose()
+            {
+                _stopwatch.Stop();
+                _logger.Verbose($"{_message}: {_stopwatch.Elapsed.TotalSeconds:0.###} seconds");
+            }
         }
     }
 }

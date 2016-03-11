@@ -24,37 +24,49 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.Http.Controllers;
+using System.Linq;
+using System.Reflection;
 using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using Module = Autofac.Module;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public abstract class ConventionModule : Module
     {
+        protected Assembly Assembly => GetType().Assembly;
+
         protected override void Load(ContainerBuilder builder)
         {
-            base.Load(builder);
+            var typesToSkip = new HashSet<Type>(Enumerable.Empty<Type>()
+                .Concat(TypesToSkip())
+                .Concat(SingletonTypes()));
 
-            builder.RegisterApiControllers(Assembly);
+            builder
+                .RegisterAssemblyTypes(GetType().Assembly)
+                .Where(t => !typesToSkip.Contains(t))
+                .Where(t => BaseTypesToSkip().All(b => !b.IsAssignableFrom(t)) )
+                .AsImplementedInterfaces()
+                .OwnedByLifetimeScope();
+
+            foreach (var singleton in SingletonTypes())
+            {
+                builder.RegisterType(singleton).AsImplementedInterfaces().SingleInstance();
+            }
         }
 
-        protected override IEnumerable<Type> TypesToSkip()
+        protected virtual IEnumerable<Type> TypesToSkip()
         {
-            yield return typeof (PluginProxy);
+            yield break;
         }
 
-        protected override IEnumerable<Type> SingletonTypes()
+        protected virtual IEnumerable<Type> BaseTypesToSkip()
         {
-            yield return typeof(PluginManagementService);
+            yield break;
         }
 
-        protected override IEnumerable<Type> BaseTypesToSkip()
+        protected virtual IEnumerable<Type> SingletonTypes()
         {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
-        }
+            yield break;
+        } 
     }
 }

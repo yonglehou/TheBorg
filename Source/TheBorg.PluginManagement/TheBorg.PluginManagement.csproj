@@ -68,9 +68,9 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TheBorg.Core\TheBorg.Core.csproj">
+    <ProjectReference Include="..\TheBorg.Common\TheBorg.Common.csproj">
       <Project>{82560bc4-8a1a-4300-a84c-9c617a392612}</Project>
-      <Name>TheBorg.Core</Name>
+      <Name>TheBorg.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\TheBorg.Host\TheBorg.Host.csproj">
       <Project>{d2645d5a-cb41-4a08-ab0f-3eb297a62148}</Project>

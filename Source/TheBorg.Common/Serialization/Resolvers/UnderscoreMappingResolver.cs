@@ -22,39 +22,18 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Serialization;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common.Serialization.Resolvers
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public class UnderscoreMappingResolver : DefaultContractResolver
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
+        private static readonly Regex Regex = new Regex(@"([A-Z])([A-Z][a-z])|([a-z0-9])([A-Z])", RegexOptions.Compiled);
 
-            builder.RegisterApiControllers(Assembly);
-        }
-
-        protected override IEnumerable<Type> TypesToSkip()
+        protected override string ResolvePropertyName(string propertyName)
         {
-            yield return typeof (PluginProxy);
-        }
-
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            return Regex.Replace(propertyName,"$1$3_$2$4").ToLower();
         }
     }
 }

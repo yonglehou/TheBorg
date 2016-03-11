@@ -24,37 +24,29 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using System.Linq;
+using System.Net.NetworkInformation;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public class TcpHelper
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
+        private static readonly Random Random = new Random();
 
-            builder.RegisterApiControllers(Assembly);
-        }
-
-        protected override IEnumerable<Type> TypesToSkip()
+        public static int GetFreePort()
         {
-            yield return typeof (PluginProxy);
-        }
+            var ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+            var activeTcpListeners = ipGlobalProperties.GetActiveTcpListeners();
+            var ports = new HashSet<int>(activeTcpListeners.Select(p => p.Port));
 
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            while (true)
+            {
+                var port = Random.Next(10000, 50000);
+                if (!ports.Contains(port))
+                {
+                    return port;
+                }
+            }
         }
     }
 }

@@ -23,38 +23,28 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using System.IO;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public class TempFile : IDisposable
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
+        public static TempFile New => new TempFile(System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString("N")));
 
-            builder.RegisterApiControllers(Assembly);
+        private TempFile(
+            string path)
+        {
+            Path = path;
         }
 
-        protected override IEnumerable<Type> TypesToSkip()
-        {
-            yield return typeof (PluginProxy);
-        }
+        public string Path { get; }
 
-        protected override IEnumerable<Type> SingletonTypes()
+        public void Dispose()
         {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            if (File.Exists(Path))
+            {
+                File.Delete(Path);
+            }
         }
     }
 }

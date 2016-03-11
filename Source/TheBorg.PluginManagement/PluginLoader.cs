@@ -28,9 +28,9 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using TheBorg.Core;
-using TheBorg.Core.Clients;
-using TheBorg.Core.Extensions;
+using TheBorg.Common;
+using TheBorg.Common.Clients;
+using TheBorg.Common.Extensions;
 using TheBorg.Host;
 using TheBorg.Interface.ValueObjects.Plugins;
 

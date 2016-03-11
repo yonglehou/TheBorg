@@ -24,37 +24,30 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using System.Linq;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public class Configuration : IConfiguration
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
+        private static readonly Dictionary<string, string> PathReplacements = new Dictionary<string, string>
+            {
+                {"APPDATA", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)},
+            };   
 
-            builder.RegisterApiControllers(Assembly);
+        private readonly IConfigurationReader _configurationReader;
+
+        public Configuration(
+            IConfigurationReader configurationReader)
+        {
+            _configurationReader = configurationReader;
         }
 
-        protected override IEnumerable<Type> TypesToSkip()
-        {
-            yield return typeof (PluginProxy);
-        }
+        public string PluginInstallPath => ReplaceSpecialPaths(_configurationReader.ReadString("plugins.install-path"));
 
-        protected override IEnumerable<Type> SingletonTypes()
+        private static string ReplaceSpecialPaths(string path)
         {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            return PathReplacements.Aggregate(path, (s, kv) => s.Replace($"{{{kv.Key}}}", kv.Value));
         }
     }
 }

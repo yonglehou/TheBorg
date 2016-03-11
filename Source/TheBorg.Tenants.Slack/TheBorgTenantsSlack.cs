@@ -24,7 +24,7 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Core;
+using TheBorg.Common;
 
 namespace TheBorg.Tenants.Slack
 {

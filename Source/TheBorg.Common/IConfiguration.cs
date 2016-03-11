@@ -22,39 +22,10 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
-
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public interface IConfiguration
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
-
-            builder.RegisterApiControllers(Assembly);
-        }
-
-        protected override IEnumerable<Type> TypesToSkip()
-        {
-            yield return typeof (PluginProxy);
-        }
-
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
-        }
+        string PluginInstallPath { get; }
     }
 }

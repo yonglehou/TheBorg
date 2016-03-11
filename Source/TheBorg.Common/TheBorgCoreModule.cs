@@ -24,37 +24,38 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.Http.Controllers;
 using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using Serilog;
+using TheBorg.Common.Clients;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public class TheBorgCoreModule : ConventionModule
     {
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
 
-            builder.RegisterApiControllers(Assembly);
+            Serilog.Debugging.SelfLog.Out = Console.Out;
+
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.ColoredConsole()
+                .CreateLogger();
+            Log.Logger = logger;
+
+            builder.RegisterInstance(logger);
+
+            builder
+                .RegisterType<WebSocketClient>()
+                .As<IWebSocketClient>()
+                .ExternallyOwned();
         }
 
         protected override IEnumerable<Type> TypesToSkip()
         {
-            yield return typeof (PluginProxy);
-        }
-
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            yield return typeof (TcpHelper);
+            yield return typeof (WebSocketClient);
         }
     }
 }

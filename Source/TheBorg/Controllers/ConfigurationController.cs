@@ -24,7 +24,7 @@
 
 using System.Web.Http;
 using Serilog;
-using TheBorg.Core;
+using TheBorg.Common;
 using TheBorg.Extensions;
 using TheBorg.Interface.ValueObjects.Plugins;
 

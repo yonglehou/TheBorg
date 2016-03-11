@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Core.Tenants;
+using TheBorg.Common.Tenants;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Services

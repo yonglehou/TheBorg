@@ -23,38 +23,28 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using System.Configuration;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public class ConfigurationReader : IConfigurationReader
     {
-        protected override void Load(ContainerBuilder builder)
+        public bool TryReadString(string key, out string value)
         {
-            base.Load(builder);
+            if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
 
-            builder.RegisterApiControllers(Assembly);
+            value = ConfigurationManager.AppSettings[key];
+            return !string.IsNullOrEmpty(value);
         }
 
-        protected override IEnumerable<Type> TypesToSkip()
+        public string ReadString(string key, string defaultValue = null)
         {
-            yield return typeof (PluginProxy);
-        }
-
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            string value;
+            if (!TryReadString(key, out value) && string.IsNullOrEmpty(defaultValue))
+            {
+                throw new ConfigurationErrorsException($"Configuration key '{key}' not set and no default value provided");
+            }
+            return value;
         }
     }
 }

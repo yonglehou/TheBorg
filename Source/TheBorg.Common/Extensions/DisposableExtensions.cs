@@ -23,38 +23,25 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Web.Http.Controllers;
-using Autofac;
-using Autofac.Integration.WebApi;
-using Microsoft.Owin;
-using TheBorg.Common;
+using Serilog;
 
-namespace TheBorg.PluginManagement
+namespace TheBorg.Common.Extensions
 {
-    public class TheBorgPluginManagementModule : ConventionModule
+    public static class DisposableExtensions
     {
-        protected override void Load(ContainerBuilder builder)
+        public static void DisposeExceptionSafe(this IDisposable disposable, ILogger logger)
         {
-            base.Load(builder);
+            if (disposable == null) return;
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
 
-            builder.RegisterApiControllers(Assembly);
-        }
-
-        protected override IEnumerable<Type> TypesToSkip()
-        {
-            yield return typeof (PluginProxy);
-        }
-
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof(PluginManagementService);
-        }
-
-        protected override IEnumerable<Type> BaseTypesToSkip()
-        {
-            yield return typeof (IHttpController);
-            yield return typeof (OwinMiddleware);
+            try
+            {
+                disposable.Dispose();
+            }
+            catch (Exception e)
+            {
+                logger.Warning(e, $"Failed to dispose '{disposable.GetType().Name}'");
+            }
         }
     }
 }
