@@ -32,6 +32,38 @@ namespace TheBorg.Collective.PluginManagement.HttpApi.Middlewares
 {
     public class PluginAuthMiddleware : OwinMiddleware
     {
+        private readonly ILogger _logger;
+
+        public PluginAuthMiddleware(OwinMiddleware next, PluginAuthMiddlewareOptions options) : base(next)
+        {
+            _logger = options.LoggerFactory(typeof (PluginAuthMiddleware));
+        }
+
+        public override async Task Invoke(IOwinContext context)
+        {
+            if (!context.Request.Headers.ContainsKey("Authorization"))
+            {
+                context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
+                return;
+            }
+
+            var headerParts = context.Request.Headers.Get("Authorization").Split(' ');
+            if (headerParts.Length != 2)
+            {
+                context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
+                return;
+            }
+            if (headerParts[0] != "THEBORG-TOKEN")
+            {
+                context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
+                return;
+            }
+
+            context.Request.User = new PluginPrincipal(new PluginIdentity(headerParts[1]));
+
+            await Next.Invoke(context).ConfigureAwait(false);
+        }
+
         private class PluginPrincipal : IPrincipal
         {
             public PluginPrincipal(IIdentity identity)
@@ -59,35 +91,6 @@ namespace TheBorg.Collective.PluginManagement.HttpApi.Middlewares
             public string Name { get; }
             public string AuthenticationType { get; }
             public bool IsAuthenticated { get; }
-        }
-
-        public PluginAuthMiddleware(OwinMiddleware next) : base(next)
-        {
-        }
-
-        public override async Task Invoke(IOwinContext context)
-        {
-            if (!context.Request.Headers.ContainsKey("Authorization"))
-            {
-                context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
-                return;
-            }
-
-            var headerParts = context.Request.Headers.Get("Authorization").Split(' ');
-            if (headerParts.Length != 2)
-            {
-                context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
-                return;
-            }
-            if (headerParts[0] != "THEBORG-TOKEN")
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                return;
-            }
-
-            context.Request.User = new PluginPrincipal(new PluginIdentity(headerParts[1]));
-
-            await Next.Invoke(context).ConfigureAwait(false);
         }
     }
 }

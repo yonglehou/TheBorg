@@ -48,7 +48,9 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="HttpApi\Middlewares\LoggerMiddleware.cs" />
+    <Compile Include="HttpApi\Middlewares\LoggerMiddlewareOptions.cs" />
     <Compile Include="HttpApi\Middlewares\PluginAuthMiddleware.cs" />
+    <Compile Include="HttpApi\Middlewares\PluginAuthMiddlewareOptions.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="HttpApi\IPluginHttpApi.cs" />
     <Compile Include="IPluginInstaller.cs" />

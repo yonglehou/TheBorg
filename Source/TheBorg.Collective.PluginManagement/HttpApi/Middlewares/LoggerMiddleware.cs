@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Owin;
@@ -32,13 +33,17 @@ namespace TheBorg.Collective.PluginManagement.HttpApi.Middlewares
 {
     public class LoggerMiddleware : OwinMiddleware
     {
-        public LoggerMiddleware(OwinMiddleware next) : base(next)
+        private readonly ILogger _logger;
+
+        public LoggerMiddleware(OwinMiddleware next, LoggerMiddlewareOptions options) : base(next)
         {
+            _logger = options.LoggerFactory(typeof (LoggerMiddleware));
         }
 
         public override async Task Invoke(IOwinContext context)
         {
             Exception exception = null;
+            var stopWatch = Stopwatch.StartNew();
 
             try
             {
@@ -51,13 +56,15 @@ namespace TheBorg.Collective.PluginManagement.HttpApi.Middlewares
             }
             finally
             {
+                stopWatch.Stop();
+
                 if (exception == null)
                 {
-                    Log.Verbose($"API {context.Request.Method} {(HttpStatusCode)context.Response.StatusCode} {context.Request.Uri.GetLeftPart(UriPartial.Path)}");
+                    _logger.Verbose($"API {context.Request.Method} {stopWatch.Elapsed.TotalSeconds:0.00} sec {(HttpStatusCode)context.Response.StatusCode} {context.Request.Uri.GetLeftPart(UriPartial.Path)}");
                 }
                 else
                 {
-                    Log.Error(exception, $"API {context.Request.Method} {(HttpStatusCode) context.Response.StatusCode} {context.Request.Uri.GetLeftPart(UriPartial.Path)}");
+                    _logger.Error(exception, $"API {context.Request.Method} {stopWatch.Elapsed.TotalSeconds:0.00} sec {(HttpStatusCode) context.Response.StatusCode} {context.Request.Uri.GetLeftPart(UriPartial.Path)}");
                 }
             }
         }
