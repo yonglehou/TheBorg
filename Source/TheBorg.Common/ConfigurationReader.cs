@@ -23,16 +23,28 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Configuration;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class ConfigurationReader : IConfigurationReader
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        public bool TryReadString(string key, out string value)
         {
-            yield return typeof (SlackTenant);
+            if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
+
+            value = ConfigurationManager.AppSettings[key];
+            return !string.IsNullOrEmpty(value);
+        }
+
+        public string ReadString(string key, string defaultValue = null)
+        {
+            string value;
+            if (!TryReadString(key, out value) && string.IsNullOrEmpty(defaultValue))
+            {
+                throw new ConfigurationErrorsException($"Configuration key '{key}' not set and no default value provided");
+            }
+            return value;
         }
     }
 }

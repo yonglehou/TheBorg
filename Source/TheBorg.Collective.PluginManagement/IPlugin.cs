@@ -23,16 +23,16 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.PluginManagement
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IPlugin
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        Task PingAsync(CancellationToken cancellationToken);
+        Task<PluginInformation> GetPluginInformationAsync(CancellationToken cancellationToken);
+        Uri BaseUri { get; }
     }
 }

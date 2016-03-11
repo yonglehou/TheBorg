@@ -24,15 +24,44 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Common.Serialization;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common.Clients
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IRestClient
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        Task<TResult> PostAsync<TResult, T>(
+            Uri uri,
+            T obj,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<T> GetAsync<T>(
+            Uri uri,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<T> GetAsync<T>(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> queryString,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<T> PostFormAsync<T>(
+            Uri uri,
+            IEnumerable<KeyValuePair<string, string>> keyValuePairs,
+            JsonFormat jsonFormat,
+            CancellationToken cancellationToken);
+
+        Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage httpRequestMessage,
+            CancellationToken cancellationToken);
+
+        Task<TempFile> DownloadAsync(
+            Uri uri,
+            CancellationToken cancellationToken);
     }
 }

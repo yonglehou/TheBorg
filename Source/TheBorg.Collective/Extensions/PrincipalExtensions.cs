@@ -22,17 +22,16 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Security.Principal;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.Extensions
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public static class PrincipalExtensions
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        public static PluginId GetPluginId(this IPrincipal principal)
         {
-            yield return typeof (SlackTenant);
+            return new PluginId(principal.Identity.Name);
         }
     }
 }

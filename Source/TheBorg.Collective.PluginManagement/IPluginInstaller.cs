@@ -22,17 +22,21 @@
 // SOFTWARE.
 //
 
-using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.PluginManagement
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public enum PluginPackageType
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        Zip,
+    }
+
+    public interface IPluginInstaller
+    {
+        Task<PluginPath> InstallPluginAsync(string name, string path, PluginPackageType packageType, CancellationToken cancellationToken);
+        Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken);
     }
 }

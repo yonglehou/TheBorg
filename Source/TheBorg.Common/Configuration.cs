@@ -24,15 +24,31 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Linq;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class Configuration : IConfiguration
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private static readonly Dictionary<string, string> PathReplacements = new Dictionary<string, string>
+            {
+                {"APPDATA", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)},
+            };   
+
+        private readonly IConfigurationReader _configurationReader;
+
+        public Configuration(
+            IConfigurationReader configurationReader)
         {
-            yield return typeof (SlackTenant);
+            _configurationReader = configurationReader;
+        }
+
+        public string PluginInstallPath => ReplaceSpecialPaths(_configurationReader.ReadString("plugins.install-path"));
+        public Uri LatestReleasesUri => new Uri(_configurationReader.ReadString("update.latest-releases-uri"), UriKind.Absolute);
+
+        private static string ReplaceSpecialPaths(string path)
+        {
+            return PathReplacements.Aggregate(path, (s, kv) => s.Replace($"{{{kv.Key}}}", kv.Value));
         }
     }
 }

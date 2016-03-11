@@ -23,16 +23,13 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.PluginManagement
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IPluginProxy : IDisposable
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        PluginId Id { get; }
+        IPlugin Plugin { get; }
     }
 }

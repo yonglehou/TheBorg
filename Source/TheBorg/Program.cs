@@ -22,10 +22,18 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using Autofac;
-using TheBorg.Core;
-using TheBorg.PluginManagement;
+using TheBorg.Collective;
+using TheBorg.Collective.PluginManagement;
+using TheBorg.Common;
+using TheBorg.Plugins.Administration;
+using TheBorg.Plugins.GitHub;
+using TheBorg.Plugins.Help;
+using TheBorg.Plugins.Jokes;
+using TheBorg.Plugins.Status;
 using TheBorg.Tenants.Slack;
 using Topshelf;
 
@@ -35,27 +43,33 @@ namespace TheBorg
     {
         private static readonly IContainer Container;
 
+        private static readonly IReadOnlyCollection<Assembly> BuiltInPlugins = new[]
+        {
+            typeof (JokesPluginBootstrapper).Assembly,
+            typeof (StatusPluginBootstrapper).Assembly,
+            typeof (PluginsPluginBootstrapper).Assembly,
+            typeof (HelpPluginBootstrapper).Assembly,
+            typeof (GitHubPluginBootstrapper).Assembly
+        };
+
         static Program()
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule<TheBorgCoreModule>();
             containerBuilder.RegisterModule<TheBorgTenantsSlack>();
-            containerBuilder.RegisterModule<TheBorgPluginManagementModule>();
-            containerBuilder.RegisterModule<TheBorgModule>();
+            containerBuilder.RegisterModule<TheBorgCollectivePluginManagement>();
+            containerBuilder.RegisterModule<TheBorgCollective>();
             Container = containerBuilder.Build();
         }
 
-        static int Main(string[] args)
+        private static int Main()
         {
             return (int) HostFactory.Run(hc =>
             {
-                hc.Service<ICollective>(s =>
+                hc.Service<IBorg>(s =>
                 {
-                    s.ConstructUsing(() => Container.Resolve<ICollective>());
-                    s.WhenStarted(c =>
-                    {
-                        c.StartAsync(CancellationToken.None).Wait();
-                    });
+                    s.ConstructUsing(() => Container.Resolve<IBorg>());
+                    s.WhenStarted(c => { c.StartAsync(BuiltInPlugins, CancellationToken.None).Wait(); });
                     s.WhenStopped(c =>
                     {
                         c.StopAsync(CancellationToken.None).Wait();
@@ -63,10 +77,11 @@ namespace TheBorg
                     });
                 });
 
+                hc.DependsOnMsSql();
                 hc.RunAsLocalSystem();
                 hc.SetDisplayName("TheBorg");
                 hc.SetServiceName("TheBorg");
-                hc.SetDescription($"The Borg v{typeof(Program).Assembly.GetName().Version}");
+                hc.SetDescription($"The Borg v{typeof (Program).Assembly.GetName().Version}");
             });
         }
     }

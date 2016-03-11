@@ -23,16 +23,18 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.IO;
+using System.Reflection;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common.Extensions
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public static class AssemblyExtensions
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        public static string GetCodeBase(this Assembly assembly)
         {
-            yield return typeof (SlackTenant);
+            var codebase = assembly.GetName().CodeBase;
+            var uri = new UriBuilder(codebase);
+            return Path.GetFullPath(Uri.UnescapeDataString(uri.Path));
         }
     }
 }

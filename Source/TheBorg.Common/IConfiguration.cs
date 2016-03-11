@@ -23,16 +23,12 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IConfiguration
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        string PluginInstallPath { get; }
+        Uri LatestReleasesUri { get; }
     }
 }

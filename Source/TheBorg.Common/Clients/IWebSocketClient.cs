@@ -23,16 +23,16 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common.Clients
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IWebSocketClient : IDisposable
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        IObservable<string> Messages { get; }
+
+        Task ConnectAsync(Uri uri, CancellationToken cancellationToken);
+        Task SendAsync(string message, CancellationToken cancellationToken);
     }
 }
