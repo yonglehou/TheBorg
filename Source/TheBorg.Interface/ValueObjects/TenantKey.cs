@@ -22,25 +22,14 @@
 // SOFTWARE.
 //
 
-using System;
-using TheBorg.Services.Slack.DTOs;
-
-namespace TheBorg.Services.Slack.ApiResponses
+namespace TheBorg.Interface.ValueObjects
 {
-    public class RtmStartApiResponse : ApiResponse
+    public class TenantKey : Key
     {
-        public RtmStartApiResponse(
-            string ok,
-            string error,
-            Uri url,
-            UserDto self)
-            : base(ok, error)
-        {
-            Url = url;
-            Self = self;
-        }
+        public static TenantKey With(string value) { return new TenantKey(value); }
 
-        public Uri Url { get; }
-        public UserDto Self { get; }
+        public TenantKey(string value) : base(value)
+        {
+        }
     }
 }

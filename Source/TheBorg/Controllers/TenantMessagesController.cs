@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using TheBorg.Interface.ValueObjects;
@@ -42,14 +43,14 @@ namespace TheBorg.Controllers
 
         [HttpPost]
         [Route("")]
-        public async Task<IHttpActionResult> Messages([FromBody] TenantMessage tenantMessage)
+        public async Task<IHttpActionResult> Messages([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            await _messageService.SendAsync(tenantMessage.Address, tenantMessage.Text).ConfigureAwait(false);
+            await _messageService.SendAsync(tenantMessage.Address, tenantMessage.Text, cancellationToken).ConfigureAwait(false);
 
             return Ok();
         }

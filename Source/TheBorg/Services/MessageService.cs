@@ -22,30 +22,40 @@
 // SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Core.Tenants;
 using TheBorg.Interface.ValueObjects;
 
 namespace TheBorg.Services
 {
     public class MessageService : IMessageService
     {
-        private readonly ISlackService _slackService;
+        private readonly IReadOnlyDictionary<TenantKey, ITenant> _tenants;
 
         public MessageService(
-            ISlackService slackService)
+            IEnumerable<ITenant> tenants)
         {
-            _slackService = slackService;
+            _tenants = tenants.ToDictionary(t => t.TenantKey, t => t);
         }
 
-        public Task ReplyAsync(TenantMessage tenantMessage, string text)
+        public Task ReplyAsync(TenantMessage tenantMessage, string text, CancellationToken cancellationToken)
         {
-            return SendAsync(tenantMessage.Address, text);
+            return SendAsync(tenantMessage.Address, text, cancellationToken);
         }
 
-        public Task SendAsync(Address address, string text)
+        public Task SendAsync(Address address, string text, CancellationToken cancellationToken)
         {
-            return _slackService.SendMessageAsync(address.TenantChannel.Value, text, CancellationToken.None);
+            ITenant tenant;
+            if (!_tenants.TryGetValue(address.TenantKey, out tenant))
+            {
+                throw new ArgumentException($"There's no tenant with key '{address.TenantKey}'");
+            }
+
+            return tenant.SendMessage(address, text, cancellationToken);
         }
     }
 }

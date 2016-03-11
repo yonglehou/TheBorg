@@ -22,22 +22,21 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Services.Slack.DTOs
-{
-    /// <summary>
-    ///     https://api.slack.com/types/channel
-    /// </summary>
-    public class ChannelDto
-    {
-        public ChannelDto(
-            string id,
-            string name)
-        {
-            Id = id;
-            Name = name;
-        }
+using TheBorg.Tenants.Slack.DTOs;
 
-        public string Id { get; }
-        public string Name { get; }
+namespace TheBorg.Tenants.Slack.ApiResponses
+{
+    public class UserInfoApiResponse : ApiResponse
+    {
+        public UserDto User { get; }
+
+        public UserInfoApiResponse(
+            string ok,
+            string error,
+            UserDto user)
+            : base(ok, error)
+        {
+            User = user;
+        }
     }
 }

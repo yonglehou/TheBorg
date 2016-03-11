@@ -29,15 +29,15 @@ namespace TheBorg.Interface.ValueObjects
         public TenantUser(
             string name,
             string id,
-            Tenant tenant)
+            TenantKey tenantKey)
         {
             Name = name;
             Id = id;
-            Tenant = tenant;
+            TenantKey = tenantKey;
         }
 
         public string Name { get; }
         public string Id { get; }
-        public Tenant Tenant { get; }
+        public TenantKey TenantKey { get; }
     }
 }

@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Services.Slack.DTOs
+namespace TheBorg.Tenants.Slack.DTOs
 {
     /// <summary>
     ///     https://api.slack.com/types/user

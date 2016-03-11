@@ -22,12 +22,33 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface.ValueObjects
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.Tenants.Slack.ApiResponses;
+
+namespace TheBorg.Tenants.Slack
 {
-    public class Tenant : SingleValueObject<string>
+    public interface ISlackService
     {
-        public Tenant(string value) : base(value)
-        {
-        }
+        Task<TenantUser> GetUserAsync(
+            string userId,
+            CancellationToken cancellationToken);
+
+        Task<ApiResponse> SendMessageAsync(
+            string channelId,
+            string text,
+            CancellationToken cancellationToken);
+
+        Task<T> CallApiAsync<T>(
+            string method,
+            Dictionary<string, string> arguments,
+            CancellationToken cancellationToken);
+
+        Task<T> CallApiAsync<T>(
+            string method,
+            CancellationToken cancellationToken,
+            params KeyValuePair<string, string>[] keyValuePairs);
     }
 }
