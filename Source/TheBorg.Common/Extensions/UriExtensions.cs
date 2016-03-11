@@ -24,15 +24,25 @@
 
 using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Web;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common.Extensions
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public static class UriExtensions
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        public static Uri WithQueryString(this Uri uri, IEnumerable<KeyValuePair<string, string>> queryStringArguments)
         {
-            yield return typeof (SlackTenant);
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            foreach (var kv in queryStringArguments)
+            {
+                queryString.Add(kv.Key, kv.Value);
+            }
+            return new UriBuilder(uri) { Query = queryString.ToString(), }.Uri;
+        }
+
+        public static string GetFilename(this Uri uri)
+        {
+            return System.IO.Path.GetFileName(uri.LocalPath);
         }
     }
 }

@@ -23,16 +23,25 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using Serilog;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common.Extensions
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public static class DisposableExtensions
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        public static void DisposeExceptionSafe(this IDisposable disposable, ILogger logger)
         {
-            yield return typeof (SlackTenant);
+            if (disposable == null) return;
+            if (logger == null) throw new ArgumentNullException(nameof(logger));
+
+            try
+            {
+                disposable.Dispose();
+            }
+            catch (Exception e)
+            {
+                logger.Warning(e, $"Failed to dispose '{disposable.GetType().Name}'");
+            }
         }
     }
 }

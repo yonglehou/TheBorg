@@ -22,17 +22,39 @@
 // SOFTWARE.
 //
 
-using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
+using TheBorg.Collective.PluginManagement;
+using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.Controllers
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    [RoutePrefix("api/plugins")]
+    public class PluginsController : ApiController
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private readonly IPluginManagementService _pluginManagementService;
+
+        public PluginsController(
+            IPluginManagementService pluginManagementService)
         {
-            yield return typeof (SlackTenant);
+            _pluginManagementService = pluginManagementService;
+        }
+
+        [HttpGet]
+        [Route("")]
+        public Task<IReadOnlyCollection<PluginInformation>> AllPlugins(CancellationToken cancellationToken)
+        {
+            return _pluginManagementService.GetPluginsAsync(cancellationToken);
+        }
+
+        [HttpPost]
+        [Route("{pId}/unload")]
+        public Task Unload(string pId, CancellationToken cancellationToken)
+        {
+            var pluginId = PluginId.With(pId);
+            return _pluginManagementService.UnloadPluginAsync(pluginId);
         }
     }
 }

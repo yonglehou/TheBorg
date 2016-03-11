@@ -23,16 +23,13 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.PluginManagement.HttpApi
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IPluginHttpApi : IDisposable
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        Task StartAsync(int port, CancellationToken cancellationToken);
     }
 }

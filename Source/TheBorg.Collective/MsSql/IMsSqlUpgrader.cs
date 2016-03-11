@@ -22,17 +22,12 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading.Tasks;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.MsSql
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IMsSqlUpgrader
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        Task UpgradeAsync();
     }
 }

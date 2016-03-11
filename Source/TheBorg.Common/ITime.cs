@@ -23,16 +23,11 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface ITime
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        DateTimeOffset Now { get; }
     }
 }

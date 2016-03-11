@@ -1,0 +1,11 @@
+﻿Autofac
+Autofac.Owin
+Autofac.WebApi2.Owin
+Dapper
+dbup
+Microsoft.AspNet.WebApi.OwinSelfHost
+Nancy.Hosting.Self
+Newtonsoft.Json
+Octokit
+Rx-Main
+Serilog

@@ -22,17 +22,37 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
+using TheBorg.Collective.Services;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective.Controllers
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    [RoutePrefix("api/tenant-messages")]
+    public class TenantMessagesController : ApiController
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private readonly IMessageService _messageService;
+
+        public TenantMessagesController(
+            IMessageService messageService)
         {
-            yield return typeof (SlackTenant);
+            _messageService = messageService;
+        }
+
+        [HttpPost]
+        [Route("")]
+        public async Task<IHttpActionResult> Messages([FromBody] TenantMessage tenantMessage, CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            await _messageService.SendAsync(tenantMessage.Address, tenantMessage.Text, cancellationToken).ConfigureAwait(false);
+
+            return Ok();
         }
     }
 }

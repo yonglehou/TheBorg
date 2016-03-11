@@ -22,17 +22,16 @@
 // SOFTWARE.
 //
 
-using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Collective
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public interface IBorg
     {
-        protected override IEnumerable<Type> SingletonTypes()
-        {
-            yield return typeof (SlackTenant);
-        }
+        Task StartAsync(IEnumerable<Assembly> builtInPlugins, CancellationToken cancellationToken);
+        Task StopAsync(CancellationToken cancellationToken);
     }
 }

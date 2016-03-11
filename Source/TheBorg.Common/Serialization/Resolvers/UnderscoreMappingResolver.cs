@@ -22,17 +22,18 @@
 // SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Serialization;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common.Serialization.Resolvers
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class UnderscoreMappingResolver : DefaultContractResolver
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private static readonly Regex Regex = new Regex(@"([A-Z])([A-Z][a-z])|([a-z0-9])([A-Z])", RegexOptions.Compiled);
+
+        protected override string ResolvePropertyName(string propertyName)
         {
-            yield return typeof (SlackTenant);
+            return Regex.Replace(propertyName,"$1$3_$2$4").ToLower();
         }
     }
 }

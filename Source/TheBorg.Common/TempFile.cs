@@ -23,16 +23,28 @@
 //
 
 using System;
-using System.Collections.Generic;
-using TheBorg.Common;
+using System.IO;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class TempFile : IDisposable
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        public static TempFile New => new TempFile(System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString("N")));
+
+        private TempFile(
+            string path)
         {
-            yield return typeof (SlackTenant);
+            Path = path;
+        }
+
+        public string Path { get; }
+
+        public void Dispose()
+        {
+            if (File.Exists(Path))
+            {
+                File.Delete(Path);
+            }
         }
     }
 }

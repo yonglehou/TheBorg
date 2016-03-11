@@ -22,17 +22,29 @@
 // SOFTWARE.
 //
 
-using System;
 using System.Collections.Generic;
-using TheBorg.Common;
+using Newtonsoft.Json;
+using TheBorg.Common.Serialization.Resolvers;
 
-namespace TheBorg.Tenants.Slack
+namespace TheBorg.Common.Serialization
 {
-    public class TheBorgTenantsSlack : ConventionModule
+    public class JsonSerializer : IJsonSerializer
     {
-        protected override IEnumerable<Type> SingletonTypes()
+        private static readonly IReadOnlyDictionary<JsonFormat, JsonSerializerSettings> JsonFormats = new Dictionary<JsonFormat, JsonSerializerSettings>
+            {
+                {JsonFormat.LowerSnakeCase, new JsonSerializerSettings { ContractResolver = new UnderscoreMappingResolver(), } },
+                {JsonFormat.CamelCase, new JsonSerializerSettings() },
+                {JsonFormat.PascalCase, new JsonSerializerSettings() },
+            };
+
+        public T Deserialize<T>(string json, JsonFormat jsonFormat = JsonFormat.CamelCase)
         {
-            yield return typeof (SlackTenant);
+            return JsonConvert.DeserializeObject<T>(json, JsonFormats[jsonFormat]);
+        }
+
+        public string Serialize<T>(T obj, JsonFormat jsonFormat = JsonFormat.CamelCase)
+        {
+            return JsonConvert.SerializeObject(obj, JsonFormats[jsonFormat]);
         }
     }
 }
