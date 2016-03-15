@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -41,14 +40,17 @@ namespace TheBorg.Common.Clients
     public class RestClient : IRestClient
     {
         private readonly ILogger _logger;
+        private readonly IFileSystemClient _fileSystemClient;
         private readonly IJsonSerializer _jsonSerializer;
         private static readonly HttpClient HttpClient = new HttpClient();
 
         public RestClient(
             ILogger logger,
+            IFileSystemClient fileSystemClient,
             IJsonSerializer jsonSerializer)
         {
             _logger = logger;
+            _fileSystemClient = fileSystemClient;
             _jsonSerializer = jsonSerializer;
         }
 
@@ -120,14 +122,13 @@ namespace TheBorg.Common.Clients
             Uri uri,
             CancellationToken cancellationToken)
         {
-            var tempFile = TempFile.New;
+            var tempFile = TempFile.New(_fileSystemClient);
 
             using (var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
             using (var httpResponseMessage = await SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
-            using (var fileStream = new FileStream(tempFile.Path, FileMode.CreateNew))
             using (var responseStream = await httpResponseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false))
             {
-                await responseStream.CopyToAsync(fileStream).ConfigureAwait(false);
+                await tempFile.WriteAsync(responseStream, cancellationToken).ConfigureAwait(false);
             }
 
             return tempFile;

@@ -23,22 +23,22 @@
 //
 
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using TheBorg.Common;
-using TheBorg.Interface.ValueObjects.Plugins;
+using TheBorg.Interface.ValueObjects;
 
-namespace TheBorg.Collective.PluginManagement
+namespace TheBorg.Common.Clients
 {
-    public enum PluginPackageType
+    public interface IFileSystemClient
     {
-        Zip,
-    }
+        void DeleteFile(string path);
 
-    public interface IPluginInstaller
-    {
-        Task<PluginPath> InstallPluginAsync(PluginId pluginId, TempFile tempFile, PluginPackageType packageType, CancellationToken cancellationToken);
-        Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken);
-        Task UninstallPluginAsync(PluginId pluginId, CancellationToken cancellationToken);
+        Task WriteAsync(Stream sourceStream, string destinationFile, CancellationToken cancellationToken);
+        Task<DataSize> ExtractZipAsync(string sourceFile, string destinationDirectory, CancellationToken cancellationToken);
+        IReadOnlyCollection<string> GetDirectories(string path);
+        bool FileExists(string path);
+        bool DirectoryExists(string path);
+        void DeleteDirectory(string path);
     }
 }

@@ -23,43 +23,48 @@
 //
 
 using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Common.Clients;
 
-namespace TheBorg.Common
+namespace TheBorg.Interface.ValueObjects
 {
-    public class TempFile : IDisposable
+    public class DataSize : SingleValueObject<long>
     {
-        private readonly string _filePath;
-        private readonly IFileSystemClient _fileSystemClient;
+        private readonly Lazy<string> _toStringLazy;
 
-        private TempFile(
-            string filePath,
-            IFileSystemClient fileSystemClient)
+        public DataSize(long value) : base(value)
         {
-            _fileSystemClient = fileSystemClient;
-            _filePath = filePath;
+            if (value < 0) throw new ArgumentOutOfRangeException(nameof(value), $"Data size must be positive '{value}'");
+
+            _toStringLazy = new Lazy<string>(() => PrettyPrint(value));
         }
 
-        public void Dispose()
+        public static DataSize With(long value)
         {
-            _fileSystemClient.DeleteFile(_filePath);
+            return new DataSize(value);
         }
 
-        public Task WriteAsync(Stream stream, CancellationToken cancellationToken)
+        public override string ToString()
         {
-            return _fileSystemClient.WriteAsync(stream, _filePath, cancellationToken);
+            return _toStringLazy.Value;
         }
 
-        public Task ExtractZipAsync(string destinationDirectory, CancellationToken cancellationToken)
+        private static string PrettyPrint(long value)
         {
-            return _fileSystemClient.ExtractZipAsync(_filePath, destinationDirectory, cancellationToken);
-        }
+            const int byteConversion = 1024;
+            var bytes = Convert.ToDouble(value);
 
-        public static TempFile New(IFileSystemClient fileSystemClient) => new TempFile(
-            Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")),
-            fileSystemClient);
+            if (bytes >= Math.Pow(byteConversion, 3))
+            {
+                return string.Concat(Math.Round(bytes/Math.Pow(byteConversion, 3), 2), " GB");
+            }
+            if (bytes >= Math.Pow(byteConversion, 2))
+            {
+                return string.Concat(Math.Round(bytes/Math.Pow(byteConversion, 2), 2), " MB");
+            }
+            if (bytes >= byteConversion)
+            {
+                return string.Concat(Math.Round(bytes/byteConversion, 2), " KB");
+            }
+            return string.Concat(bytes, " B");
+        }
     }
 }

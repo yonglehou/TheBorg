@@ -24,42 +24,40 @@
 
 using System;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Common.Clients;
+using System.Linq;
 
-namespace TheBorg.Common
+namespace TheBorg.Tests
 {
-    public class TempFile : IDisposable
+    public static class TestDataReader
     {
-        private readonly string _filePath;
-        private readonly IFileSystemClient _fileSystemClient;
-
-        private TempFile(
-            string filePath,
-            IFileSystemClient fileSystemClient)
+        public static Stream OpenEmbeddedResourceStream(string endWith)
         {
-            _fileSystemClient = fileSystemClient;
-            _filePath = filePath;
+            var assembly = typeof (TestDataReader).Assembly;
+            var resourceNames = assembly.GetManifestResourceNames();
+            var resourceName = resourceNames.SingleOrDefault(r => r.EndsWith(endWith));
+
+            if (string.IsNullOrEmpty(resourceName))
+            {
+                throw new ArgumentException($"Not found '{endWith}': {string.Join(", ", resourceNames)}");
+            }
+
+            return assembly.GetManifestResourceStream(resourceName);
         }
 
-        public void Dispose()
+        public static string ExtractEmbeddedResource(string endsWith)
         {
-            _fileSystemClient.DeleteFile(_filePath);
-        }
+            var directoryPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+            var filePath = Path.Combine(directoryPath, endsWith);
 
-        public Task WriteAsync(Stream stream, CancellationToken cancellationToken)
-        {
-            return _fileSystemClient.WriteAsync(stream, _filePath, cancellationToken);
-        }
+            Directory.CreateDirectory(directoryPath);
 
-        public Task ExtractZipAsync(string destinationDirectory, CancellationToken cancellationToken)
-        {
-            return _fileSystemClient.ExtractZipAsync(_filePath, destinationDirectory, cancellationToken);
-        }
+            using (var embeddedResourceStream = OpenEmbeddedResourceStream(endsWith))
+            using (var fileStream = File.OpenWrite(filePath))
+            {
+                embeddedResourceStream.CopyTo(fileStream);
+            }
 
-        public static TempFile New(IFileSystemClient fileSystemClient) => new TempFile(
-            Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")),
-            fileSystemClient);
+            return filePath;
+        }
     }
 }
