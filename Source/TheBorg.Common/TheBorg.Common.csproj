@@ -35,6 +35,8 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -48,6 +50,8 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="CertificateGenerator.cs" />
+    <Compile Include="Clients\FileSystemClient.cs" />
+    <Compile Include="Clients\IFileSystemClient.cs" />
     <Compile Include="Clients\IWebSocketClient.cs" />
     <Compile Include="Clients\WebSocketClient.cs" />
     <Compile Include="Configuration.cs" />

@@ -22,22 +22,42 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
+using System;
+using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Common;
-using TheBorg.Interface.ValueObjects.Plugins;
+using FluentAssertions;
+using NUnit.Framework;
+using Serilog;
+using TheBorg.Common.Clients;
 
-namespace TheBorg.Collective.PluginManagement
+namespace TheBorg.Tests.UnitTests.Common.Clients
 {
-    public enum PluginPackageType
+    public class FileSystemClientTests
     {
-        Zip,
-    }
+        private IFileSystemClient _sut;
 
-    public interface IPluginInstaller
-    {
-        Task<PluginPath> InstallPluginAsync(string name, TempFile tempFile, PluginPackageType packageType, CancellationToken cancellationToken);
-        Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken);
+        [SetUp]
+        public void SetUp()
+        {
+            _sut = new FileSystemClient(
+                new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger());
+        }
+
+        [Test]
+        public void ExtractZipAsync()
+        {
+            // Arrange
+            var zipFile = TestDataReader.ExtractEmbeddedResource("theborg.zip");
+            var destinationDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+
+            // Act
+            _sut.ExtractZipAsync(zipFile, destinationDirectory, CancellationToken.None).Wait();
+
+            // Assert
+            var expectedDestinationFile = Path.Combine(destinationDirectory, "theborg", "theborg.txt");
+            File.Exists(expectedDestinationFile).Should().BeTrue();
+            var content = File.ReadAllText(expectedDestinationFile);
+            content.Should().Be("resistance is futile");
+        }
     }
 }

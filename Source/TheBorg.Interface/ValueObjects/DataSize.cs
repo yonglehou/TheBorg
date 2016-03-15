@@ -22,22 +22,20 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Common;
-using TheBorg.Interface.ValueObjects.Plugins;
+using System;
 
-namespace TheBorg.Collective.PluginManagement
+namespace TheBorg.Interface.ValueObjects
 {
-    public enum PluginPackageType
+    public class DataSize : SingleValueObject<long>
     {
-        Zip,
-    }
+        public DataSize(long value) : base(value)
+        {
+            if (value < 0) throw new ArgumentOutOfRangeException(nameof(value), $"Data size must be positive '{value}'");
+        }
 
-    public interface IPluginInstaller
-    {
-        Task<PluginPath> InstallPluginAsync(string name, TempFile tempFile, PluginPackageType packageType, CancellationToken cancellationToken);
-        Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken);
+        public static DataSize With(long value)
+        {
+            return new DataSize(value);
+        }
     }
 }

@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,11 +47,7 @@ namespace TheBorg.Collective.PluginManagement
             _configuration = configuration;
         }
 
-        public Task<PluginPath> InstallPluginAsync(
-            string name,
-            string path,
-            PluginPackageType packageType,
-            CancellationToken cancellationToken)
+        public async Task<PluginPath> InstallPluginAsync(string name, TempFile tempFile, PluginPackageType packageType, CancellationToken cancellationToken)
         {
             var pluginInstallPath = _configuration.PluginInstallPath;
             _logger.Verbose($"Plugin install path is '{pluginInstallPath}'");
@@ -69,10 +64,10 @@ namespace TheBorg.Collective.PluginManagement
             {
                 case PluginPackageType.Zip:
                     {
-                        ZipFile.ExtractToDirectory(path, installDirectory);
+                        await tempFile.ExtractZipAsync(installDirectory, cancellationToken).ConfigureAwait(false);
                         var pluginDll = Path.Combine(installDirectory, $"{name}.dll");
                         _logger.Verbose($"Guessing that plugin location is '{pluginDll}'");
-                        return Task.FromResult(new PluginPath(pluginDll));
+                        return new PluginPath(pluginDll);
                     }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(packageType), packageType, null);

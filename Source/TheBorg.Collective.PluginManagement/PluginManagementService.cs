@@ -128,7 +128,7 @@ namespace TheBorg.Collective.PluginManagement
             {
                 var pluginPath = await _pluginInstaller.InstallPluginAsync(
                     Path.GetFileNameWithoutExtension(filename), // TODO: Fix
-                    tempFile.Path,
+                    tempFile,
                     PluginPackageType.Zip,
                     cancellationToken)
                     .ConfigureAwait(false);
