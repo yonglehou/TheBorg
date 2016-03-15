@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,5 +36,9 @@ namespace TheBorg.Common.Clients
 
         Task WriteAsync(Stream sourceStream, string destinationFile, CancellationToken cancellationToken);
         Task<DataSize> ExtractZipAsync(string sourceFile, string destinationDirectory, CancellationToken cancellationToken);
+        IReadOnlyCollection<string> GetDirectories(string path);
+        bool FileExists(string path);
+        bool DirectoryExists(string path);
+        void DeleteDirectory(string path);
     }
 }

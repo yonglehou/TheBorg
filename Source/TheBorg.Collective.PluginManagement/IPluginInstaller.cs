@@ -37,7 +37,8 @@ namespace TheBorg.Collective.PluginManagement
 
     public interface IPluginInstaller
     {
-        Task<PluginPath> InstallPluginAsync(string name, TempFile tempFile, PluginPackageType packageType, CancellationToken cancellationToken);
+        Task<PluginPath> InstallPluginAsync(PluginId pluginId, TempFile tempFile, PluginPackageType packageType, CancellationToken cancellationToken);
         Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken);
+        Task UninstallPluginAsync(PluginId pluginId, CancellationToken cancellationToken);
     }
 }

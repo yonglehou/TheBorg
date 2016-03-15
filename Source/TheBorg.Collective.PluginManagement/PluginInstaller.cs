@@ -30,6 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Common;
+using TheBorg.Common.Clients;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Collective.PluginManagement
@@ -37,35 +38,35 @@ namespace TheBorg.Collective.PluginManagement
     public class PluginInstaller : IPluginInstaller
     {
         private readonly ILogger _logger;
+        private readonly IFileSystemClient _fileSystemClient;
         private readonly IConfiguration _configuration;
 
         public PluginInstaller(
             ILogger logger,
+            IFileSystemClient fileSystemClient,
             IConfiguration configuration)
         {
             _logger = logger;
+            _fileSystemClient = fileSystemClient;
             _configuration = configuration;
         }
 
-        public async Task<PluginPath> InstallPluginAsync(string name, TempFile tempFile, PluginPackageType packageType, CancellationToken cancellationToken)
+        public async Task<PluginPath> InstallPluginAsync(
+            PluginId pluginId,
+            TempFile tempFile,
+            PluginPackageType packageType,
+            CancellationToken cancellationToken)
         {
-            var pluginInstallPath = _configuration.PluginInstallPath;
-            _logger.Verbose($"Plugin install path is '{pluginInstallPath}'");
+            var installDirectory = GetInstallDirectory(pluginId);
 
-            var installDirectory = Path.Combine(pluginInstallPath, name);
-            _logger.Verbose($"Plugin install directory is '{installDirectory}'");
-            if (!Directory.Exists(installDirectory))
-            {
-                _logger.Verbose($"Creating directory as it does not exists '{installDirectory}'");
-                Directory.CreateDirectory(installDirectory);
-            }
+            _logger.Verbose($"Installing plugin '{pluginId}' into '{installDirectory}'");
 
             switch (packageType)
             {
                 case PluginPackageType.Zip:
                     {
                         await tempFile.ExtractZipAsync(installDirectory, cancellationToken).ConfigureAwait(false);
-                        var pluginDll = Path.Combine(installDirectory, $"{name}.dll");
+                        var pluginDll = Path.Combine(installDirectory, $"{pluginId}.dll");
                         _logger.Verbose($"Guessing that plugin location is '{pluginDll}'");
                         return new PluginPath(pluginDll);
                     }
@@ -74,21 +75,36 @@ namespace TheBorg.Collective.PluginManagement
             }
         }
 
+        public Task UninstallPluginAsync(PluginId pluginId, CancellationToken cancellationToken)
+        {
+            var installDirectory = GetInstallDirectory(pluginId);
+
+            if (_fileSystemClient.DirectoryExists(installDirectory))
+            {
+                _logger.Warning($"Plugin '{pluginId}' is now installed, but request to be uninstalled");
+                return Task.FromResult(0);
+            }
+
+            return Task.Run(() => _fileSystemClient.DeleteDirectory(installDirectory), cancellationToken);
+        }
+
         public Task<IReadOnlyCollection<PluginPath>> GetInstalledPluginsAsync(CancellationToken cancellationToken)
         {
             var pluginInstallPath = _configuration.PluginInstallPath;
-            if (!Directory.Exists(pluginInstallPath))
-            {
-                return Task.FromResult<IReadOnlyCollection<PluginPath>>(new PluginPath[] {});
-            }
 
-            var pluginPaths = Directory.GetDirectories(pluginInstallPath)
+            var pluginPaths = _fileSystemClient.GetDirectories(pluginInstallPath)
                 .Select(d => Path.Combine(d, $"{Path.GetFileName(d)}.dll"))
-                .Where(File.Exists)
+                .Where(_fileSystemClient.FileExists)
                 .Select(p => PluginPath.With(p))
                 .ToList();
 
             return Task.FromResult<IReadOnlyCollection<PluginPath>>(pluginPaths);
+        }
+
+        private string GetInstallDirectory(PluginId pluginId)
+        {
+            var pluginInstallPath = _configuration.PluginInstallPath;
+            return Path.Combine(pluginInstallPath, pluginId.Value);
         }
     }
 }

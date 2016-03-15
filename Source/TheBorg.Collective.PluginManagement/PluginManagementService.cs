@@ -124,10 +124,17 @@ namespace TheBorg.Collective.PluginManagement
             var filename = uri.GetFilename();
             if (!uri.ToString().ToLowerInvariant().EndsWith(".zip")) throw new ArgumentException($"Only understands ZIP files: {uri} ({filename})");
 
+            var pluginId = PluginId.With(Path.GetFileNameWithoutExtension(filename).ToLowerInvariant());
+
+            if (_plugins.ContainsKey(pluginId))
+            {
+                await _pluginInstaller.UninstallPluginAsync(pluginId, cancellationToken).ConfigureAwait(false);
+            }
+
             using (var tempFile = await _restClient.DownloadAsync(uri, cancellationToken).ConfigureAwait(false))
             {
                 var pluginPath = await _pluginInstaller.InstallPluginAsync(
-                    Path.GetFileNameWithoutExtension(filename), // TODO: Fix
+                    pluginId,
                     tempFile,
                     PluginPackageType.Zip,
                     cancellationToken)

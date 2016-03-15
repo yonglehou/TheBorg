@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
@@ -55,6 +56,28 @@ namespace TheBorg.Common.Clients
             File.Delete(path);
         }
 
+        public IReadOnlyCollection<string> GetDirectories(string path)
+        {
+            return Directory.Exists(path)
+                ? Directory.GetDirectories(path)
+                : new string[] {};
+        }
+
+        public bool FileExists(string path)
+        {
+            return File.Exists(path);
+        }
+
+        public bool DirectoryExists(string path)
+        {
+            return Directory.Exists(path);
+        }
+
+        public void DeleteDirectory(string path)
+        {
+            Directory.Delete(path, true);
+        }
+
         public async Task WriteAsync(Stream sourceStream, string destinationFile, CancellationToken cancellationToken)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
@@ -68,7 +91,7 @@ namespace TheBorg.Common.Clients
         public async Task<DataSize> ExtractZipAsync(string sourceFile, string destinationDirectory, CancellationToken cancellationToken)
         {
             var fullNameDestinationDirectory = Directory.CreateDirectory(destinationDirectory).FullName;
-            long dataSize = 0;
+            long originalDataSize = 0;
 
             using (var zipArchive = ZipFile.OpenRead(sourceFile))
             {
@@ -99,12 +122,12 @@ namespace TheBorg.Common.Clients
                         _logger.Verbose($"ZIP EXTRACT: {fullPath}");
 
                         File.SetLastWriteTime(fullPath, source.LastWriteTime.DateTime);
-                        dataSize += source.Length;
+                        originalDataSize += source.Length;
                     }
                 }
             }
 
-            return DataSize.With(dataSize);
+            return DataSize.With(originalDataSize);
         }
     }
 }

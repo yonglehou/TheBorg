@@ -63,6 +63,7 @@
     <Compile Include="ValueObjects\Address.cs" />
     <Compile Include="ValueObjects\CommandDescription.cs" />
     <Compile Include="ValueObjects\ConfigKey.cs" />
+    <Compile Include="ValueObjects\DataSize.cs" />
     <Compile Include="ValueObjects\Key.cs" />
     <Compile Include="ValueObjects\Plugins\PluginDescription.cs" />
     <Compile Include="ValueObjects\Plugins\PluginId.cs" />

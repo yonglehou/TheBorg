@@ -28,14 +28,43 @@ namespace TheBorg.Interface.ValueObjects
 {
     public class DataSize : SingleValueObject<long>
     {
+        private readonly Lazy<string> _toStringLazy;
+
         public DataSize(long value) : base(value)
         {
             if (value < 0) throw new ArgumentOutOfRangeException(nameof(value), $"Data size must be positive '{value}'");
+
+            _toStringLazy = new Lazy<string>(() => PrettyPrint(value));
         }
 
         public static DataSize With(long value)
         {
             return new DataSize(value);
+        }
+
+        public override string ToString()
+        {
+            return _toStringLazy.Value;
+        }
+
+        private static string PrettyPrint(long value)
+        {
+            const int byteConversion = 1024;
+            var bytes = Convert.ToDouble(value);
+
+            if (bytes >= Math.Pow(byteConversion, 3))
+            {
+                return string.Concat(Math.Round(bytes/Math.Pow(byteConversion, 3), 2), " GB");
+            }
+            if (bytes >= Math.Pow(byteConversion, 2))
+            {
+                return string.Concat(Math.Round(bytes/Math.Pow(byteConversion, 2), 2), " MB");
+            }
+            if (bytes >= byteConversion)
+            {
+                return string.Concat(Math.Round(bytes/byteConversion, 2), " KB");
+            }
+            return string.Concat(bytes, " B");
         }
     }
 }
