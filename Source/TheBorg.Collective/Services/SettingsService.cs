@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,6 +43,7 @@ namespace TheBorg.Collective.Services
             END";
         private const string GetSql = "SELECT [Value] FROM [dbo].[Settings] WHERE [Key] = @Key AND GroupKey = @GroupKey";
         private const string DeleteSql = "DELETE FROM [dbo].[Settings] WHERE [Key] = @Key AND GroupKey = @GroupKey";
+        private const string ListSql = "SELECT [Key] FROM [dbo].[Settings] WHERE [GroupKey] = @GroupKey";
 
         public SettingsService(
             IMsSqlConnection msSqlConnection)
@@ -62,7 +64,7 @@ namespace TheBorg.Collective.Services
 
         public async Task SetAsync(SettingKey settingKey, SettingGroupKey settingGroupKey, string value, CancellationToken cancellationToken)
         {
-            ValidateValue(value);
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
 
             var affectedRows = await _msSqlConnection.ExecuteAsync(
                 cancellationToken,
@@ -76,17 +78,25 @@ namespace TheBorg.Collective.Services
             }
         }
 
+        public async Task<IReadOnlyCollection<SettingGroupKey>> GetKeysAsync(SettingGroupKey settingGroupKey, CancellationToken cancellationToken)
+        {
+            var keys = await _msSqlConnection.QueryAsync<string>(
+                cancellationToken,
+                ListSql,
+                new {GroupKey = settingGroupKey.Value})
+                .ConfigureAwait(false);
+
+            return keys
+                .Select(SettingGroupKey.With)
+                .ToList();
+        }
+
         public Task RemoveAsync(SettingKey settingKey, SettingGroupKey settingGroupKey, CancellationToken cancellationToken)
         {
             return _msSqlConnection.ExecuteAsync(
                 cancellationToken,
                 DeleteSql,
                 new {Key = settingKey.Value, GroupKey = settingGroupKey.Value });
-        }
-
-        private static void ValidateValue(string value)
-        {
-            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
         }
     }
 }

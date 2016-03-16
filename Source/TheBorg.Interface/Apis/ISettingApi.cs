@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
@@ -32,5 +33,6 @@ namespace TheBorg.Interface.Apis
     {
         Task<string> GetAsync(SettingKey settingKey, CancellationToken cancellationToken);
         Task SetAsync(SettingKey settingKey, string value, CancellationToken cancellationToken);
+        Task<IReadOnlyCollection<SettingKey>> GetKeysAsync(CancellationToken cancellationToken);
     }
 }

@@ -80,5 +80,32 @@ namespace TheBorg.Collective.Controllers
 
             return Content(HttpStatusCode.OK, content);
         }
+
+        [Route("")]
+        [HttpGet]
+        public async Task<IHttpActionResult> List(CancellationToken cancellationToken)
+        {
+            var settingGroupKeys = await _settingsService.GetKeysAsync(
+                User.GetPluginId().ToSettingGroupKey(),
+                cancellationToken)
+                .ConfigureAwait(false);
+
+            return Ok(settingGroupKeys);
+        }
+
+        [Route("{key}")]
+        [HttpDelete]
+        public async Task<IHttpActionResult> Delete(string key, CancellationToken cancellationToken)
+        {
+            var settingKey = SettingKey.With(key);
+
+            await _settingsService.RemoveAsync(
+                settingKey,
+                User.GetPluginId().ToSettingGroupKey(),
+                cancellationToken)
+                .ConfigureAwait(false);
+
+            return Ok();
+        }
     }
 }

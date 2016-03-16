@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.Apis;
@@ -53,6 +54,13 @@ namespace TheBorg.Host.Apis
             return PostAsync(
                 $"/api/settings/{settingKey.Value}",
                 value,
+                cancellationToken);
+        }
+
+        public Task<IReadOnlyCollection<SettingKey>> GetKeysAsync(CancellationToken cancellationToken)
+        {
+            return GetAsAsync<IReadOnlyCollection<SettingKey>>(
+                "/api/settings",
                 cancellationToken);
         }
     }
