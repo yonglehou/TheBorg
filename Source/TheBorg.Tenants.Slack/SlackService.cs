@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Common.Clients;
 using TheBorg.Common.Serialization;
-using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Tenants;
 using TheBorg.Tenants.Slack.ApiResponses;
 
@@ -71,17 +70,14 @@ namespace TheBorg.Tenants.Slack
             return new TenantUser(userInfoApiResponse.User.Name, userInfoApiResponse.User.Id, TenantKey);
         }
 
-        public Task<ApiResponse> SendMessageAsync(
-            string channelId,
-            string text,
-            CancellationToken cancellationToken)
+        public Task<ApiResponse> SendMessageAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             return CallApiAsync<ApiResponse>(
                 "chat.postMessage",
                 new Dictionary<string, string>
                     {
-                        {"channel", channelId},
-                        {"text", text},
+                        {"channel", tenantMessage.Address.TenantChannel.Value},
+                        {"text", tenantMessage.Text},
                         {"as_user", "true"},
                     },
                 cancellationToken);

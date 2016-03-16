@@ -23,36 +23,28 @@
 //
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using TheBorg.Interface.Apis;
-using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Tenants;
 
-namespace TheBorg.Host.Apis
+namespace TheBorg.Interface.ValueObjects.Tenants
 {
-    public class MessageApi : Api, IMessageApi
+    public class TenantMessageAttachment
     {
-        public MessageApi(
-            Uri baseUri,
-            Token token)
-            : base(baseUri, token)
+        public static TenantMessageAttachment With(string type, string data)
         {
+            return new TenantMessageAttachment(type, data);
         }
 
-        public Task ReplyToAsync(TenantMessage tenantMessage, string text, CancellationToken cancellationToken)
-        {
-            return SendAsync(tenantMessage.Address, text, cancellationToken);
-        }
+        public string Type { get; }
+        public string Data { get; }
 
-        public Task SendAsync(Address address, string text, CancellationToken cancellationToken)
+        public TenantMessageAttachment(
+            string type,
+            string data)
         {
-            return SendAsync(TenantMessage.To(address, text), cancellationToken);
-        }
+            if (string.IsNullOrEmpty(type)) throw new ArgumentNullException(nameof(type));
+            if (string.IsNullOrEmpty(data)) throw new ArgumentNullException(nameof(data));
 
-        public Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
-        {
-            return PostAsync("api/tenant-messages", tenantMessage, cancellationToken);
+            Type = type;
+            Data = data;
         }
     }
 }

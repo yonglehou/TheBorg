@@ -28,7 +28,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Common.Tenants;
-using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Collective.Services
@@ -45,18 +44,18 @@ namespace TheBorg.Collective.Services
 
         public Task ReplyAsync(TenantMessage tenantMessage, string text, CancellationToken cancellationToken)
         {
-            return SendAsync(tenantMessage.Address, text, cancellationToken);
+            return SendAsync(tenantMessage.CreateReply(text), cancellationToken);
         }
 
-        public Task SendAsync(Address address, string text, CancellationToken cancellationToken)
+        public Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             ITenant tenant;
-            if (!_tenants.TryGetValue(address.TenantKey, out tenant))
+            if (!_tenants.TryGetValue(tenantMessage.Address.TenantKey, out tenant))
             {
-                throw new ArgumentException($"There's no tenant with key '{address.TenantKey}'");
+                throw new ArgumentException($"There's no tenant with key '{tenantMessage.Address.TenantKey}'");
             }
 
-            return tenant.SendMessage(address, text, cancellationToken);
+            return tenant.SendMessage(tenantMessage, cancellationToken);
         }
     }
 }

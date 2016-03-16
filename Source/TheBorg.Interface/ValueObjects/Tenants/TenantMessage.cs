@@ -22,24 +22,48 @@
 // SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace TheBorg.Interface.ValueObjects.Tenants
 {
     public class TenantMessage
     {
+        public static TenantMessage To(
+            Address address,
+            string text,
+            params TenantMessageAttachment[] tenantMessageAttachments)
+        {
+            return new TenantMessage(
+                text,
+                address,
+                tenantMessageAttachments);
+        }
+
         public TenantMessage(
             string text,
-            Address address)
+            Address address,
+            IEnumerable<TenantMessageAttachment> attachments)
         {
+            if (string.IsNullOrEmpty(text)) throw new ArgumentNullException(nameof(text));
+            if (address == null) throw new ArgumentNullException(nameof(address));
+
             Text = text;
             Address = address;
+            Attachments = (attachments ?? Enumerable.Empty<TenantMessageAttachment>()).ToList();
         }
 
         public string Text { get; }
         public Address Address { get; }
+        public IReadOnlyCollection<TenantMessageAttachment> Attachments { get; set; }
 
-        public TenantMessage CreateReply(string text)
+        public TenantMessage CreateReply(string text, params TenantMessageAttachment[] tenantMessageAttachments)
         {
-            return new TenantMessage(text, Address);
+            return new TenantMessage(
+                text,
+                Address,
+                tenantMessageAttachments);
         }
     }
 }
