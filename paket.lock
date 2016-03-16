@@ -78,6 +78,10 @@ GROUP Test
 NUGET
   remote: https://www.nuget.org/api/v2
   specs:
+    AutoFixture (3.41.1)
+    AutoFixture.AutoMoq (3.41.1)
+      AutoFixture (>= 3.41.1)
+      Moq (>= 4.1.1308.2120)
     FluentAssertions (4.2.1)
       System.Collections (>= 4.0.10) - framework: dnxcore50
       System.Diagnostics.Debug (>= 4.0.10) - framework: dnxcore50
@@ -95,6 +99,7 @@ NUGET
       System.Threading (>= 4.0.10) - framework: dnxcore50
       System.Threading.Tasks (>= 4.0.10) - framework: dnxcore50
       System.Xml.XDocument (>= 4.0.10) - framework: dnxcore50
+    Moq (4.2.1510.2205)
     NUnit (2.6.4)
     System.Collections (4.0.10) - framework: dnxcore50
       System.Diagnostics.Debug (>= 4.0.0) - framework: dnxcore50
