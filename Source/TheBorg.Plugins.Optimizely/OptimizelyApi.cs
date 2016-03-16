@@ -21,21 +21,27 @@
 // SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.Attributes;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Plugins.Optimizely.DTO;
 
 namespace TheBorg.Plugins.Optimizely
 {
     public class OptimizelyApi : IPluginHttpApi
     {
+        private readonly Uri _baseUri = new Uri("https://www.optimizelyapis.com");
         private readonly IConfigApi _configApi;
         private readonly IHttpApi _httpApi;
         private readonly IMessageApi _messageApi;
-
+        
         public OptimizelyApi(
             IConfigApi configApi,
             IHttpApi httpApi,
@@ -46,12 +52,27 @@ namespace TheBorg.Plugins.Optimizely
             _messageApi = messageApi;
         }
 
+        private async Task<List<Project>> GetProjectsAsync(CancellationToken cancellationToken)
+        {
+            var apiToken = await _configApi.GetAsync(ConfigKey.With("api-token"), cancellationToken).ConfigureAwait(false);
+            var apiTokenHeader = new KeyValuePair<string, string>("token", apiToken);
+            var headers = new List<KeyValuePair<string, string>>() { apiTokenHeader };
+            var uri = new Uri(_baseUri, "experiment/v1/projects/");
+
+            return await _httpApi.GetAsyncAs<List<Project>>(uri, cancellationToken, headers).ConfigureAwait(false);
+        }
+
         [HttpApi(HttpApiMethod.Get, "api/commands/projects")]
         [Command("^opt list projects", "Lists projects")]
         public async Task ListProjects([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
-            var projects = "Test Project 1";
-            await _messageApi.SendAsync(tenantMessage.CreateReply(projects), CancellationToken.None).ConfigureAwait(false);
+            var projects = await GetProjectsAsync(cancellationToken).ConfigureAwait(false);
+            var result = projects.Aggregate(
+                new StringBuilder().AppendLine("*Projects:*"),
+                (b, p) => b.AppendLine($"*{p.project_name}* - {p.id} - [{p.project_status}]"))
+                .ToString();
+
+            await _messageApi.SendAsync(tenantMessage.CreateReply(result), CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
