@@ -36,9 +36,7 @@ namespace TheBorg.Tenants.Slack
             string userId,
             CancellationToken cancellationToken);
 
-        Task<ApiResponse> SendMessageAsync(
-            TenantMessage tenantMessage,
-            CancellationToken cancellationToken);
+        Task SendMessageAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
 
         Task<T> CallApiAsync<T>(
             string method,

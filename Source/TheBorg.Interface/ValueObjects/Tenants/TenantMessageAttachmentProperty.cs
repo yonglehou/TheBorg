@@ -22,19 +22,29 @@
 // SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Linq;
+using System;
 
 namespace TheBorg.Interface.ValueObjects.Tenants
 {
-    public class TenantMessageAttachment
+    public class TenantMessageAttachmentProperty
     {
-        public IReadOnlyCollection<TenantMessageAttachmentProperty> Properties { get; }
-
-        public TenantMessageAttachment(
-            IEnumerable<TenantMessageAttachmentProperty> properties)
+        public static TenantMessageAttachmentProperty With(string type, string data)
         {
-            Properties = (properties ?? Enumerable.Empty<TenantMessageAttachmentProperty>()).ToList();
+            return new TenantMessageAttachmentProperty(type, data);
+        }
+
+        public string Type { get; }
+        public string Data { get; }
+
+        public TenantMessageAttachmentProperty(
+            string type,
+            string data)
+        {
+            if (string.IsNullOrEmpty(type)) throw new ArgumentNullException(nameof(type));
+            if (string.IsNullOrEmpty(data)) throw new ArgumentNullException(nameof(data));
+
+            Type = type;
+            Data = data;
         }
     }
 }

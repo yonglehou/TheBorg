@@ -58,8 +58,12 @@ namespace TheBorg.Interface.ValueObjects.Tenants
         public Address Address { get; }
         public IReadOnlyCollection<TenantMessageAttachment> Attachments { get; set; }
 
-        public TenantMessage CreateReply(string text, params TenantMessageAttachment[] tenantMessageAttachments)
+        public TenantMessage CreateReply(string text, params TenantMessageAttachmentProperty[] tenantMessageAttachmentsProperties)
         {
+            var tenantMessageAttachments = tenantMessageAttachmentsProperties.Any()
+                ? new[] {new TenantMessageAttachment(tenantMessageAttachmentsProperties)}
+                : Enumerable.Empty<TenantMessageAttachment>();
+
             return new TenantMessage(
                 text,
                 Address,

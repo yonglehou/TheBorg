@@ -79,6 +79,7 @@
     <Compile Include="ValueObjects\Tenants\TenantKey.cs" />
     <Compile Include="ValueObjects\Tenants\TenantMessage.cs" />
     <Compile Include="ValueObjects\Tenants\TenantMessageAttachment.cs" />
+    <Compile Include="ValueObjects\Tenants\TenantMessageAttachmentProperty.cs" />
     <Compile Include="ValueObjects\Tenants\TenantUser.cs" />
     <Compile Include="ValueObjects\Token.cs" />
     <Compile Include="ValueObjects\TokenId.cs" />
