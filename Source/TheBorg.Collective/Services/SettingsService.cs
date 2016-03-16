@@ -29,6 +29,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Collective.MsSql;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Settings;
 
 namespace TheBorg.Collective.Services
 {

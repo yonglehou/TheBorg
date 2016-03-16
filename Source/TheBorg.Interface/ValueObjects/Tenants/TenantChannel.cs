@@ -22,13 +22,11 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface.ValueObjects
+namespace TheBorg.Interface.ValueObjects.Tenants
 {
-    public class TenantKey : Key
+    public class TenantChannel : SingleValueObject<string>
     {
-        public static TenantKey With(string value) { return new TenantKey(value); }
-
-        public TenantKey(string value) : base(value)
+        public TenantChannel(string value) : base(value)
         {
         }
     }

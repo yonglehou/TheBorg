@@ -33,6 +33,7 @@ using TheBorg.Interface.Apis;
 using TheBorg.Interface.Attributes;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Plugins.Administration
 {

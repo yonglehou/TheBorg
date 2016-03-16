@@ -22,22 +22,14 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface.ValueObjects
+namespace TheBorg.Interface.ValueObjects.Tenants
 {
-    public class TenantUser : ValueObject
+    public class TenantKey : Key
     {
-        public TenantUser(
-            string name,
-            string id,
-            TenantKey tenantKey)
-        {
-            Name = name;
-            Id = id;
-            TenantKey = tenantKey;
-        }
+        public static TenantKey With(string value) { return new TenantKey(value); }
 
-        public string Name { get; }
-        public string Id { get; }
-        public TenantKey TenantKey { get; }
+        public TenantKey(string value) : base(value)
+        {
+        }
     }
 }

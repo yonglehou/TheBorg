@@ -24,6 +24,7 @@
 
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
+using TheBorg.Interface.ValueObjects.Settings;
 
 namespace TheBorg.Collective.Extensions
 {

@@ -29,6 +29,7 @@ using System.Web.Http;
 using TheBorg.Collective.Extensions;
 using TheBorg.Collective.Services;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Settings;
 
 namespace TheBorg.Collective.Controllers
 {

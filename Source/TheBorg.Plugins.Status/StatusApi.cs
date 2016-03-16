@@ -28,6 +28,8 @@ using TheBorg.Interface;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.Attributes;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Settings;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Plugins.Status
 {

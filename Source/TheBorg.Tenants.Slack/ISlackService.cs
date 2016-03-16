@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 using TheBorg.Tenants.Slack.ApiResponses;
 
 namespace TheBorg.Tenants.Slack

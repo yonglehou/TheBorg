@@ -27,6 +27,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Host.Apis
 {

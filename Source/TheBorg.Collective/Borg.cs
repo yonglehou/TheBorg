@@ -37,6 +37,7 @@ using TheBorg.Common.Extensions;
 using TheBorg.Common.Tenants;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Collective
 {

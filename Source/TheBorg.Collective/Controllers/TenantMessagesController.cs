@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using TheBorg.Collective.Services;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Collective.Controllers
 {

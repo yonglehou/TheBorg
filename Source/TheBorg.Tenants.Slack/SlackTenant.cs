@@ -38,6 +38,7 @@ using TheBorg.Common.Serialization.Resolvers;
 using TheBorg.Common.Tenants;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 using TheBorg.Tenants.Slack.ApiResponses;
 using TheBorg.Tenants.Slack.DTOs;
 using TheBorg.Tenants.Slack.RtmResponses;

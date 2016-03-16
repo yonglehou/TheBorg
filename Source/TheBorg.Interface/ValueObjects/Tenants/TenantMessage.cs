@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface.ValueObjects
+namespace TheBorg.Interface.ValueObjects.Tenants
 {
     public class TenantMessage
     {

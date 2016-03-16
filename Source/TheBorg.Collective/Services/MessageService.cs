@@ -29,6 +29,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Common.Tenants;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Collective.Services
 {

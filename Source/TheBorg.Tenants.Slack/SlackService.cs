@@ -32,6 +32,7 @@ using Serilog;
 using TheBorg.Common.Clients;
 using TheBorg.Common.Serialization;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 using TheBorg.Tenants.Slack.ApiResponses;
 
 namespace TheBorg.Tenants.Slack
