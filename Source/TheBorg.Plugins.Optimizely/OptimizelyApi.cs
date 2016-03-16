@@ -72,7 +72,7 @@ namespace TheBorg.Plugins.Optimizely
                 (b, p) => b.AppendLine($"*{p.project_name}* - {p.id} - [{p.project_status}]"))
                 .ToString();
 
-            await _messageApi.SendAsync(tenantMessage.CreateReply(result), CancellationToken.None).ConfigureAwait(false);
+            await _messageApi.SendAsync(tenantMessage.CreateReply(result), cancellationToken).ConfigureAwait(false);
         }
     }
 }
