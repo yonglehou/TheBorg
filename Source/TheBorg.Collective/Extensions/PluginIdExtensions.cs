@@ -22,22 +22,16 @@
 // SOFTWARE.
 //
 
-using System.Security.Principal;
 using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Collective.Extensions
 {
-    public static class PrincipalExtensions
+    public static class PluginIdExtensions
     {
-        public static Token GeToken(this IPrincipal principal)
+        public static SettingGroupKey ToSettingGroupKey(this PluginId pluginId)
         {
-            return new Token(principal.Identity.Name);
-        }
-
-        public static PluginId GetPluginId(this IPrincipal principal)
-        {
-            return principal.GeToken().PluginId;
+            return SettingGroupKey.With($"plugin.{pluginId.Value}");
         }
     }
 }

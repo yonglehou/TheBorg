@@ -26,6 +26,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using TheBorg.Collective.Extensions;
 using TheBorg.Collective.Services;
 using TheBorg.Interface.ValueObjects;
 
@@ -55,7 +56,12 @@ namespace TheBorg.Collective.Controllers
                 return BadRequest("No content");
             }
 
-            await _settingsService.SetAsync(settingKey.Value, content, cancellationToken).ConfigureAwait(false);
+            await _settingsService.SetAsync(
+                settingKey,
+                User.GetPluginId().ToSettingGroupKey(),
+                content,
+                cancellationToken)
+                .ConfigureAwait(false);
 
             return Ok();
         }
@@ -66,7 +72,11 @@ namespace TheBorg.Collective.Controllers
         {
             var settingKey = SettingKey.With(key);
 
-            var content = await _settingsService.GetAsync(settingKey.Value, cancellationToken).ConfigureAwait(false);
+            var content = await _settingsService.GetAsync(
+                settingKey,
+                User.GetPluginId().ToSettingGroupKey(),
+                cancellationToken)
+                .ConfigureAwait(false);
 
             return Content(HttpStatusCode.OK, content);
         }

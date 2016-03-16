@@ -54,7 +54,10 @@ namespace TheBorg.Host.Apis
             T value,
             CancellationToken cancellationToken)
         {
-            var httpContent = BuildJsonContent(value);
+            var httpContent = typeof(T) == typeof(string)
+                ? new StringContent((string)(object)value)
+                : BuildJsonContent(value);
+
             using (var httpResponseMessage = await SendAsync(
                 path,
                 HttpMethod.Post,
@@ -83,7 +86,7 @@ namespace TheBorg.Host.Apis
             }
         }
 
-        protected async Task<T> GetAsAsync<T>(
+        protected async Task<string> GetAsync(
             string path,
             CancellationToken cancellationToken,
             params HttpStatusCode[] validStatusCodes)
@@ -96,9 +99,17 @@ namespace TheBorg.Host.Apis
                     httpResponseMessage.EnsureSuccessStatusCode();
                 }
 
-                var json = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<T>(json);
+                return await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
+        }
+
+        protected async Task<T> GetAsAsync<T>(
+            string path,
+            CancellationToken cancellationToken,
+            params HttpStatusCode[] validStatusCodes)
+        {
+            var json = await GetAsync(path, cancellationToken, validStatusCodes).ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
         private static HttpContent BuildJsonContent<T>(T value)

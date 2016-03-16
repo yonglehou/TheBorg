@@ -50,6 +50,7 @@
     <Compile Include="Apis\IHttpApi.cs" />
     <Compile Include="Apis\IMessageApi.cs" />
     <Compile Include="Apis\IPluginApi.cs" />
+    <Compile Include="Apis\ISettingApi.cs" />
     <Compile Include="AsyncLock.cs" />
     <Compile Include="Attributes\CommandAttribute.cs" />
     <Compile Include="Attributes\FromBodyAttribute.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="ValueObjects\Plugins\PluginPath.cs" />
     <Compile Include="ValueObjects\Plugins\PluginTitle.cs" />
     <Compile Include="ValueObjects\Plugins\PluginVersion.cs" />
+    <Compile Include="ValueObjects\SettingGroupKey.cs" />
     <Compile Include="ValueObjects\SettingKey.cs" />
     <Compile Include="ValueObjects\TenantChannel.cs" />
     <Compile Include="ValueObjects\SingleValueObject.cs" />

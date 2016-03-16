@@ -52,7 +52,6 @@ namespace TheBorg.Collective.PluginManagement.HttpApi.Middlewares
             catch (Exception e)
             {
                 exception = e;
-                throw;
             }
             finally
             {
@@ -66,6 +65,11 @@ namespace TheBorg.Collective.PluginManagement.HttpApi.Middlewares
                 {
                     _logger.Error(exception, $"API {context.Request.Method} {stopWatch.Elapsed.TotalSeconds:0.00} sec {(HttpStatusCode) context.Response.StatusCode} {context.Request.Uri.GetLeftPart(UriPartial.Path)}");
                 }
+            }
+
+            if (exception != null)
+            {
+                throw exception;
             }
         }
     }

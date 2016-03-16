@@ -29,9 +29,10 @@ using System.Web.Http;
 using Autofac;
 using Autofac.Integration.WebApi;
 using Microsoft.Owin.Hosting;
+using Microsoft.Owin.Logging;
 using Owin;
-using Serilog;
 using TheBorg.Collective.PluginManagement.HttpApi.Middlewares;
+using ILogger = Serilog.ILogger;
 
 namespace TheBorg.Collective.PluginManagement.HttpApi
 {
@@ -63,6 +64,7 @@ namespace TheBorg.Collective.PluginManagement.HttpApi
                 };
             httpConfiguration.MapHttpAttributeRoutes();
 
+            app.SetLoggerFactory(new OwinLoggerFactory(_logger));
             app.Use<LoggerMiddleware>(new LoggerMiddlewareOptions(t => _logger.ForContext(t)));
             app.Use<PluginAuthMiddleware>(new PluginAuthMiddlewareOptions(t => _logger.ForContext(t)));
             app.UseAutofacMiddleware(_lifetimeScope);

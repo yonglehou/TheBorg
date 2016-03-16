@@ -33,11 +33,14 @@ namespace TheBorg.Plugins.Status
 {
     public class StatusApi : IPluginHttpApi
     {
+        private readonly ISettingApi _settingApi;
         private readonly IMessageApi _messageApi;
 
         public StatusApi(
+            ISettingApi settingApi,
             IMessageApi messageApi)
         {
+            _settingApi = settingApi;
             _messageApi = messageApi;
         }
 
@@ -45,6 +48,7 @@ namespace TheBorg.Plugins.Status
         [Command("^ping (?<message>.+)$", "pings the borg")]
         public async Task Ping([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
+            await _settingApi.SetAsync(SettingKey.With("last-ping-message"), tenantMessage.Text, cancellationToken).ConfigureAwait(false);
             await _messageApi.ReplyToAsync(tenantMessage, $"pong: {tenantMessage.Text}", cancellationToken).ConfigureAwait(false);
         }
     }

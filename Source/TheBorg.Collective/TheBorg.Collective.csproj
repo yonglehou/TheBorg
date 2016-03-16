@@ -51,6 +51,7 @@
     <Compile Include="Controllers\PluginsController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\TenantMessagesController.cs" />
+    <Compile Include="Extensions\PluginIdExtensions.cs" />
     <Compile Include="Extensions\PrincipalExtensions.cs" />
     <Compile Include="IBorg.cs" />
     <Compile Include="MsSql\IMsSqlConnection.cs" />
@@ -90,6 +91,9 @@
       <Project>{a418717d-e36d-43cb-8a46-ae50a2d38cc7}</Project>
       <Name>TheBorg.Collective.PluginManagement</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MsSql\Scripts\0002 - Add Settings.Group column.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

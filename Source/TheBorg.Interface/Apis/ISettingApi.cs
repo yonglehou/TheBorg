@@ -22,22 +22,15 @@
 // SOFTWARE.
 //
 
-using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Collective.Extensions
+namespace TheBorg.Interface.Apis
 {
-    public static class PrincipalExtensions
+    public interface ISettingApi
     {
-        public static Token GeToken(this IPrincipal principal)
-        {
-            return new Token(principal.Identity.Name);
-        }
-
-        public static PluginId GetPluginId(this IPrincipal principal)
-        {
-            return principal.GeToken().PluginId;
-        }
+        Task<string> GetAsync(SettingKey settingKey, CancellationToken cancellationToken);
+        Task SetAsync(SettingKey settingKey, string value, CancellationToken cancellationToken);
     }
 }

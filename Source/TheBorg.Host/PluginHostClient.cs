@@ -30,7 +30,6 @@ using System.Threading;
 using TheBorg.Host.Apis;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Host
 {
@@ -61,7 +60,8 @@ namespace TheBorg.Host
                 new MessageApi(pluginApiUri, token),
                 new HttpApi(),
                 new Apis.PluginApi(pluginApiUri, token),
-                new ConfigApi(pluginApiUri, token));
+                new ConfigApi(pluginApiUri, token),
+                new SettingApi(pluginApiUri, token));
 
             pluginBootstrapper.Start(r =>
                 {

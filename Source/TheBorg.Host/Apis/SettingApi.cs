@@ -22,22 +22,38 @@
 // SOFTWARE.
 //
 
-using System.Security.Principal;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Interface.Apis;
 using TheBorg.Interface.ValueObjects;
-using TheBorg.Interface.ValueObjects.Plugins;
 
-namespace TheBorg.Collective.Extensions
+namespace TheBorg.Host.Apis
 {
-    public static class PrincipalExtensions
+    public class SettingApi : Api, ISettingApi
     {
-        public static Token GeToken(this IPrincipal principal)
+        public SettingApi(
+            Uri baseUri,
+            Token token)
+            : base(baseUri, token)
         {
-            return new Token(principal.Identity.Name);
         }
 
-        public static PluginId GetPluginId(this IPrincipal principal)
+        public Task<string> GetAsync(SettingKey settingKey, CancellationToken cancellationToken)
         {
-            return principal.GeToken().PluginId;
+            return GetAsync(
+                $"/api/settings/{settingKey.Value}",
+                cancellationToken);
+        }
+
+        public Task SetAsync(SettingKey settingKey, string value, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
+
+            return PostAsync(
+                $"/api/settings/{settingKey.Value}",
+                value,
+                cancellationToken);
         }
     }
 }

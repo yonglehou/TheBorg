@@ -42,7 +42,7 @@ namespace TheBorg.Plugins.Status
                         PluginVersion.From(assembly),
                         PluginDescription.With("Provides status on the Borg"),
                         r.Uri));
-                    r.RegisterHttpApi(new StatusApi(r.MessageApi));
+                    r.RegisterHttpApi(new StatusApi(r.SettingApi, r.MessageApi));
                     r.RegisterHttpApiCommands();
                 });
         }

@@ -36,6 +36,7 @@ namespace TheBorg.Interface
         IConfigApi ConfigApi { get; }
         IMessageApi MessageApi { get; }
         IHttpApi HttpApi { get; }
+        ISettingApi SettingApi { get; }
         IPluginApi PluginApi { get; }
 
         Uri Uri { get; }

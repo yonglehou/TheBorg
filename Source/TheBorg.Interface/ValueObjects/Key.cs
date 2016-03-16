@@ -30,7 +30,7 @@ namespace TheBorg.Interface.ValueObjects
     public abstract class Key : SingleValueObject<string>
     {
         private static readonly Regex KeyValidator = new Regex(
-            @"^[a-z0-9][[a-z0-9\-]{1,126}[a-z0-9]$",
+            @"^[a-z0-9][[a-z0-9\-\.]{1,126}[a-z0-9]$",
             RegexOptions.Compiled | RegexOptions.Singleline);
 
         protected Key(

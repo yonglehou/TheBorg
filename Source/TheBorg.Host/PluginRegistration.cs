@@ -43,6 +43,7 @@ namespace TheBorg.Host
         public IConfigApi ConfigApi { get; }
         public IMessageApi MessageApi { get; }
         public IHttpApi HttpApi { get; }
+        public ISettingApi SettingApi { get; }
         public IPluginApi PluginApi { get; }
         public Uri Uri { get; }
         public Token Token { get; }
@@ -60,7 +61,8 @@ namespace TheBorg.Host
             IMessageApi messageApi,
             IHttpApi httpApi,
             IPluginApi pluginApi,
-            IConfigApi configApi)
+            IConfigApi configApi,
+            ISettingApi settingApi)
         {
             Uri = uri;
             Token = token;
@@ -69,6 +71,7 @@ namespace TheBorg.Host
             HttpApi = httpApi;
             PluginApi = pluginApi;
             ConfigApi = configApi;
+            SettingApi = settingApi;
         }
 
         public IPluginRegistration SetPluginInformation(PluginInformation pluginInformation)
