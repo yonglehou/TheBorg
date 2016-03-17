@@ -22,6 +22,8 @@
 // SOFTWARE.
 //
 
+using TheBorg.Interface.ValueObjects.Tenants;
+
 namespace TheBorg.Interface.ValueObjects
 {
     public class Address : ValueObject

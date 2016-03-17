@@ -25,12 +25,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Collective.Services
 {
     public interface IMessageService
     {
         Task ReplyAsync(TenantMessage tenantMessage, string text, CancellationToken cancellationToken);
-        Task SendAsync(Address address, string text, CancellationToken cancellationToken);
+        Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken);
     }
 }

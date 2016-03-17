@@ -26,7 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using TheBorg.Collective.Services;
-using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Collective.Controllers
 {
@@ -50,7 +50,7 @@ namespace TheBorg.Collective.Controllers
                 return BadRequest();
             }
 
-            await _messageService.SendAsync(tenantMessage.Address, tenantMessage.Text, cancellationToken).ConfigureAwait(false);
+            await _messageService.SendAsync(tenantMessage, cancellationToken).ConfigureAwait(false);
 
             return Ok();
         }

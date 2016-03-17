@@ -23,15 +23,21 @@
 //
 
 using System.Security.Principal;
+using TheBorg.Interface.ValueObjects;
 using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Collective.Extensions
 {
     public static class PrincipalExtensions
     {
+        public static Token GeToken(this IPrincipal principal)
+        {
+            return new Token(principal.Identity.Name);
+        }
+
         public static PluginId GetPluginId(this IPrincipal principal)
         {
-            return new PluginId(principal.Identity.Name);
+            return principal.GeToken().PluginId;
         }
     }
 }

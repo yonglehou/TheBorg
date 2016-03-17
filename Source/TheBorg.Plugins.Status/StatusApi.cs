@@ -27,17 +27,21 @@ using System.Threading.Tasks;
 using TheBorg.Interface;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.Attributes;
-using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Settings;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Plugins.Status
 {
     public class StatusApi : IPluginHttpApi
     {
+        private readonly ISettingApi _settingApi;
         private readonly IMessageApi _messageApi;
 
         public StatusApi(
+            ISettingApi settingApi,
             IMessageApi messageApi)
         {
+            _settingApi = settingApi;
             _messageApi = messageApi;
         }
 
@@ -45,7 +49,14 @@ namespace TheBorg.Plugins.Status
         [Command("^ping (?<message>.+)$", "pings the borg")]
         public async Task Ping([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
-            await _messageApi.ReplyToAsync(tenantMessage, $"pong: {tenantMessage.Text}", cancellationToken).ConfigureAwait(false);
+            await _settingApi.SetAsync(SettingKey.With("last-ping-message"), tenantMessage.Text, cancellationToken).ConfigureAwait(false);
+
+            var reply = tenantMessage.CreateReply(
+                "pong",
+                TenantMessageAttachmentProperty.With("text", tenantMessage.Text),
+                TenantMessageAttachmentProperty.With("color", "#333333"));
+
+            await _messageApi.SendAsync(reply, cancellationToken).ConfigureAwait(false);
         }
     }
 }

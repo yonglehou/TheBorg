@@ -22,14 +22,23 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface.ValueObjects
-{
-    public class SettingKey : Key
-    {
-        public static SettingKey With(string value) { return new SettingKey(value); }
+using System;
+using System.Threading;
+using NUnit.Framework;
+using Ploeh.AutoFixture;
 
-        public SettingKey(string value) : base(value)
+namespace TheBorg.Tests
+{
+    public abstract class BaseTestFor<T> : BaseTest
+        where T : class
+    {
+        private Lazy<T> _sut;
+        protected T Sut => _sut.Value;
+
+        [SetUp]
+        public void BaseTestForSetUp()
         {
+            _sut = new Lazy<T>(() => Fixture.Create<T>(), LazyThreadSafetyMode.ExecutionAndPublication);
         }
     }
 }

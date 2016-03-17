@@ -38,6 +38,7 @@ using TheBorg.Common.Serialization.Resolvers;
 using TheBorg.Common.Tenants;
 using TheBorg.Interface;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 using TheBorg.Tenants.Slack.ApiResponses;
 using TheBorg.Tenants.Slack.DTOs;
 using TheBorg.Tenants.Slack.RtmResponses;
@@ -78,11 +79,10 @@ namespace TheBorg.Tenants.Slack
 
         public IObservable<TenantMessage> Messages => _messages;
 
-        public Task SendMessage(Address address, string text, CancellationToken cancellationToken)
+        public Task SendMessage(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
             return _slackService.SendMessageAsync(
-                address.TenantChannel.Value,
-                text,
+                tenantMessage,
                 cancellationToken);
         }
 
@@ -212,9 +212,11 @@ namespace TheBorg.Tenants.Slack
 
             _messages.OnNext(new TenantMessage(
                 text,
-                sender));
+                sender,
+                Enumerable.Empty<TenantMessageAttachment>()));
         }
 
+        /*
         private Task ReplyToAsync(
             MessageRtmResponse messageRtmResponse,
             string text,
@@ -224,8 +226,9 @@ namespace TheBorg.Tenants.Slack
             {
                 text = $"<@{messageRtmResponse.User}>: {text}";
             }
-            return _slackService.SendMessageAsync(messageRtmResponse.Channel, text, cancellationToken);
+            return _slackService.SendMessageAsync(TODO, cancellationToken);
         }
+        */
 
         private static string SanitiseText(string text)
         {

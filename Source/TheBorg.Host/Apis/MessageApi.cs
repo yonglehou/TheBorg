@@ -27,6 +27,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 
 namespace TheBorg.Host.Apis
 {
@@ -46,7 +47,7 @@ namespace TheBorg.Host.Apis
 
         public Task SendAsync(Address address, string text, CancellationToken cancellationToken)
         {
-            return SendAsync(new TenantMessage(text, address), cancellationToken);
+            return SendAsync(TenantMessage.To(address, text), cancellationToken);
         }
 
         public Task SendAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)

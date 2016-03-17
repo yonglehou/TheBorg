@@ -35,7 +35,7 @@ using Serilog;
 
 namespace TheBorg.Collective.MsSql
 {
-    public abstract class MsSqlConnection : IMsSqlConnection
+    public class MsSqlConnection : IMsSqlConnection
     {
         public virtual Task<int> ExecuteAsync(
             CancellationToken cancellationToken,

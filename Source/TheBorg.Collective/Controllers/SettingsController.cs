@@ -26,8 +26,10 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using TheBorg.Collective.Extensions;
 using TheBorg.Collective.Services;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Settings;
 
 namespace TheBorg.Collective.Controllers
 {
@@ -55,7 +57,12 @@ namespace TheBorg.Collective.Controllers
                 return BadRequest("No content");
             }
 
-            await _settingsService.SetAsync(settingKey.Value, content, cancellationToken).ConfigureAwait(false);
+            await _settingsService.SetAsync(
+                settingKey,
+                User.GetPluginId().ToSettingGroupKey(),
+                content,
+                cancellationToken)
+                .ConfigureAwait(false);
 
             return Ok();
         }
@@ -66,9 +73,40 @@ namespace TheBorg.Collective.Controllers
         {
             var settingKey = SettingKey.With(key);
 
-            var content = await _settingsService.GetAsync(settingKey.Value, cancellationToken).ConfigureAwait(false);
+            var content = await _settingsService.GetAsync(
+                settingKey,
+                User.GetPluginId().ToSettingGroupKey(),
+                cancellationToken)
+                .ConfigureAwait(false);
 
             return Content(HttpStatusCode.OK, content);
+        }
+
+        [Route("")]
+        [HttpGet]
+        public async Task<IHttpActionResult> List(CancellationToken cancellationToken)
+        {
+            var settingGroupKeys = await _settingsService.GetKeysAsync(
+                User.GetPluginId().ToSettingGroupKey(),
+                cancellationToken)
+                .ConfigureAwait(false);
+
+            return Ok(settingGroupKeys);
+        }
+
+        [Route("{key}")]
+        [HttpDelete]
+        public async Task<IHttpActionResult> Delete(string key, CancellationToken cancellationToken)
+        {
+            var settingKey = SettingKey.With(key);
+
+            await _settingsService.RemoveAsync(
+                settingKey,
+                User.GetPluginId().ToSettingGroupKey(),
+                cancellationToken)
+                .ConfigureAwait(false);
+
+            return Ok();
         }
     }
 }

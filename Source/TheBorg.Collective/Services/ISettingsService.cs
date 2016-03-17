@@ -22,15 +22,19 @@
 // SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Settings;
 
 namespace TheBorg.Collective.Services
 {
     public interface ISettingsService
     {
-        Task<string> GetAsync(string key, CancellationToken cancellationToken);
-        Task SetAsync(string key, string value, CancellationToken cancellationToken);
-        Task RemoveAsync(string key, CancellationToken cancellationToken);
+        Task<string> GetAsync(SettingKey settingKey, SettingGroupKey settingGroupKey, CancellationToken cancellationToken);
+        Task SetAsync(SettingKey settingKey, SettingGroupKey settingGroupKey, string value, CancellationToken cancellationToken);
+        Task RemoveAsync(SettingKey settingKey, SettingGroupKey settingGroupKey, CancellationToken cancellationToken);
+        Task<IReadOnlyCollection<SettingGroupKey>> GetKeysAsync(SettingGroupKey settingGroupKey, CancellationToken cancellationToken);
     }
 }

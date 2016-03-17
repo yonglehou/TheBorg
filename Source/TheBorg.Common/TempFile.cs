@@ -24,27 +24,42 @@
 
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using TheBorg.Common.Clients;
 
 namespace TheBorg.Common
 {
     public class TempFile : IDisposable
     {
-        public static TempFile New => new TempFile(System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString("N")));
+        private readonly string _filePath;
+        private readonly IFileSystemClient _fileSystemClient;
 
         private TempFile(
-            string path)
+            string filePath,
+            IFileSystemClient fileSystemClient)
         {
-            Path = path;
+            _fileSystemClient = fileSystemClient;
+            _filePath = filePath;
         }
-
-        public string Path { get; }
 
         public void Dispose()
         {
-            if (File.Exists(Path))
-            {
-                File.Delete(Path);
-            }
+            _fileSystemClient.DeleteFile(_filePath);
         }
+
+        public Task WriteAsync(Stream stream, CancellationToken cancellationToken)
+        {
+            return _fileSystemClient.WriteAsync(stream, _filePath, cancellationToken);
+        }
+
+        public Task ExtractZipAsync(string destinationDirectory, CancellationToken cancellationToken)
+        {
+            return _fileSystemClient.ExtractZipAsync(_filePath, destinationDirectory, cancellationToken);
+        }
+
+        public static TempFile New(IFileSystemClient fileSystemClient) => new TempFile(
+            Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")),
+            fileSystemClient);
     }
 }

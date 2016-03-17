@@ -22,14 +22,42 @@
 // SOFTWARE.
 //
 
-namespace TheBorg.Interface.ValueObjects
-{
-    public class TenantKey : Key
-    {
-        public static TenantKey With(string value) { return new TenantKey(value); }
+using System;
+using System.IO;
+using System.Threading;
+using FluentAssertions;
+using NUnit.Framework;
+using Serilog;
+using TheBorg.Common.Clients;
 
-        public TenantKey(string value) : base(value)
+namespace TheBorg.Tests.UnitTests.Common.Clients
+{
+    public class FileSystemClientTests
+    {
+        private IFileSystemClient _sut;
+
+        [SetUp]
+        public void SetUp()
         {
+            _sut = new FileSystemClient(
+                new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger());
+        }
+
+        [Test]
+        public void ExtractZipAsync()
+        {
+            // Arrange
+            var zipFile = TestDataReader.ExtractEmbeddedResource("theborg.zip");
+            var destinationDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+
+            // Act
+            _sut.ExtractZipAsync(zipFile, destinationDirectory, CancellationToken.None).Wait();
+
+            // Assert
+            var expectedDestinationFile = Path.Combine(destinationDirectory, "theborg", "theborg.txt");
+            File.Exists(expectedDestinationFile).Should().BeTrue();
+            var content = File.ReadAllText(expectedDestinationFile);
+            content.Should().Be("resistance is futile");
         }
     }
 }

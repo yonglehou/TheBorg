@@ -23,10 +23,13 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TheBorg.Collective.MsSql;
+using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Settings;
 
 namespace TheBorg.Collective.Services
 {
@@ -34,13 +37,14 @@ namespace TheBorg.Collective.Services
     {
         private readonly IMsSqlConnection _msSqlConnection;
         private const string SetSql = @"
-            UPDATE [dbo].[Settings] SET [Value] = @Value WHERE [Key] = @Key;
+            UPDATE [dbo].[Settings] SET [Value] = @Value WHERE [Key] = @Key AND GroupKey = @GroupKey;
             IF @@ROWCOUNT = 0
             BEGIN
-                INSERT [dbo].[Settings] ([Key], [Value]) VALUES (@Key, @Value);
+                INSERT [dbo].[Settings] ([Key], [Value], [GroupKey]) VALUES (@Key, @Value, @GroupKey);
             END";
-        private const string GetSql = "SELECT [Value] FROM [dbo].[Settings] WHERE [Key] = @Key";
-        private const string DeleteSql = "DELETE FROM [dbo].[Settings] WHERE [Key] = @Key";
+        private const string GetSql = "SELECT [Value] FROM [dbo].[Settings] WHERE [Key] = @Key AND GroupKey = @GroupKey";
+        private const string DeleteSql = "DELETE FROM [dbo].[Settings] WHERE [Key] = @Key AND GroupKey = @GroupKey";
+        private const string ListSql = "SELECT [Key] FROM [dbo].[Settings] WHERE [GroupKey] = @GroupKey";
 
         public SettingsService(
             IMsSqlConnection msSqlConnection)
@@ -48,55 +52,52 @@ namespace TheBorg.Collective.Services
             _msSqlConnection = msSqlConnection;
         }
 
-        public async Task<string> GetAsync(string key, CancellationToken cancellationToken)
+        public async Task<string> GetAsync(SettingKey settingKey, SettingGroupKey settingGroupKey, CancellationToken cancellationToken)
         {
-            ValidateKey(key);
-
             var values = await _msSqlConnection.QueryAsync<string>(
                 cancellationToken,
                 GetSql,
-                new {Key = key})
+                new {Key = settingKey.Value, GroupKey = settingGroupKey.Value })
                 .ConfigureAwait(false);
 
             return values.SingleOrDefault();
         }
 
-        public async Task SetAsync(string key, string value, CancellationToken cancellationToken)
+        public async Task SetAsync(SettingKey settingKey, SettingGroupKey settingGroupKey, string value, CancellationToken cancellationToken)
         {
-            ValidateKey(key);
-            ValidateValue(value);
+            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
 
             var affectedRows = await _msSqlConnection.ExecuteAsync(
                 cancellationToken,
                 SetSql,
-                new {Key = key, Value = value})
+                new {Key = settingKey.Value, Value = value, GroupKey = settingGroupKey.Value})
                 .ConfigureAwait(false);
 
             if (affectedRows != 1)
             {
-                throw new Exception($"Updating key '{key}' didn't update any rows");
+                throw new Exception($"Updating key '{settingKey}' didn't update any rows");
             }
         }
 
-        public Task RemoveAsync(string key, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<SettingGroupKey>> GetKeysAsync(SettingGroupKey settingGroupKey, CancellationToken cancellationToken)
         {
-            ValidateKey(key);
+            var keys = await _msSqlConnection.QueryAsync<string>(
+                cancellationToken,
+                ListSql,
+                new {GroupKey = settingGroupKey.Value})
+                .ConfigureAwait(false);
 
+            return keys
+                .Select(SettingGroupKey.With)
+                .ToList();
+        }
+
+        public Task RemoveAsync(SettingKey settingKey, SettingGroupKey settingGroupKey, CancellationToken cancellationToken)
+        {
             return _msSqlConnection.ExecuteAsync(
                 cancellationToken,
                 DeleteSql,
-                new {Key = key});
-        }
-
-        private static void ValidateKey(string key)
-        {
-            if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
-            if (key.Length > 128) throw new ArgumentOutOfRangeException(nameof(key), $"Key '{key}' is too long, it can only be 128");
-        }
-
-        private static void ValidateValue(string value)
-        {
-            if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(nameof(value));
+                new {Key = settingKey.Value, GroupKey = settingGroupKey.Value });
         }
     }
 }

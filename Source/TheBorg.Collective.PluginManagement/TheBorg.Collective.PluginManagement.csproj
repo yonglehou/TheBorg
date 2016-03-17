@@ -47,6 +47,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="HttpApi\Middlewares\OwinLoggerFactory.cs" />
     <Compile Include="HttpApi\Middlewares\LoggerMiddleware.cs" />
     <Compile Include="HttpApi\Middlewares\LoggerMiddlewareOptions.cs" />
     <Compile Include="HttpApi\Middlewares\PluginAuthMiddleware.cs" />

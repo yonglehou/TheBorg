@@ -22,7 +22,6 @@
 // SOFTWARE.
 //
 
-using System;
 using System.IO;
 
 namespace TheBorg.Interface.ValueObjects.Plugins
@@ -35,7 +34,6 @@ namespace TheBorg.Interface.ValueObjects.Plugins
             string value)
             : base(value)
         {
-            if (!File.Exists(value)) throw new ArgumentException($"Plugin '{value}' does not exist");
         }
 
         public PluginId GetPluginId()

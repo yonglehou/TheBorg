@@ -50,6 +50,7 @@
     <Compile Include="Apis\IHttpApi.cs" />
     <Compile Include="Apis\IMessageApi.cs" />
     <Compile Include="Apis\IPluginApi.cs" />
+    <Compile Include="Apis\ISettingApi.cs" />
     <Compile Include="AsyncLock.cs" />
     <Compile Include="Attributes\CommandAttribute.cs" />
     <Compile Include="Attributes\FromBodyAttribute.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="ValueObjects\Address.cs" />
     <Compile Include="ValueObjects\CommandDescription.cs" />
     <Compile Include="ValueObjects\ConfigKey.cs" />
+    <Compile Include="ValueObjects\DataSize.cs" />
     <Compile Include="ValueObjects\Key.cs" />
     <Compile Include="ValueObjects\Plugins\PluginDescription.cs" />
     <Compile Include="ValueObjects\Plugins\PluginId.cs" />
@@ -70,12 +72,15 @@
     <Compile Include="ValueObjects\Plugins\PluginPath.cs" />
     <Compile Include="ValueObjects\Plugins\PluginTitle.cs" />
     <Compile Include="ValueObjects\Plugins\PluginVersion.cs" />
-    <Compile Include="ValueObjects\SettingKey.cs" />
-    <Compile Include="ValueObjects\TenantChannel.cs" />
+    <Compile Include="ValueObjects\Settings\SettingGroupKey.cs" />
+    <Compile Include="ValueObjects\Settings\SettingKey.cs" />
+    <Compile Include="ValueObjects\Tenants\TenantChannel.cs" />
     <Compile Include="ValueObjects\SingleValueObject.cs" />
-    <Compile Include="ValueObjects\TenantKey.cs" />
-    <Compile Include="ValueObjects\TenantMessage.cs" />
-    <Compile Include="ValueObjects\TenantUser.cs" />
+    <Compile Include="ValueObjects\Tenants\TenantKey.cs" />
+    <Compile Include="ValueObjects\Tenants\TenantMessage.cs" />
+    <Compile Include="ValueObjects\Tenants\TenantMessageAttachment.cs" />
+    <Compile Include="ValueObjects\Tenants\TenantMessageAttachmentProperty.cs" />
+    <Compile Include="ValueObjects\Tenants\TenantUser.cs" />
     <Compile Include="ValueObjects\Token.cs" />
     <Compile Include="ValueObjects\TokenId.cs" />
     <Compile Include="ValueObjects\ValueObject.cs" />

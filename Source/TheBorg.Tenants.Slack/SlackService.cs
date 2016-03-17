@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 using Serilog;
 using TheBorg.Common.Clients;
 using TheBorg.Common.Serialization;
-using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 using TheBorg.Tenants.Slack.ApiResponses;
 
 namespace TheBorg.Tenants.Slack
@@ -39,15 +39,34 @@ namespace TheBorg.Tenants.Slack
     public class SlackService : ISlackService
     {
         private readonly ILogger _logger;
+        private readonly IJsonSerializer _jsonSerializer;
         private readonly IRestClient _restClient;
         private readonly ConcurrentDictionary<string, Task<TenantUser>> _userCache = new ConcurrentDictionary<string, Task<TenantUser>>();
+
         private static readonly TenantKey TenantKey = new TenantKey("slack");
+        private static readonly ISet<string> ValidAttachmentProperties = new HashSet<string>
+            {
+                "fallback",
+                "color",
+                "pretext",
+                "author_name",
+                "author_link",
+                "author_icon",
+                "title",
+                "title_link",
+                "text",
+                //"fields" // TODO: Don't know how to handle yet
+                "image_url",
+                "thumb_url"
+            }; 
 
         public SlackService(
             ILogger logger,
+            IJsonSerializer jsonSerializer,
             IRestClient restClient)
         {
             _logger = logger;
+            _jsonSerializer = jsonSerializer;
             _restClient = restClient;
         }
 
@@ -70,20 +89,39 @@ namespace TheBorg.Tenants.Slack
             return new TenantUser(userInfoApiResponse.User.Name, userInfoApiResponse.User.Id, TenantKey);
         }
 
-        public Task<ApiResponse> SendMessageAsync(
-            string channelId,
-            string text,
-            CancellationToken cancellationToken)
+        public async Task SendMessageAsync(TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
-            return CallApiAsync<ApiResponse>(
+            var attachments = tenantMessage.Attachments
+                .Select(a => a.Properties
+                    .Where(p =>
+                        {
+                            var isValid = ValidAttachmentProperties.Contains(p.Type);
+                            if (!isValid)
+                            {
+                                _logger.Warning($"Invalid Slack attachment property '{p.Type}'");
+                            }
+                            return isValid;
+                        })
+                    .ToDictionary(kv => kv.Type, kv => kv.Data))
+                .Where(a => a.Any())
+                .ToList();
+
+            var apiResponse = await CallApiAsync<ApiResponse>(
                 "chat.postMessage",
                 new Dictionary<string, string>
                     {
-                        {"channel", channelId},
-                        {"text", text},
+                        {"channel", tenantMessage.Address.TenantChannel.Value},
+                        {"text", tenantMessage.Text},
                         {"as_user", "true"},
+                        {"attachments", _jsonSerializer.Serialize(attachments, JsonFormat.LowerSnakeCase)}
                     },
-                cancellationToken);
+                cancellationToken)
+                .ConfigureAwait(false);
+
+            if (!apiResponse.IsOk)
+            {
+                _logger.Error($"SLACK SEND MESSAGE: {apiResponse.Error}");
+            }
         }
 
         public Task<T> CallApiAsync<T>(
