@@ -51,7 +51,7 @@ namespace TheBorg
             typeof (PluginsPluginBootstrapper).Assembly,
             typeof (HelpPluginBootstrapper).Assembly,
             typeof (GitHubPluginBootstrapper).Assembly,
-            //typeof (OptimizelyPluginBootstrapper).Assembly
+            typeof (OptimizelyPluginBootstrapper).Assembly
         };
 
         static Program()

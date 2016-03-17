@@ -31,6 +31,7 @@ using TheBorg.Interface;
 using TheBorg.Interface.Apis;
 using TheBorg.Interface.Attributes;
 using TheBorg.Interface.ValueObjects;
+using TheBorg.Interface.ValueObjects.Tenants;
 using TheBorg.Plugins.Optimizely.DTO;
 
 namespace TheBorg.Plugins.Optimizely
@@ -52,7 +53,8 @@ namespace TheBorg.Plugins.Optimizely
             _messageApi = messageApi;
         }
 
-        private async Task<List<Project>> GetProjectsAsync(CancellationToken cancellationToken)
+        [HttpApi(HttpApiMethod.Get, "api/projects")]
+        public async Task<List<Project>> GetProjectsAsync(CancellationToken cancellationToken)
         {
             var apiToken = await _configApi.GetAsync(ConfigKey.With("api-token"), cancellationToken).ConfigureAwait(false);
             var apiTokenHeader = new KeyValuePair<string, string>("token", apiToken);
@@ -62,7 +64,7 @@ namespace TheBorg.Plugins.Optimizely
             return await _httpApi.GetAsyncAs<List<Project>>(uri, cancellationToken, headers).ConfigureAwait(false);
         }
 
-        [HttpApi(HttpApiMethod.Get, "api/commands/projects")]
+        [HttpApi(HttpApiMethod.Post, "api/commands/projects")]
         [Command("^opt list projects", "Lists projects")]
         public async Task ListProjects([FromBody]TenantMessage tenantMessage, CancellationToken cancellationToken)
         {
