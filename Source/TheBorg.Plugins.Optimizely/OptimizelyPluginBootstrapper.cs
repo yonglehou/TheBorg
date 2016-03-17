@@ -27,7 +27,7 @@ using TheBorg.Interface.ValueObjects.Plugins;
 
 namespace TheBorg.Plugins.Optimizely
 {
-    class OptimizelyPluginBootstrapper : IPluginBootstrapper
+    public class OptimizelyPluginBootstrapper : IPluginBootstrapper
     {
         public void Start(Action<Action<IPluginRegistration>> pluginRegistra)
         {

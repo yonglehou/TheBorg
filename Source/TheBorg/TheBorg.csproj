@@ -103,6 +103,10 @@
       <Project>{721cf637-01fe-4691-a6a1-eff1ec4e9d25}</Project>
       <Name>TheBorg.Plugins.Jokes</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TheBorg.Plugins.Optimizely\TheBorg.Plugins.Optimizely.csproj">
+      <Project>{e6bd3a3e-2d16-4d65-9fca-80e7f3f60797}</Project>
+      <Name>TheBorg.Plugins.Optimizely</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TheBorg.Plugins.Status\TheBorg.Plugins.Status.csproj">
       <Project>{a2968831-196d-4b58-8813-93ea1648703d}</Project>
       <Name>TheBorg.Plugins.Status</Name>

@@ -34,6 +34,7 @@ using TheBorg.Plugins.GitHub;
 using TheBorg.Plugins.Help;
 using TheBorg.Plugins.Jokes;
 using TheBorg.Plugins.Status;
+using TheBorg.Plugins.Optimizely;
 using TheBorg.Tenants.Slack;
 using Topshelf;
 
@@ -49,7 +50,8 @@ namespace TheBorg
             typeof (StatusPluginBootstrapper).Assembly,
             typeof (PluginsPluginBootstrapper).Assembly,
             typeof (HelpPluginBootstrapper).Assembly,
-            typeof (GitHubPluginBootstrapper).Assembly
+            typeof (GitHubPluginBootstrapper).Assembly,
+            //typeof (OptimizelyPluginBootstrapper).Assembly
         };
 
         static Program()
