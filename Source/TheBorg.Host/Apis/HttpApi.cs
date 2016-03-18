@@ -46,7 +46,7 @@ namespace TheBorg.Host.Apis
         {
             var content = await GetAsync(uri, cancellationToken, headers, validStatusCodes).ConfigureAwait(false);
 
-            return JsonConvert.DeserializeObject<T>(content);
+            return JsonConvert.DeserializeObject<T>(content, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
         }
 
         public async Task<string> GetAsync(
@@ -65,7 +65,7 @@ namespace TheBorg.Host.Apis
                     }
                 }
 
-                using (var httpResponseMessage = await HttpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false))
+                using (var httpResponseMessage = await HttpClient.SendAsync(httpRequestMessage, cancellationToken).ConfigureAwait(false))
                 {
                     if (validStatusCodes == null ||
                         (!validStatusCodes.Contains(httpResponseMessage.StatusCode)))
